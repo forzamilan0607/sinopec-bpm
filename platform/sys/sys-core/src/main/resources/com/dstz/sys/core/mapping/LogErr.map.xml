@@ -21,7 +21,7 @@
 	</sql>
 
     <insert id="create" parameterType="com.dstz.sys.core.model.LogErr">
-		INSERT INTO SYS_LOG_ERR
+		INSERT INTO sys_log_err
 		(id_,account_,ip_,url_,content_,stack_trace_,create_time_,ip_address_,status_,request_param_)
 		VALUES 
 		(#{id,jdbcType=VARCHAR}, #{account,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{content,jdbcType=CLOB},#{stackTrace,jdbcType=CLOB}, #{createTime,jdbcType=TIMESTAMP}
@@ -31,13 +31,13 @@
     <select id="get" parameterType="java.lang.String" resultMap="LogErr">
         SELECT
         <include refid="columns"/>
-        FROM SYS_LOG_ERR
+        FROM sys_log_err
         WHERE
         id_=#{id}
     </select>
     
     <update id="update" parameterType="com.dstz.sys.core.model.LogErr">
-		UPDATE SYS_LOG_ERR SET
+		UPDATE sys_log_err SET
 		status_=#{status,jdbcType=VARCHAR},
 		content_=#{content,jdbcType=VARCHAR}
 		WHERE
@@ -45,7 +45,7 @@
 	</update>
 
     <select id="query" parameterType="java.util.Map" resultMap="LogErr">
-        SELECT id_,account_,ip_,url_,create_time_,ip_address_,status_,content_ FROM SYS_LOG_ERR
+        SELECT id_,account_,ip_,url_,create_time_,ip_address_,status_,content_ FROM sys_log_err
         <where>
             <if test="whereSql!=null">
                 ${whereSql}

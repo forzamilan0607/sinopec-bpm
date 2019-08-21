@@ -24,7 +24,7 @@ import cn.hutool.core.map.MapUtil;
 
 /**
  * <pre>
- * 描述：SYS_PROPERTIES 处理实现类
+ * 描述：sys_properties 处理实现类
  * </pre>
  */
 @Service("sysPropertiesManager")

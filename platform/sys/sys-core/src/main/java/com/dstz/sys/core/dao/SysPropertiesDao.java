@@ -9,7 +9,7 @@ import org.mybatis.spring.annotation.MapperScan;
 
 /**
  * <pre>
- * 描述：SYS_PROPERTIES DAO接口
+ * 描述：sys_properties DAO接口
  * </pre>
  */
 @MapperScan

@@ -8,7 +8,7 @@ import java.util.Map;
 
 /**
  * <pre>
- * 描述：SYS_PROPERTIES 处理接口
+ * 描述：sys_properties 处理接口
  * </pre>
  */
 public interface SysPropertiesManager extends Manager<String, SysProperties> {

@@ -12,7 +12,7 @@ import com.dstz.sys.api.constant.EnvironmentConstant;
 
 /**
  * <pre>
- * 描述：SYS_PROPERTIES 实体对象
+ * 描述：sys_properties 实体对象
  * </pre>
  */
 public class SysProperties extends BaseModel{

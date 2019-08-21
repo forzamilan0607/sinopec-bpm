@@ -17,7 +17,7 @@
     </resultMap>
 
     <insert id="create" parameterType="com.dstz.sys.core.model.SysProperties">
-		INSERT INTO SYS_PROPERTIES
+		INSERT INTO sys_properties
 		(id_,name_,alias_,group_,value_,encrypt_,description_,environment_,create_time_,update_time_,create_by_,update_by_)
 		VALUES 
 		(#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{alias,jdbcType=VARCHAR}, 
@@ -26,13 +26,13 @@
 	</insert>
 
     <select id="get" parameterType="java.lang.String" resultMap="SysProperties">
-		SELECT * FROM SYS_PROPERTIES 
+		SELECT * FROM sys_properties
 		WHERE 
 		id_=#{id_}
 	</select>
 
     <select id="query" parameterType="java.util.Map" resultMap="SysProperties">
-        SELECT * FROM SYS_PROPERTIES
+        SELECT * FROM sys_properties
         <where>
             <if test="whereSql!=null">
                 ${whereSql}
@@ -47,7 +47,7 @@
     </select>
 
     <update id="update" parameterType="com.dstz.sys.core.model.SysProperties">
-		UPDATE SYS_PROPERTIES SET
+		UPDATE sys_properties SET
 		name_=#{name,jdbcType=VARCHAR},
 		alias_=#{alias,jdbcType=VARCHAR},
 		group_=#{group,jdbcType=VARCHAR},
@@ -64,18 +64,18 @@
 	</update>
 
     <delete id="remove" parameterType="java.lang.String">
-		DELETE FROM SYS_PROPERTIES 
+		DELETE FROM sys_properties
 		WHERE
 		id_=#{id}
 	</delete>
 
 
     <select id="getGroups" resultType="java.lang.String">
-		SELECT distinct group_ FROM SYS_PROPERTIES
+		SELECT distinct group_ FROM sys_properties
 	</select>
 
     <select id="isExist" resultType="java.lang.Integer">
-        SELECT count(1) FROM SYS_PROPERTIES where alias_=#{alias}
+        SELECT count(1) FROM sys_properties where alias_=#{alias}
         <if test="id!=null">
             and id_!=#{id}
         </if>
