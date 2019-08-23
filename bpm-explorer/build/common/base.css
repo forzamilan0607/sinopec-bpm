@@ -13066,7 +13066,7 @@ body.body-small .navbar-top-links li:last-child {
 
 .nav-header {
     padding: 33px 25px;
-    background: url(/flow-editor/editor-app/images/test.png) no-repeat;
+    background: url(../../flow-editor/editor-app/images/test.png) no-repeat;
     background-size: 100% 100%;
 }
 
