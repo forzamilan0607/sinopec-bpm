@@ -85,10 +85,11 @@
 </head>
 <body ng-controller="ctrl">
 
-	<!-- 顶部按钮 -->
+	<!-- 顶部按钮
 	<div class="panel-body">
 			<a class="btn btn-primary fa-save" ng-model="data" ng-click="save()"><span>保存</span></a>
 	</div>
+	  -->
 	<form name="form" method="post" ng-model="data" ab-load="/org/group/get?id={id}">
 		<table class="form-table" cellspacing="0">
 			<tr>
@@ -131,6 +132,12 @@
 				<th>描述</th>
 				<td>	<textarea rows="3"  ng-model="data.desc" class="form-control"></textarea>
 						</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>
+					<a class="btn btn-primary fa-save" ng-model="data" ng-click="save()"><span>保存</span></a>
+				</td>
 			</tr>
 		</table>
 	</form>

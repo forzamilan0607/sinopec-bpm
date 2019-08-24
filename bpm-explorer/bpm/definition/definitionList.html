@@ -67,7 +67,7 @@
 					<th data-field="id" data-formatter="innerHtmlFormatter" data-title="管理">
 						<span class="fa-trash btn btn-outline  btn-primary btn-sm" qtip='删除' sendAction="删除" url="/bpm/definition/remove?id={id}"></span>
 						<span class="fa-user-times btn btn-outline  btn-primary btn-sm" dialogConf='"height":500,"width":600' qtip='授权' openDialog="{name}流程授权" top="true" url="sys/authorization/authorizationDialog.html?rightsObject=FLOW&rightsTarget={key}"></span>
-						<span class="fa-edit btn btn-outline btn-primary btn-sm" qtip='流程设计' openDialog="流程设计  (流程实施方案请参考 www.agilebpm.cn 【敏捷流程实施三步曲】)" top="true" url="flow-editor/modeler.html?modelId={actModelId}"></span>
+						<span class="fa-edit btn btn-outline btn-primary btn-sm" qtip='流程设计' openDialog="流程设计" top="true" url="flow-editor/modeler.html?modelId={actModelId}"></span>
 						<span if="'{actDefId}'" class="fa-send btn btn-outline btn-primary btn-sm" iview="标记" qtip='启动' openDialog="发起申请【{name}】" top="true" url="bpm/definition/start.html?defId={id}"></span>
 						<span if="!'{actDefId}'" class="fa-send btn btn-outline btn-primary btn-sm" qtip='请完成流程设计后再启动流程！'></span>
 

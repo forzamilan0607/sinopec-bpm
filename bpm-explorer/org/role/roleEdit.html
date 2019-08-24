@@ -32,13 +32,14 @@
 	</script>
 	<body class="panel success" ng-controller="ctrl">
 		
-			<!-- 顶部按钮 -->
+			<!-- 顶部按钮
 			<div class="panel-heading">
 				<div class="panel-heading">
 					<a class="btn btn-primary fa-save" ng-model="data" ab-save="/org/role/save"><span>保存</span></a>
 					<a class="btn btn-primary fa-back" onClick="javascript:$.Dialog.close();"><span>返回</span></a>
 				</div>
 			</div>
+			-->
 			<form name="form" method="post" ab-load="org/role/get?id={id}"  ng-model="data">
 				<table class="form-table">
 					<tr>								
@@ -68,6 +69,13 @@
 						<td>
 							<textarea class="form-control" id="description"  ng-model="data.description"></textarea>
 						</td>								
+					</tr>
+					<tr>
+						<td></td>
+						<td>
+							<a class="btn btn-primary fa-save" ng-model="data" ab-save="/org/role/save"><span>保存</span></a>
+							<a class="btn btn-primary fa-back" onClick="javascript:$.Dialog.close();"><span>返回</span></a>
+						</td>
 					</tr>
 				</table>
 			</form>
