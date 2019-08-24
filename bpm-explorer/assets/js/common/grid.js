@@ -206,7 +206,10 @@ $(function() {
 
 function dataCheck(data){
 	if(data.isOk === false && data.code === "401"){
-		 jQuery.Toast.error("登录超时，请重新登录");
+		jQuery.Toast.error("登录超时，请重新登录");
+		setTime(function () {
+			window.location.href = "login.html";
+        }, 1000)
 	}
 }
 

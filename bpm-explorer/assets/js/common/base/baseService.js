@@ -11,6 +11,7 @@ var base = angular.module("base", [])
 	    		  jQuery.Toast.error("登录超时，请重新登录");
 	    		  console.info(response.data);
 	    		  console.info(window.location.href);
+                  window.location.href = "login.html";
 			  }
 	    	  if(response.data && !response.data.isOk && response.data.code==="403" ){
 	    		  jQuery.Toast.error("访问受限! "+response.data.msg);
