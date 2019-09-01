@@ -5,6 +5,7 @@
 	<link href="../../build/common/base.css" rel="stylesheet">
 	<script type="text/javascript" src="../../build/common/base.js"></script>
 	<script type="text/javascript" src="../../build/common/gridList.js"></script>
+	<script type="text/javascript" src="../../assets/js/common/tools/dialogCreator.js"></script>
 </head>
 <body>
 <div class="panel-body" style="padding-bottom:0px;">
@@ -22,13 +23,16 @@
                          <input type="text" class="form-control" id="name_^VLK">
                      </div>
                      <div class="col-sm-4" style="text-align:left;">
-                     		<button type="button" style="margin-left: 50px" class="btn btn-primary fa-search">查询</button>
-							<button type="button" style="margin-left: 50px" class="btn btn-primary fa-rotate-left">重置</button>
+                     		<button type="button" style="margin-left: 30px" class="btn btn-primary fa-search">查询</button>
+							<button type="button" style="margin-left: 30px" class="btn btn-primary fa-rotate-left">重置</button>
                      </div>
                  </div>
              </form>
          </div>
-     </div>       
+     </div>
+    <div class="btn-group toolbar">
+        <button class="btn btn-outline btn-primary" id="btn_batchHandle">批量处理</button>
+    </div>
 	<!--  <div class="btn-group toolbar">
           <button class="btn btn-outline btn-primary fa-remove">删除</button>
       </div> -->
@@ -63,27 +67,48 @@ $(function(){
 			$("[opendialog]").attr("qtip","处理任务请移步只门户平台 （切换子系统）");
 		}
 	},1000);
-})
 
-	function assignUser (taskId){
-		CustUtil.openCustDialog("userSelector",function(arrData,innerWindow){
-		    var param = {userId:arrData[0].id,userName:arrData[0].name,taskId:taskId};
-			
-			$.post(__ctx+"/bpm/task/assignTask",param,function(responseText){
-				var result	= eval('(' + responseText + ')');
-				if (result.isOk) {
-					$.Toast.success('指派成功！', function() {
-						reloadGrid();
-					});
-				} else {
-					$.Toast.error(result.msg);
-				}
-			})
-		    $.Dialog.close(innerWindow);
-		},null,{ multiple : false})
-		
-		
-	}
+	initEventBind();
+});
+function initEventBind() {
+    $("button#btn_batchHandle").bind("click", function () {
+        var ids = $.getDatagridCheckedId();
+        if (ids && ids.length) {
+            $.Dialog.msg("taskIds = " + ids);
+            var conf = {
+                title: "test",
+                topOpen: true,
+                url: dialogHelper__.getProjectUrl("bpm/task/batchTaskHandle.html?taskId=" + ids),
+                width: "100%",
+                height: "100%"
+            };
+            jQuery.Dialog.open(conf);
+        } else {
+            $.Dialog.msg("请选择要处理的任务!");
+        }
+    });
+}
+
+
+function assignUser (taskId){
+    CustUtil.openCustDialog("userSelector",function(arrData,innerWindow){
+        var param = {userId:arrData[0].id,userName:arrData[0].name,taskId:taskId};
+
+        $.post(__ctx+"/bpm/task/assignTask",param,function(responseText){
+            var result	= eval('(' + responseText + ')');
+            if (result.isOk) {
+                $.Toast.success('指派成功！', function() {
+                    reloadGrid();
+                });
+            } else {
+                $.Toast.error(result.msg);
+            }
+        })
+        $.Dialog.close(innerWindow);
+    },null,{ multiple : false})
+
+
+}
 	
 
 </script>
