@@ -276,9 +276,9 @@ bpmModel.factory('bpmService', ['$rootScope', 'baseService', 'ArrayToolService',
                 var ii;
                 var button;
 
-                scope.$root.$on("data:loaded", function (event, data) {
+                /*scope.$root.$on("data:loaded", function (event, data) {
                     scope.buttonList = data.buttonList;
-                })
+                })*/
 
                 /**
                  *  是否校验表单，对话框高，宽
