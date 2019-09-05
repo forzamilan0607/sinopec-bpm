@@ -12,8 +12,9 @@
 
 
 	<script type="text/javascript">
+        // {"defId":"410781317607981057","taskId":"410871326876106753","instanceId":"410871326597185537","formType":"INNER","data":{"purchasePlan":{"handleDays":5,"approveResult":1,"planImportTime":"2019-09-01 22:55:17","ID":"410871326674518017"}},"action":"agree","nodeId":"UserTask1","opinion":"同意"}
 		var TaskComplateController = ['$scope','baseService',function($scope,baseService){
-			$scope.bpmInitParam = {"taskId":$.getParam("taskId")};
+			$scope.bpmInitParam = {"taskIds":$.getParam("taskIds")};
 		}];
 	</script>
 </head>
@@ -22,9 +23,9 @@
 		<div class="ibox-title print-hidden">
 			<div bpm-buttons-batch></div>
 		</div>
-		<div bpm-init-batch="bpmInitParam"></div>
+		<!--<div bpm-init-batch="bpmInitParam"></div>-->
 		<div>
-			<table ab-grid data-id-field="id" data-url="/bpm/task/listJson">
+			<table ab-grid data-id-field="id" data-url="/bpm/task/listJson?id=123&taskIds={bpmInitParam.taskIds}">
 				<thead>
 					<tr>
 						<th data-field="subject">流程标题</th>

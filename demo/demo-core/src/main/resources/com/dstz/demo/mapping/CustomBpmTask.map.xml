@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dstz.demo.core.dao.CustomBpmTaskDao">
+
+
+
+	<select id="queryListByTaskIds" resultType="com.dstz.demo.core.model.dto.BpmTaskDTO">
+		SELECT
+			t.id_      AS taskId,
+			t.name_    AS taskName,
+			t.inst_id_ AS instId,
+			t.def_id_  AS defId
+		FROM bpm_task t
+		WHERE t.id_ IN
+		<foreach item="item" index="index" collection="taskIds" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+
+	
+	
+</mapper>

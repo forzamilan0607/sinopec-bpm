@@ -72,7 +72,26 @@ $(function(){
 });
 function initEventBind() {
     $("button#btn_batchHandle").bind("click", function () {
-        var ids = $.getDatagridCheckedId();
+        //  获取选中的记录
+        var selectedObjs = $("[ab-grid]").bootstrapTable("getSelections");
+        if (selectedObjs && selectedObjs.length) {
+            if (isSelectedSameNode(selectedObjs)) {
+                var ids = selectedObjs.map(item => item.id).join(",");
+                var conf = {
+                    title: "test",
+                    topOpen: true,
+                    url: dialogHelper__.getProjectUrl("bpm/task/batchTaskHandle.html?taskIds=" + ids),
+                    width: "100%",
+                    height: "100%"
+                };
+                jQuery.Dialog.open(conf);
+            } else {
+                $.Dialog.msg("请选择相同类型的任务!");
+            }
+        } else {
+            $.Dialog.msg("请选择要处理的任务!");
+        }
+        /*var ids = $.getDatagridCheckedId();
         if (ids && ids.length) {
             $.Dialog.msg("taskIds = " + ids);
             var conf = {
@@ -85,8 +104,19 @@ function initEventBind() {
             jQuery.Dialog.open(conf);
         } else {
             $.Dialog.msg("请选择要处理的任务!");
-        }
+        }*/
     });
+}
+
+function isSelectedSameNode(selectedObjs) {
+    var defId = selectedObjs[0].defId;
+    var nodeId = selectedObjs[0].nodeId;
+    for (var i = 1; i < selectedObjs.length; i++) {
+        if (defId !== selectedObjs[i].defId || nodeId !== selectedObjs[i].nodeId) {
+            return false;
+        }
+    }
+    return true;
 }
 
 

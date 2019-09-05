@@ -272,9 +272,29 @@ bpmModel.factory('bpmService', ['$rootScope', 'baseService', 'ArrayToolService',
         return {
             restrict: "EA",
             link: function (scope, element, attrs) {
-                alert("ok");
+
                 var ii;
                 var button;
+                var taskIds = scope.bpmInitParam.taskIds;
+
+                var dataUrl = __ctx + "/bpm/task/getMultiTaskData?taskIds=" + taskIds;
+
+                var defer = baseService.get(dataUrl);
+
+                $.getResultData(defer, function (data) {
+                    alert(JSON.stringify(data));
+                    /*bpmTask = data.task;
+                    if (data.defId) {
+                        defId = data.defId
+                    }
+                    ;
+                    scope.$emit('data:loaded', data)
+                    jQuery.extend(scope, data);*/
+                }, "alert");
+
+                scope.ArrayTool = ArrayToolService;
+
+                scope.buttonList = {}
 
                 /*scope.$root.$on("data:loaded", function (event, data) {
                     scope.buttonList = data.buttonList;

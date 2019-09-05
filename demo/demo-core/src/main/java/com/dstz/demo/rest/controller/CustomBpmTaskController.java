@@ -3,31 +3,33 @@ package com.dstz.demo.rest.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.dstz.base.api.response.impl.ResultMsg;
 import com.dstz.base.rest.ControllerTools;
-import com.dstz.bpm.api.engine.data.BpmFlowDataAccessor;
-import com.dstz.bpm.api.engine.data.result.BpmFlowData;
-import com.dstz.form.api.model.FormType;
+import com.dstz.demo.core.manager.CustomBpmTaskManager;
+import com.dstz.demo.core.model.dto.BpmTaskDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 public class CustomBpmTaskController extends ControllerTools {
 
     @Autowired
-    private BpmFlowDataAccessor bpmFlowDataAccessor;
+    private CustomBpmTaskManager customBpmTaskManager;
 
     @RequestMapping("/bpm/task/getMultiTaskData")
-    public ResultMsg<JSONObject> getTaskData(@RequestBody List<String> taskIds){
-        List<BpmFlowData> flowDataList = taskIds.stream().parallel().map(taskId ->
-                this.bpmFlowDataAccessor.getFlowTaskData(taskId, FormType.fromValue(FormType.PC.value()))
-        ).collect(Collectors.toList());
-
+    public ResultMsg<JSONObject> getMultiTaskData(HttpServletRequest request){
+        List<String> taskIds = this.extractTaskIdsFromRequest(request);
+        List<BpmTaskDTO> data = this.customBpmTaskManager.queryListByTaskIds(taskIds);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("data", flowDataList);
+        jsonObject.put("data", data);
         return super.getSuccessResult(jsonObject);
+    }
+
+    private List<String> extractTaskIdsFromRequest(HttpServletRequest request) {
+        String taskIds = request.getParameter("taskIds");
+        return Arrays.asList(taskIds.split(","));
     }
 }
