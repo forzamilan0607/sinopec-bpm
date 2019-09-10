@@ -78,7 +78,7 @@ function initEventBind() {
             if (isSelectedSameNode(selectedObjs)) {
                 var ids = selectedObjs.map(item => item.id).join(",");
                 var conf = {
-                    title: "test",
+                    title: "批量处理",
                     topOpen: true,
                     url: dialogHelper__.getProjectUrl("bpm/task/batchTaskHandle.html?taskIds=" + ids),
                     width: "100%",

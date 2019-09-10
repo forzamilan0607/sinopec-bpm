@@ -36,6 +36,12 @@
 						<th data-field="status" data-formatter="labelFormatter"
 							data-value-style="NORMAL-普通-primary,SUSPEND-挂起-info,LOCK-锁定-warning,BACK-驳回-warning,DESIGNATE-指派-info,TURN-转办-info,AGENCY-代理-info,">状态</th>
 						<th data-field="createTime" data-formatter=dateTimeFormatter data-sort-name="create_time_" data-sortable="true">任务创建时间</th>
+						<th  data-formatter="innerHtmlFormatter" data-title="查看">
+							<span>
+								<div buttonAlias="test" ng-click="buttonClick(false,500,900)" 	class="btn btn-primary fa fa-navicon" style="font-size: 14px;">审批历史</div>
+								<div buttonAlias="test2" ng-click="buttonClick(false,600,800)" 	class="btn btn-primary fa fa-image" style="font-size: 14px;">流程图</div>
+							</span>
+						</th>
 					</tr>
 				</thead>
 			</table>

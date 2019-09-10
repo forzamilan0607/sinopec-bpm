@@ -282,7 +282,16 @@ bpmModel.factory('bpmService', ['$rootScope', 'baseService', 'ArrayToolService',
                 var defer = baseService.get(dataUrl);
 
                 $.getResultData(defer, function (data) {
-                    alert(JSON.stringify(data));
+                    scope.buttonList = [
+                        {
+                            name: "批量同意",
+                            alias: "agree"
+                        },
+                        {
+                            name: "批量驳回",
+                            alias: "reject"
+                        }
+                    ]
                     /*bpmTask = data.task;
                     if (data.defId) {
                         defId = data.defId
@@ -383,14 +392,8 @@ bpmModel.factory('bpmService', ['$rootScope', 'baseService', 'ArrayToolService',
                 }
             }, /* button 是否需要对表单校验 后面修改为 后台配置，按钮可配置形*/
             template: '<span  ng-repeat="button in buttonList">\
-					<div ng-if="button.alias==\'start\'" 		buttonAlias="{{button.alias}}"   	ng-click="buttonClick(true)" 			class="btn btn-success fa fa-send">{{button.name}}</div>\
 					<div ng-if="button.alias==\'agree\'" 		buttonAlias="{{button.alias}}"   	ng-click="buttonClick(true,422,690)" 	class="btn btn-success fa fa-check-square-o">{{button.name}}</div>\
-					<div ng-if="button.alias==\'oppose\'" 		buttonAlias="{{button.alias}}"   	ng-click="buttonClick(true,422,690)" 	class="btn btn-primary fa fa-close">{{button.name}}</div>\
 					<div ng-if="button.alias==\'reject\'" 		buttonAlias="{{button.alias}}"   	ng-click="buttonClick(false,422,690)" 	class="btn btn-danger fa fa-lastfm">{{button.name}}</div>\
-					<div ng-if="button.alias==\'reject2Start\'" buttonAlias="{{button.alias}}"   	ng-click="buttonClick(false,300,500)" 	class="btn btn-danger fa fa-lastfm">{{button.name}}</div>\
-					<div ng-if="button.alias==\'taskOpinion\'" 	buttonAlias="{{button.alias}}"   	ng-click="buttonClick(false,500,900)" 	class="btn btn-primary fa fa-navicon">审批历史</div>\
-					<div ng-if="button.alias==\'flowImage\'" 	buttonAlias="{{button.alias}}"   	ng-click="buttonClick(false,600,800)" 	class="btn btn-primary fa fa-image">流程图</div>\
-					<div ng-if="\'start,draft,save,agree,oppose,reject,reject2Start,lock,unlock,taskOpinion,flowImage,manualEnd,print,\'.indexOf(button.alias)==-1" 		buttonAlias="{{button.alias}}"   	ng-click="buttonClick(false)" 			class="btn btn-primary">{{button.name}}</div>\
 				 </span>',
             replace: true
         };
