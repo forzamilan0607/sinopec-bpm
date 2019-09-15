@@ -48,7 +48,7 @@
 		</dependency>
         <dependency>
 			<groupId>com.dstz.agilebpm</groupId>
-			<artifactId>wf-core</artifactId>
+			<artifactId>wf-rest</artifactId>
 			<version>1.5.3</version>
 		</dependency>
 
