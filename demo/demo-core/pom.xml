@@ -46,6 +46,12 @@
 			<artifactId>wf-api</artifactId>
 			<version>1.5.3</version>
 		</dependency>
-		 
+        <dependency>
+			<groupId>com.dstz.agilebpm</groupId>
+			<artifactId>wf-core</artifactId>
+			<version>1.5.3</version>
+		</dependency>
+
+
     </dependencies>
 </project>

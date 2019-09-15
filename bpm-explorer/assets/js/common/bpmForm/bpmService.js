@@ -282,13 +282,16 @@ bpmModel.factory('bpmService', ['$rootScope', 'baseService', 'ArrayToolService',
                 var defer = baseService.get(dataUrl);
 
                 $.getResultData(defer, function (data) {
+                    scope.taskList = data.data;
                     scope.buttonList = [
                         {
                             name: "批量同意",
+                            configPage: "/bpm/task/taskOpinionDialog.html",
                             alias: "agree"
                         },
                         {
                             name: "批量驳回",
+                            configPage: "/bpm/task/taskOpinionDialog.html",
                             alias: "reject"
                         }
                     ]
@@ -301,7 +304,7 @@ bpmModel.factory('bpmService', ['$rootScope', 'baseService', 'ArrayToolService',
                     jQuery.extend(scope, data);*/
                 }, "alert");
 
-                scope.ArrayTool = ArrayToolService;
+                //scope.ArrayTool = ArrayToolService;
 
                 scope.buttonList = {}
 
@@ -320,19 +323,15 @@ bpmModel.factory('bpmService', ['$rootScope', 'baseService', 'ArrayToolService',
                     }
                     ii = layer.load();
                     //获取流程数据
-                    var busData = bpmService.getFormData(scope, button, validateForm);
+                   /* var busData = bpmService.getFormData(scope, button, validateForm);
                     if (busData === false) {
                         layer.close(ii);
                         return;
-                    }
+                    }*/
                     var flowData = {
-                        defId: bpmService.getDefId(),
-                        taskId: bpmService.getTaskId(),
-                        instanceId: bpmService.getInstanceId(),
-                        formType: scope.form.type,
-                        data: busData,
+                        opinion: "",
                         action: button.alias,
-                        nodeId: bpmService.getNodeId()
+                        taskList: scope.taskList
                     };
                     //获取更多完成动作配置
                     if (button.configPage) {
@@ -361,7 +360,7 @@ bpmModel.factory('bpmService', ['$rootScope', 'baseService', 'ArrayToolService',
                 scope.postAction = function (flowData, innerWindow) {
                     ii = layer.load();
                     // 执行动作
-                    var url = __ctx + (flowData.taskId ? "/bpm/task/doAction" : "/bpm/instance/doAction");
+                    var url = __ctx + (flowData.taskId ? "/bpm/task/doMultiAction" : "/bpm/instance/doMultiAction");
                     var defer = baseService.post(url, flowData);
                     $.getResultMsg(defer, function () {
                         layer.close(ii); //关闭等待框
