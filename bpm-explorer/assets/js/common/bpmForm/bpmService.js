@@ -1,3 +1,4 @@
+var globalTaskList = null;
 var bpmModel = angular.module('bpm', ['base', 'formServiceModule'])
 bpmModel.factory('bpmService', ['$rootScope', 'baseService', 'ArrayToolService', function ($rootScope, baseService, ArrayToolService) {
     //如果只有流程定义ID说明启动流程
@@ -283,6 +284,7 @@ bpmModel.factory('bpmService', ['$rootScope', 'baseService', 'ArrayToolService',
 
                 $.getResultData(defer, function (data) {
                     scope.taskList = data.data;
+                    globalTaskList = scope.taskList;
                     scope.buttonList = [
                         {
                             name: "批量同意",

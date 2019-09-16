@@ -19,4 +19,9 @@ public class CustomBpmTaskManagerImpl extends BaseManager<String, BpmTaskDTO> im
 	public List<BpmTaskDTO> queryListByTaskIds(List<String> taskIds) {
 		return this.customBpmTaskDao.queryListByTaskIds(taskIds);
 	}
+
+	@Override
+	public List<String> queryTaskNames(String userId) {
+		return this.customBpmTaskDao.queryTaskNames(userId);
+	}
 }

@@ -7,4 +7,6 @@ import java.util.List;
 public interface CustomBpmTaskManager {
 
     List<BpmTaskDTO> queryListByTaskIds(List<String> taskIds);
+
+    List<String> queryTaskNames(String userId);
 }

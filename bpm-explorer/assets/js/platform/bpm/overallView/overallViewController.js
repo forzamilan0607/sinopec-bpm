@@ -353,19 +353,6 @@ overallViewApp.directive('abTrim', function() {
 		    		<td> <input ng-model="bpmForm.formValue" class="form-control"></td>                                                                            \
 		    	</tr>                                                                                                                                              \
 		    	                                                                                                                                                   \
-		    	<tr  ng-if="bpmForm.type==\'INNER\'" >                                                                                                             \
-		    		<td>移动端</td>                                                                                                                                \
-		    		<td>  {{mobileForm.name}} </td>                                                                                                                \
-		    		<td>                                                                                                                                           \
-		    			<a href="javascript:void(0);" class="btn btn-info btn-sm  fa fa-search" ng-click="selectForm(false)"></a>                    \
-		    			<a href="javascript:void(0);" class="btn btn-info btn-sm fa fa-repeat" ng-click="clearForm(mobileForm)"></a>                 \
-		    		</td>									                                                                                                       \
-		    	</tr>                                                                                                                                              \
-		    	                                                                                                                                                   \
-		    	<tr ng-if="bpmForm.type==\'FRAME\'">                                                                                                               \
-		    		<td>移动端URL:</td>                                                                                                                            \
-		    		<td> <input ng-model="mobileForm.formValue" class="form-control"></td>                                                                         \
-		    	</tr>                                                                                                                                              \
 	    		<tr ng-if="bpmForm.type==\'FRAME\' && type != \'instance\'">                                                                                                               \
 	    			<td>URL表单处理器</td>                                                                                                                              \
 	    			<td> <input ng-model="bpmForm.formHandler" class="form-control"></td>                                                                            \

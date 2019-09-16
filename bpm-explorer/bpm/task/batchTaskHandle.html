@@ -16,6 +16,35 @@
 		var TaskComplateController = ['$scope','baseService',function($scope,baseService){
 			$scope.bpmInitParam = {"taskIds":$.getParam("taskIds")};
 		}];
+		function showWindow(taskId, type) {
+		    var task = getTaskById(taskId);
+            var flowData = {
+                defId: task.defId,
+                taskId: task.taskId,
+                instanceId: task.instId,
+                formType: "INNER"
+            };
+			var conf = {
+				title: type == 1 ? "审批历史" : "流程图",
+				url: type == 1 ? "/bpm/instance/taskOpinionHistoryDialog.html" : "/bpm/instance/instanceImageDialog.html",
+				height: type ==1 ? 500 : 600,
+				width: type ==1 ? 900 : 800,
+				passData: flowData,
+				topOpen: true
+			};
+			conf.ok = function (index, innerWindow) {
+                innerWindow.isValidate();
+			}
+			$.Dialog.open(conf);
+        }
+        function getTaskById(taskId) {
+            for (var i = 0; i < globalTaskList.length; i++) {
+                if (globalTaskList[i].taskId === taskId) {
+                    return globalTaskList[i];
+                }
+            }
+            return null;
+        }
 	</script>
 </head>
 
@@ -38,8 +67,8 @@
 						<th data-field="createTime" data-formatter=dateTimeFormatter data-sort-name="create_time_" data-sortable="true">任务创建时间</th>
 						<th  data-formatter="innerHtmlFormatter" data-title="查看">
 							<span>
-								<div buttonAlias="test" ng-click="buttonClick(false,500,900)" 	class="btn btn-primary fa fa-navicon" style="font-size: 14px;">审批历史</div>
-								<div buttonAlias="test2" ng-click="buttonClick(false,600,800)" 	class="btn btn-primary fa fa-image" style="font-size: 14px;">流程图</div>
+								<div buttonAlias="test" onclick="showWindow('{id}', 1)"	class="btn btn-primary fa fa-navicon" style="font-size: 14px;">审批历史</div>
+								<div buttonAlias="test2" onclick="showWindow('{id}', 2)" class="btn btn-primary fa fa-image" style="font-size: 14px;">流程图</div>
 							</span>
 						</th>
 					</tr>

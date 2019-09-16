@@ -9,4 +9,6 @@ import java.util.List;
 public interface CustomBpmTaskDao extends BaseDao<String, BpmTaskDTO> {
 
     List<BpmTaskDTO> queryListByTaskIds(@Param("taskIds") List<String> taskIds);
+
+    List<String> queryTaskNames(@Param("userId") String userId);
 }

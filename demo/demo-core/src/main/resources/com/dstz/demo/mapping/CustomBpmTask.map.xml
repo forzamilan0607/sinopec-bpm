@@ -17,6 +17,15 @@
 		</foreach>
 	</select>
 
+	<select id="queryTaskNames" resultType="java.lang.String">
+		select t.name_ from bpm_task t,bpm_definition d
+		where t.def_id_ = d.id_
+		<if test="userId != null and userId !='' ">
+
+		</if>
+		group by t.node_id_,t.def_id_,t.name_
+	</select>
+
 	
 	
 </mapper>
