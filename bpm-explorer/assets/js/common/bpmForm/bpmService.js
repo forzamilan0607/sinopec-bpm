@@ -151,6 +151,22 @@ bpmModel.factory('bpmService', ['$rootScope', 'baseService', 'ArrayToolService',
 				   </div>'
         };
     }])
+    .directive('bpmInitBatch', ['bpmService', '$filter', function (bpmService, $filter) {
+        return {
+            restrict: "EA",
+            link: function (scope, element, attrs) {
+                var paramKey = attrs.bpmInit || "bpmInitParam";
+                //bpmService.init(scope, scope[paramKey]);
+                scope.$root.$on("afterBindHtmlEvent", function (event) {
+                    $(function () {
+                        // 隐藏
+                        $("[hide]").hide();
+                    });
+                });
+            },
+            template: '<div style="height:0px;"></div>'
+        };
+    }])
     /**
      * 流程按钮解析。
      * 关于按钮样式，对话框宽高属性，不做可配置行，因为前段无法统一，

@@ -464,19 +464,24 @@
                     "refresh.bs.table": "onRefresh"
                 },
                 BootstrapTable.prototype.init = function() {
+                    this.extractTaskIds(),
                     this.initLocale(),
-                        this.initContainer(),
-                        this.initTable(),
-                        this.initHeader(),
-                        this.initData(),
-                        this.initFooter(),
-                        this.initToolbar(),
-                        this.initPagination(),
-                        this.initBody(),
-                        this.initSearchText(),
-                        this.initServer()
-                }
-                ,
+                    this.initContainer(),
+                    this.initTable(),
+                    this.initHeader(),
+                    this.initData(),
+                    this.initFooter(),
+                    this.initToolbar(),
+                    this.initPagination(),
+                    this.initBody(),
+                    this.initSearchText(),
+                    this.initServer()
+                },
+                BootstrapTable.prototype.extractTaskIds = function() {
+                   if ($("#id_\\^VIN").length > 0) {
+                       $("#id_\\^VIN").val(window.location.search.replace("?taskIds=", ""));
+                   }
+                },
                 BootstrapTable.prototype.initLocale = function() {
                     if (this.options.locale) {
                         var parts = this.options.locale.split(/-|_/);

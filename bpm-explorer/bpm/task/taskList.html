@@ -110,27 +110,13 @@
                         width: "100%",
                         height: "100%"
                     };
-                    jQuery.Dialog.open(conf);
+                    $.Dialog.open(conf);
                 } else {
                     $.Dialog.msg("请选择相同类型的任务!");
                 }
             } else {
                 $.Dialog.msg("请选择要处理的任务!");
             }
-            /*var ids = $.getDatagridCheckedId();
-            if (ids && ids.length) {
-                $.Dialog.msg("taskIds = " + ids);
-                var conf = {
-                    title: "test",
-                    topOpen: true,
-                    url: dialogHelper__.getProjectUrl("bpm/task/batchTaskHandle.html?taskId=" + ids),
-                    width: "100%",
-                    height: "100%"
-                };
-                jQuery.Dialog.open(conf);
-            } else {
-                $.Dialog.msg("请选择要处理的任务!");
-            }*/
         });
     }
 

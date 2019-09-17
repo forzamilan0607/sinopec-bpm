@@ -12,7 +12,7 @@
 
 
 	<script type="text/javascript">
-		var globalConf = {
+		/*var globalConf = {
 		    "1": {
 		        title: "审批历史",
 				url: "/bpm/instance/taskOpinionHistoryDialog.html",
@@ -31,19 +31,13 @@
                 width: 900,
                 height: 500
             }
-		}
+		}*/
 		var TaskComplateController = ['$scope','baseService',function($scope,baseService){
 			$scope.bpmInitParam = {"taskIds":$.getParam("taskIds")};
 		}];
 		function showWindow(taskId, type) {
 		    var task = getTaskById(taskId);
-            var flowData = {
-                defId: task.defId,
-                taskId: task.taskId,
-                instanceId: task.instId,
-                formType: "INNER"
-            };
-            var conf = generateConfByType(type);
+            var conf = generateConfByType(type, task);
 
 			conf.ok = function (index, innerWindow) {
                 innerWindow.isValidate();
@@ -58,13 +52,18 @@
             }
             return null;
         }
-        function generateConfByType(type) {
+        function generateConfByType(type, task) {
             var conf = {
                 title: type == 1 ? "审批历史" : "流程图",
                 url: type == 1 ? "/bpm/instance/taskOpinionHistoryDialog.html" : "/bpm/instance/instanceImageDialog.html",
                 height: type ==1 ? 500 : 600,
                 width: type ==1 ? 900 : 800,
-                passData: flowData,
+                passData: {
+                    defId: task.defId,
+                    taskId: task.taskId,
+                    instanceId: task.instId,
+                    formType: "INNER"
+                },
                 topOpen: true
             };
             return conf;
@@ -76,9 +75,16 @@
 		<div class="ibox-title print-hidden">
 			<div bpm-buttons-batch></div>
 		</div>
-		<!--<div bpm-init-batch="bpmInitParam"></div>-->
+		<div bpm-init-batch="bpmInitParam"></div>
 		<div>
-			<table ab-grid data-id-field="id" data-url="/bpm/task/listJson?id=123&taskIds={bpmInitParam.taskIds}">
+			<form id="searchForm" class="form-horizontal" style="display: none;">
+				<div class="form-group">
+					<div class="col-sm-3">
+						<input type="hidden"  class="form-control" id="id_^VIN" >
+					</div>
+				</div>
+			</form>
+			<table ab-grid data-id-field="id" data-url="/bpm/task/listJson">
 				<thead>
 					<tr>
 						<th data-field="subject">流程标题</th>
@@ -93,7 +99,7 @@
 							<span>
 								<div onclick="showWindow('{id}', 1)"	class="btn btn-primary fa fa-navicon" style="font-size: 14px;">审批历史</div>
 								<div onclick="showWindow('{id}', 2)" class="btn btn-primary fa fa-image" style="font-size: 14px;">流程图</div>
-								<div onclick="showWindow('{id}', 3)" class="btn btn-primary fa fa-image" style="font-size: 14px;">查看表单</div>
+								<!--<div onclick="showWindow('{id}', 3)" class="btn btn-primary fa fa-image" style="font-size: 14px;">查看表单</div>-->
 							</span>
 						</th>
 					</tr>
