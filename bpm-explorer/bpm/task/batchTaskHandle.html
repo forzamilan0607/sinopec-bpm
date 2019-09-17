@@ -12,7 +12,26 @@
 
 
 	<script type="text/javascript">
-        // {"defId":"410781317607981057","taskId":"410871326876106753","instanceId":"410871326597185537","formType":"INNER","data":{"purchasePlan":{"handleDays":5,"approveResult":1,"planImportTime":"2019-09-01 22:55:17","ID":"410871326674518017"}},"action":"agree","nodeId":"UserTask1","opinion":"同意"}
+		var globalConf = {
+		    "1": {
+		        title: "审批历史",
+				url: "/bpm/instance/taskOpinionHistoryDialog.html",
+				width: 900,
+                height: 500
+			},
+			"2": {
+		        title: "流程图",
+				url: "/bpm/instance/instanceImageDialog.html",
+				width: 800,
+                height: 600
+			},
+            "3": {
+                title: "查看表单",
+                url: "/bpm/task/showForm.html",
+                width: 900,
+                height: 500
+            }
+		}
 		var TaskComplateController = ['$scope','baseService',function($scope,baseService){
 			$scope.bpmInitParam = {"taskIds":$.getParam("taskIds")};
 		}];
@@ -24,14 +43,8 @@
                 instanceId: task.instId,
                 formType: "INNER"
             };
-			var conf = {
-				title: type == 1 ? "审批历史" : "流程图",
-				url: type == 1 ? "/bpm/instance/taskOpinionHistoryDialog.html" : "/bpm/instance/instanceImageDialog.html",
-				height: type ==1 ? 500 : 600,
-				width: type ==1 ? 900 : 800,
-				passData: flowData,
-				topOpen: true
-			};
+            var conf = generateConfByType(type);
+
 			conf.ok = function (index, innerWindow) {
                 innerWindow.isValidate();
 			}
@@ -44,6 +57,17 @@
                 }
             }
             return null;
+        }
+        function generateConfByType(type) {
+            var conf = {
+                title: type == 1 ? "审批历史" : "流程图",
+                url: type == 1 ? "/bpm/instance/taskOpinionHistoryDialog.html" : "/bpm/instance/instanceImageDialog.html",
+                height: type ==1 ? 500 : 600,
+                width: type ==1 ? 900 : 800,
+                passData: flowData,
+                topOpen: true
+            };
+            return conf;
         }
 	</script>
 </head>
@@ -67,8 +91,9 @@
 						<th data-field="createTime" data-formatter=dateTimeFormatter data-sort-name="create_time_" data-sortable="true">任务创建时间</th>
 						<th  data-formatter="innerHtmlFormatter" data-title="查看">
 							<span>
-								<div buttonAlias="test" onclick="showWindow('{id}', 1)"	class="btn btn-primary fa fa-navicon" style="font-size: 14px;">审批历史</div>
-								<div buttonAlias="test2" onclick="showWindow('{id}', 2)" class="btn btn-primary fa fa-image" style="font-size: 14px;">流程图</div>
+								<div onclick="showWindow('{id}', 1)"	class="btn btn-primary fa fa-navicon" style="font-size: 14px;">审批历史</div>
+								<div onclick="showWindow('{id}', 2)" class="btn btn-primary fa fa-image" style="font-size: 14px;">流程图</div>
+								<div onclick="showWindow('{id}', 3)" class="btn btn-primary fa fa-image" style="font-size: 14px;">查看表单</div>
 							</span>
 						</th>
 					</tr>

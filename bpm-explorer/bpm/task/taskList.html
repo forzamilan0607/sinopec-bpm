@@ -102,10 +102,11 @@
             if (selectedObjs && selectedObjs.length) {
                 if (isSelectedSameNode(selectedObjs)) {
                     var ids = selectedObjs.map(item => item.id).join(",");
+                    var url = selectedObjs.length > 1 ? "bpm/task/batchTaskHandle.html?taskIds=" + ids : "bpm/task/taskComplete.html?taskId=" + ids;
                     var conf = {
                         title: "批量处理",
                         topOpen: true,
-                        url: dialogHelper__.getProjectUrl("bpm/task/batchTaskHandle.html?taskIds=" + ids),
+                        url: dialogHelper__.getProjectUrl(url),
                         width: "100%",
                         height: "100%"
                     };
