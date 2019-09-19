@@ -8284,7 +8284,7 @@
                     var text = me.attr("openDialog") || me.text();
                     conf.url = url,
                         conf.title = text,
-                        conf.topOpen = me.attr("top"),alert(JSON.stringify(conf)),
+                        conf.topOpen = me.attr("top"),
                         jQuery.Dialog.open(conf)
                 })
             }
