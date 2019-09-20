@@ -80,8 +80,8 @@
                              <li>
                              	 <a href="#">
                                        <div>
-                                           <i class="fa  fa-user">{{userMsg.currentOrg.groupName}}</i> 
-                                           <span class="pull-right btn btn-xs btn-primary">当前组织</span>
+                                           <i class="fa  fa-user">{{userMsg.currentOrg.groupName}}</i>
+                                           <span class="pull-right btn btn-xs btn-primary" style="margin-top: 3px;">当前组织</span>
                                        </div>
                                    </a>
                              </li>
@@ -90,14 +90,14 @@
                              		<a href="#">
                                       <div>
                                           <i class="fa fa-users"></i> {{org.groupName}}
-                                          <span class="pull-right btn btn-xs btn-success fa fa-exchange" ng-click="changeCurrentOrg(org.groupId)">切换组织</span>
+                                          <span class="pull-right btn btn-xs btn-success fa fa-exchange" style="margin-top: 3px;" ng-click="changeCurrentOrg(org.groupId)">切换组织</span>
                                       </div>
                                    </a>
                              </li>
                              <li ng-repeat="system in userMsg.subsystemList" ng-show="system.id != userMsg.currentSystem.id">
                              		<a href="#">
                                           <i class="fa fa-align-justify"></i> {{system.name}}
-                                          <span class="pull-right btn btn-xs btn-danger fa fa-exchange" ng-click="changeCurrentSystem(system)">切换系统</span>
+                                          <span class="pull-right btn btn-xs btn-danger fa fa-exchange" style="margin-top: 3px;" ng-click="changeCurrentSystem(system)">切换系统</span>
                                    </a>
                              </li>
                               <li class="divider"></li>

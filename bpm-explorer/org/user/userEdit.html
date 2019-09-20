@@ -229,7 +229,6 @@
 			<tr>
 				<th>
 					<span>角色:</span>
-					<span class="required">*</span>
 				</th>
 				<td>
 					<span ng-repeat="relation in data.orgRelationList" ng-show="relation.type ==='userRole'" style="margin-right: 10px" class="label label-danger"> {{relation.roleName}}
@@ -240,7 +239,6 @@
 			<tr>
 				<th>
 					<span>组织:</span>
-					<span class="required">*</span>
 				</th>
 				<td>
 					<span ng-repeat="relation in data.orgRelationList" ng-show="relation.type ==='groupUser'" style="margin-right: 10px" class="label label-danger"> {{relation.groupName}}
@@ -251,12 +249,11 @@
 			<tr>
 				<th>
 					<span>岗位:</span>
-					<span class="required">*</span>
 				</th>
 				<td>
 					<span ng-repeat="relation in data.orgRelationList|filter:{type:'groupUserRole'}" style="margin-right: 10px" class="label label-danger"> {{relation.postName}}
 					<button href="javascript:void(0)" class="btn btn-link btn-default btn-xs" ng-click="ArrayTool.remove(relation,data.orgRelationList)">×</button></span>
-					<span class="btn  btn-sm btn-primary fa fa-search" ng-click="selectPostRelation()" >选择</span> 暂不支持回显
+					<span class="btn  btn-sm btn-primary fa fa-search" ng-click="selectPostRelation()" >选择</span>
 				</td>
 			</tr>
 			<tr ng-if="data.id != null">
