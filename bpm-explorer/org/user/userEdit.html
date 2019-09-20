@@ -39,8 +39,8 @@
 			for(var i=0,relation;relation = $scope.data.orgRelationList[i++];){
 				if(relation.type == "userRole"){
 					var object = {};
-					object.id = relation.roleName;
-					object.name = relation.roleId;
+					object.name = relation.roleName;
+					object.id = relation.roleId;
 					arr.push(object);
 				}else{
 					newList.push(relation);
