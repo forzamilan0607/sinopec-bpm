@@ -1,14 +1,24 @@
 package com.dstz.demo.rest.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.dstz.base.api.query.QueryFilter;
 import com.dstz.base.api.response.impl.ResultMsg;
+import com.dstz.base.db.model.page.PageResult;
 import com.dstz.base.rest.ControllerTools;
 import com.dstz.bpm.api.engine.action.cmd.FlowRequestParam;
+import com.dstz.bpm.core.manager.BpmTaskManager;
+import com.dstz.bpm.core.model.BpmTask;
 import com.dstz.bpm.engine.action.cmd.DefualtTaskActionCmd;
 import com.dstz.demo.core.manager.CustomBpmTaskManager;
+import com.dstz.demo.core.manager.TimeLimitBpmTaskManager;
+import com.dstz.demo.core.model.BpmTaskNew;
+import com.dstz.demo.core.model.TimeLimit;
 import com.dstz.demo.core.model.dto.BpmTaskBatchDTO;
 import com.dstz.demo.core.model.dto.BpmTaskDTO;
+import com.dstz.demo.core.utils.DemoUtils;
 import com.dstz.sys.util.ContextUtil;
+import com.github.pagehelper.Page;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +28,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -27,6 +39,12 @@ public class CustomBpmTaskController extends ControllerTools {
 
     @Autowired
     private CustomBpmTaskManager customBpmTaskManager;
+
+    @Autowired
+    private BpmTaskManager bpmTaskManager;
+
+    @Autowired
+    private TimeLimitBpmTaskManager timeLimitBpmTaskManager;
 
     @RequestMapping("/bpm/task/getMultiTaskData")
     public ResultMsg<JSONObject> getMultiTaskData(HttpServletRequest request){
@@ -87,4 +105,22 @@ public class CustomBpmTaskController extends ControllerTools {
         jsonObject.put("data", taskNames);
         return super.getSuccessResult(jsonObject);
     }
+
+    @RequestMapping("/bpm/task/getTaskList")
+    public PageResult<BpmTaskNew> getTaskList(HttpServletRequest request, HttpServletResponse reponse) throws Exception{
+        QueryFilter queryFilter = this.getQueryFilter(request);
+        List<BpmTask> bpmTaskList = this.bpmTaskManager.query(queryFilter);
+        List<BpmTaskNew> bpmTaskNewList = new Page<>();
+        if (CollectionUtils.isNotEmpty(bpmTaskList)) {
+            List<TimeLimit> listTimeLimit = timeLimitBpmTaskManager.getTimeLimitList(bpmTaskList);
+            for (BpmTask task : bpmTaskList) {
+                if (!DemoUtils.addTaskNew(bpmTaskNewList, listTimeLimit, task)) {
+                    bpmTaskNewList.add(BpmTaskNew.build(task));
+                }
+            }
+        }
+        Page<BpmTaskNew> pageList = (Page) bpmTaskNewList;
+        return new PageResult(pageList);
+    }
+
 }

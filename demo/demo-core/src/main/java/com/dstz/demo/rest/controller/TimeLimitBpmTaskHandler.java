@@ -13,6 +13,7 @@ import com.dstz.bpm.core.model.BpmTask;
 import com.dstz.demo.core.manager.TimeLimitBpmTaskManager;
 import com.dstz.demo.core.model.BpmTaskNew;
 import com.dstz.demo.core.model.TimeLimit;
+import com.dstz.demo.core.utils.DemoUtils;
 import com.dstz.sys.util.ContextUtil;
 import com.github.pagehelper.Page;
 import org.apache.commons.collections.CollectionUtils;
@@ -44,25 +45,13 @@ public class TimeLimitBpmTaskHandler extends ControllerTools {
         if (CollectionUtils.isNotEmpty(listTodoTask)) {
             List<TimeLimit> listTimeLimit = timeLimitBpmTaskManager.getTimeLimitList(listTodoTask);
             for (BpmTask task : listTodoTask) {
-                if (!this.addTaskNew(bpmTaskNewList, listTimeLimit, task)) {
+                if (!DemoUtils.addTaskNew(bpmTaskNewList, listTimeLimit, task)) {
                     bpmTaskNewList.add(BpmTaskNew.build(task));
                 }
             }
         }
         Page<BpmTaskNew> pageList = (Page) bpmTaskNewList;
         return new PageResult(pageList);
-    }
-
-    private boolean addTaskNew(List<BpmTaskNew> bpmTaskNewList, List<TimeLimit> listTimeLimit, BpmTask task) {
-        for (TimeLimit timeLimit : listTimeLimit) {
-            if (task.getId().equals(timeLimit.getTaskId())) {
-                BpmTaskNew taskNew = BpmTaskNew.build(task);
-                taskNew.setDelayFlag(timeLimit.getTaskEndTime().before(new Date()));
-                bpmTaskNewList.add(taskNew);
-                return true;
-            }
-        }
-        return false;
     }
 
     @RequestMapping("/bpm/task/delayTask")

@@ -27,7 +27,7 @@
         	<div class="pull-right">
             	<button type="button" class="btn" ng-click="close()" ng-disabled="status.loading" translate>ACTION.CANCEL</button>
             	<button class="btn btn-primary" ng-click="save()" ng-disabled="status.loading"  ng-show="!error" translate>ACTION.SAVE</button>
-            	<button class="btn btn-primary" ng-click="save(true)" ng-disabled="status.loading" ab-tip title="请注意 ！<br>流程实例会使用启动时版本的流程配置<br>新发起的流程则使用当前主版本的流程配置。<br>保存则会立即更新当前版本的流程配置" ng-show="!error" >发布新版本</button>
+            	<!--<button class="btn btn-primary" ng-click="save(true)" ng-disabled="status.loading" ab-tip title="请注意 ！<br>流程实例会使用启动时版本的流程配置<br>新发起的流程则使用当前主版本的流程配置。<br>保存则会立即更新当前版本的流程配置" ng-show="!error" >发布新版本</button>-->
             </div>
         
             <div class="pull-right popup-error" ng-if="error && !error.isConflict">
