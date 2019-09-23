@@ -27,9 +27,7 @@
 			}]);*/
 		var TaskComplateController = ['$scope','baseService',function($scope,baseService){
 			$scope.save =function () {
-				alert(1);
 				var timeLimit = $scope.timeLimit;
-				alert($.getParam("taskId"));
 				timeLimit.taskId = $.getParam("taskId");
 				var defer = baseService.postForm(__ctx+"/bpm/task/delayTask",timeLimit);
 				$.getResultMsg(defer,function(){
