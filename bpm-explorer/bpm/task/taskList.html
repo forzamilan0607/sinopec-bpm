@@ -58,7 +58,7 @@
 					<span class="fa-user btn btn-outline btn-primary btn-sm" top="true" qtip="指派候选人" onclick="assignUser('{id}')"></span>
 					<span if="'{status}'==='DESIGNATE'" class="fa-refresh btn btn-outline btn-primary btn-sm" top="true" qtip="取消指派" sendAction="取消指派" url="/bpm/task/unLock?taskId={id}"></span>
 					<span  class="fa-check-circle btn btn-outline btn-primary btn-sm" openDialog="处理任务【{subject}】-【{name}】"  top="true" qtip="处理" url="bpm/task/taskComplete.html?taskId={id}"></span>
-					
+                   <span class="fa-send btn btn-outline btn-primary btn-sm" openDialog="延期任务【{subject}】-【{name}】"   qtip="延期" top="true" url="bpm/task/taskDelay.html?taskId={id}"></span>
 			  </th>
           </tr>
           </thead>

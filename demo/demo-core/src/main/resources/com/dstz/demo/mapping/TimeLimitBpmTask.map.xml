@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dstz.demo.core.dao.TimeLimitBpmTaskDao">
+	<resultMap id="TimeLimitBpm" type="com.dstz.demo.core.model.TimeLimit">
+		<id property="id" column="id_" jdbcType="VARCHAR"/>
+		<result property="instId" column="inst_id_" jdbcType="VARCHAR"/>
+		<result property="taskId" column="task_id_" jdbcType="VARCHAR"/>
+		<result property="isDelay" column="isDelay" jdbcType="VARCHAR"/>
+		<result property="delayTime" column="delayTime" jdbcType="VARCHAR"/>
+		<result property="delayReason" column="delayReason" jdbcType="VARCHAR"/>
+		<result property="timeLimit" column="timeLimit" jdbcType="VARCHAR"/>
+		<result property="taskStartTime" column="task_start_time" jdbcType="NUMERIC"/>
+		<result property="taskDealTime" column="task_deal_time" jdbcType="VARCHAR"/>
+		<result property="taskEndTime" column="task_end_time" jdbcType="VARCHAR"/>
+		<result property="createTime" column="create_time_" jdbcType="VARCHAR"/>
+		<result property="creatBy" column="create_by_" jdbcType="VARCHAR"/>
+		<result property="remark" column="remark" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<insert id="saveTimeLimitData" parameterType="com.dstz.demo.core.model.TimeLimit">
+		INSERT INTO bpm_timelimit
+		(id_,inst_id_,task_id_,isDelay,delayTime,delayReason,timeLimit,task_start_time,task_deal_time,task_end_time,create_time_,create_by_,remark)
+		VALUES
+		(#{id,jdbcType=VARCHAR}, #{instId,jdbcType=VARCHAR}, #{taskId,jdbcType=VARCHAR},
+		#{isDelay,jdbcType=NUMERIC}, #{delayTime}, #{delayReason,jdbcType=VARCHAR},
+		#{timeLimit,jdbcType=VARCHAR}, #{taskStartTime}, #{taskDealTime}, #{taskEndTime},
+		#{createTime}, #{creatBy,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
+	</insert>
+
+	<!--<insert id="saveTimeLimitData" parameterType="com.dstz.demo.core.model.TimeLimit">
+		INSERT INTO bpm_timelimit
+		(id_,inst_id_,task_id_,timeLimit,task_start_time,task_end_time,create_time_)
+		VALUES
+		(#{id,jdbcType=VARCHAR}, #{instId,jdbcType=VARCHAR}, #{taskId,jdbcType=VARCHAR},
+		 #{timeLimit,jdbcType=VARCHAR}, #{taskStartTime},  #{taskEndTime},
+		 #{createTime})
+	</insert>-->
+
+	<select id="getTimeLimitData" resultMap="TimeLimitBpm" parameterType="com.dstz.demo.core.model.TimeLimit">
+		SELECT
+		*
+		FROM bpm_timelimit
+		where 1=1
+			<if test="instId!=null">
+				and	inst_id_=#{instId,jdbcType=VARCHAR}
+			</if>
+			<if test="taskId!=null">
+				and task_id_=#{taskId,jdbcType=VARCHAR}
+			</if>
+	</select>
+
+	<update id="updateTimeLimitData" parameterType="com.dstz.demo.core.model.TimeLimit">
+		UPDATE bpm_timelimit SET
+		task_deal_time=#{taskDealTime,jdbcType=VARCHAR}
+		WHERE
+		id_=#{id}
+	</update>
+
+	<update id="updateDelayTask" parameterType="com.dstz.demo.core.model.TimeLimit">
+		UPDATE bpm_timelimit SET
+		task_end_time=#{taskEndTime},
+		isDelay=#{isDelay},
+		delayReason=#{delayReason}
+		WHERE
+		id_=#{id}
+	</update>
+
+	<select id="getTimeLimitList" resultMap="TimeLimitBpm">
+		SELECT t.*
+		FROM bpm_timelimit t
+		WHERE t.task_id_ IN
+		<foreach item="item" index="index" collection="taskIds" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+
+	
+	
+</mapper>

@@ -5,4 +5,5 @@
    <bean id="iCache" class="com.dstz.agilebpm.component.j2cache.J2CacheImpl"/> 
 	 <!-- <bean id="iCache" class="com.dstz.base.core.cache.impl.MemoryCache"/>-->
     <bean id="cacheChannel" class="com.dstz.agilebpm.component.j2cache.CacheChannelFactoryBean"/>
+    <bean id="SpringContextUtils" class="com.dstz.agilebpm.component.j2cache.SpringContextUtils"/>
 </beans>

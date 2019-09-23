@@ -1,0 +1,59 @@
+<html ng-app="bpm">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>任务延期</title>
+	<link href="../../build/common/base.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/base.js"></script>
+	<script type="text/javascript" src="../../build/common/gridList.js"></script>
+	<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+	<script type="text/javascript" src="../../assets/js/common/bpmForm/bpmService.js"></script>
+	<script type="text/javascript" src="../../build/common/custForm.js"></script>
+	<style media="print">.print-hidden{display:none}</style>
+
+
+	<script type="text/javascript">
+		/*var taskId = $.getParam("taskId");
+		var DelayController = angular.module('DelayController', ['baseDirective']);
+		DelayController.controller("DelayController", [ '$scope', 'baseService','ArrayToolService', function($scope, baseService,ArrayToolService) {
+			$scope.save = function(){
+				var timeLimit = $scope.flowParam;
+				timeLimit.taskId = taskId;
+				var defer = baseService.postForm(__ctx+"/bpm/task/delayTask",timeLimit);
+				$.getResultMsg(defer,function(){
+				},function(){
+
+				});
+			}
+			}]);*/
+		var TaskComplateController = ['$scope','baseService',function($scope,baseService){
+			$scope.save =function () {
+				alert(1);
+				var timeLimit = $scope.timeLimit;
+				alert($.getParam("taskId"));
+				timeLimit.taskId = $.getParam("taskId");
+				var defer = baseService.postForm(__ctx+"/bpm/task/delayTask",timeLimit);
+				$.getResultMsg(defer,function(){
+				},function(){
+
+				});
+			}
+		}];
+	</script>
+</head>
+
+<body ng-controller="TaskComplateController"><table class="form-table">
+	<tr><th><span>延期原因:</span><span class="required">*</span></th>
+		<td><textarea rows="2" cols="20" class="form-control" ng-model="timeLimit.reason"></textarea>
+		</td>
+		<th><span>延期时间:</span><span class="required">*</span></th>
+		<td>
+			<textarea rows="2" cols="20" class="form-control" ng-model="timeLimit.delayTime"></textarea>
+		</td>
+	</tr>
+</table>
+<div class="ibox-title" style="text-align: center;">
+	<a class="btn btn-primary fa-save"  href="javascript:void(0)" id="aaa" ng-click="save()">提交</a>
+	<a href="javascript:void(0)" class="btn btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);">取消</a>
+</div>
+</body>
+</html>

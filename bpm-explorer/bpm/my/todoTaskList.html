@@ -111,7 +111,8 @@
               <th data-field="createTime" data-formatter=dateTimeFormatter data-sort-name="create_time_" data-sortable="true">任务创建时间</th>
               <th data-formatter="innerHtmlFormatter" data-title="管理">
 					<span class="fa-check-square-o btn btn-outline btn-primary btn-sm" openDialog="处理任务【{subject}】-【{name}】"   qtip="办理" top="true" url="bpm/task/taskComplete.html?taskId={id}"></span>
-			  </th>
+                    <span class="fa-send btn btn-outline btn-primary btn-sm" openDialog="延期任务【{subject}】-【{name}】"   qtip="延期" top="true" url="bpm/task/taskDelay.html?taskId={id}"></span>
+              </th>
           </tr>
           </thead>
       </table>
