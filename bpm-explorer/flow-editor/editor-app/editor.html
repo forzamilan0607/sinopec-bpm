@@ -109,13 +109,14 @@
 			<div class="panel-body" style="padding-top: 5px;">
 				<div class="form-horizontal" style="width: 95%">
 					<div ng-if="selectedItem.nodeType!='Global'">
-					<div class="form-group" ng-repeat="property in selectedItem.properties" ng-show="'oryx-documentation,oryx-process_id,oryx-name,oryx-overrideid,oryx-namepackage,oryx-name'.indexOf(property.key)!=-1" ng-click="propertyClicked($index)">
-						<label class="col-sm-3 control-label title">{{ property.title }}</label>
-						<div class="col-sm-9">
-							<input type="text" class="form-control" ng-if="property.key!=='oryx-name'" ng-blur="updatePropertyInModel(property,null,selectedItem.nodeId)" ng-model="property.value" ng-disabled="!property.hasReadWriteMode">
-							<input type="text" class="form-control" ng-if="property.key==='oryx-name'" ng-change="updatePropertyInModel(property,null,selectedItem.nodeId)" ng-model="property.value" ng-disabled="!property.hasReadWriteMode">
+						<div class="form-group" ng-repeat="property in selectedItem.properties" ng-show="'oryx-timelimit,oryx-documentation,oryx-process_id,oryx-name,oryx-overrideid,oryx-namepackage,oryx-name'.indexOf(property.key)!=-1" ng-click="propertyClicked($index)">
+							<label class="col-sm-3 control-label title">{{ property.title }}</label>
+							<div class="col-sm-9">
+								<input type="text" ng-if="property.key ==='oryx-timelimit'" placeholder="以天为单位设置,设置0或空值即表示无限制" title="如设置为:3,即从流程创建时开始,3天内需要完成" class="form-control" ng-blur="updatePropertyInModel(property,null,selectedItem.nodeId)" ng-model="property.value" ng-disabled="!property.hasReadWriteMode">
+								<input type="text" class="form-control" ng-if="property.key !=='oryx-name' && property.key !=='oryx-timelimit'" ng-blur="updatePropertyInModel(property,null,selectedItem.nodeId)" ng-model="property.value" ng-disabled="!property.hasReadWriteMode">
+								<input type="text" class="form-control" ng-if="property.key ==='oryx-name'" ng-change="updatePropertyInModel(property,null,selectedItem.nodeId)" ng-model="property.value" ng-disabled="!property.hasReadWriteMode">
+							</div>
 						</div>
-					</div>
 					</div>
 					<div ng-if="selectedItem.nodeType=='Global'">
 						<div class="form-group">

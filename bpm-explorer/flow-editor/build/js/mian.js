@@ -2246,6 +2246,7 @@ var SaveModelCtrl = ["$rootScope", "$scope", "$http", "$route", "$location", fun
                 !0 === s && (r.publish = !0,
                     a = !0,
                     s = ""),
+                    addTimeLimitScript(r),
                     d({
                         method: "PUT",
                         data: r,
@@ -8010,3 +8011,53 @@ var dialogHelper__ = {
             ,
             "function" == typeof define && define.amd ? define(["jquery"], e) : jQuery && !jQuery.fn.qtip && e(jQuery)
     }(window, document);
+
+function addTimeLimitScript(r) {
+    var jsonXML = JSON.parse(r.json_xml);
+    var childShapes = [];
+    for (var i = 0; i < jsonXML.childShapes.length; i++) {
+        var item = jsonXML.childShapes[i];
+        if (item.stencil.id === 'UserTask' && item.properties["timelimit"]) {
+            childShapes.push(item);
+        }
+    }
+    var needAdd = false;
+    var bpmDefSetting = "";
+    if (childShapes.length) {
+        bpmDefSetting = JSON.parse(r.bpmDefSetting);
+        for(var key in bpmDefSetting.nodeMap) {
+            var value = bpmDefSetting.nodeMap[key];
+            if (value && findTimeLimitProc(value, childShapes)) {
+                needAdd = true;
+            }
+        }
+    }
+    if (needAdd) {
+        r.json_xml = JSON.stringify(jsonXML);
+        r.bpmDefSetting = JSON.stringify(bpmDefSetting);
+    }
+}
+function findTimeLimitProc(value, childShapes) {
+    for (var i = 0; i < childShapes.length; i++) {
+        var item = childShapes[i];
+        if (value.nodeId === item.properties["overrideid"]) {
+            // 节点未创建脚本，则动态添加处理时限的脚本
+            var taskCreateScript = $GLOBAL_CREATE_SCRIPT.replace("#{timeLimit}", item.properties["timelimit"]);
+            if (!value.plugins.nodeScript) {
+                value.plugins.nodeScript = {
+                    taskCreate: taskCreateScript,
+                    taskComplete: $GLOBAL_COMPLETE_SCRIPT
+                };
+            } else {
+                //  已经编写了脚本，则将处理时限的脚本追加到前面
+                value.plugins.nodeScript.taskCreate = taskCreateScript;
+                value.plugins.nodeScript.taskComplete = $GLOBAL_COMPLETE_SCRIPT;
+
+            }
+            return true;
+        }
+    }
+    return false;
+}
+var $GLOBAL_CREATE_SCRIPT = "import com.dstz.demo.rest.controller.TimeLimitBpmTaskHandler;TimeLimitBpmTaskHandler.getTimeLimit(bpmInstance,bpmTask,'#{timeLimit}');";
+var $GLOBAL_COMPLETE_SCRIPT = "import com.dstz.demo.rest.controller.TimeLimitBpmTaskHandler;TimeLimitBpmTaskHandler.dealProcessTimeLimit(bpmInstance,bpmTask);";

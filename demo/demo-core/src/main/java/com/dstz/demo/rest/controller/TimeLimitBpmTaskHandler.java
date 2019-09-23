@@ -104,8 +104,8 @@ public class TimeLimitBpmTaskHandler extends ControllerTools {
 
     public static Date getTaskEndTime(Date createTime, String timeLimitStr) {
         Date taskEndDate = null;
-        if (timeLimitStr != null && timeLimitStr.contains("天")) {
-            int day = Integer.parseInt(timeLimitStr.substring(0, timeLimitStr.indexOf("天")));
+        if (timeLimitStr != null) {
+            int day = timeLimitStr.contains("天") ? Integer.parseInt(timeLimitStr.substring(0, timeLimitStr.indexOf("天"))) : Integer.valueOf(timeLimitStr);
 //            int hour =Integer.parseInt(timeLimitStr.substring(timeLimitStr.indexOf("天"),timeLimitStr.indexOf("时")));
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(createTime);

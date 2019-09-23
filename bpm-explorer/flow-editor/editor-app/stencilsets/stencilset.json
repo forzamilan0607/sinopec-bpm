@@ -48,6 +48,17 @@
 			}]
 		},
 		{
+			"name": "timelimitpackage",
+			"properties": [{
+				"id": "timelimit",
+				"type": "Text",
+				"title": "处理时限",
+				"value": "",
+				"description": "处理时限",
+				"popular": true
+			}]
+		},
+		{
 			"name": "process_authorpackage",
 			"properties": [{
 				"id": "process_author",
@@ -874,6 +885,7 @@
 				"overrideidpackage",
 				"namepackage",
 				"documentationpackage",
+				"timelimitpackage",
 				"asynchronousdefinitionpackage",
 				"exclusivedefinitionpackage",
 				"executionlistenerspackage",
@@ -892,6 +904,7 @@
 			],
 			"hiddenPropertyPackages": [
 				"documentationpackage",
+				"timelimitpackage",
 				"asynchronousdefinitionpackage",
 				"exclusivedefinitionpackage",
 				"executionlistenerspackage",
