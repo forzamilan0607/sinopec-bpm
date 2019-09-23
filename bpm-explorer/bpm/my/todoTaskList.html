@@ -67,6 +67,13 @@
             }
             return true;
         }
+        function showButtons(value, row, index) {
+            if (row.delayFlag) {
+                return "<span class=\"fa-send btn btn-outline btn-primary btn-sm\" openDialog=\"延期任务【" + row.subject + "】-【" + row.name + "】\"   qtip=\"延期\" top=\"true\" url=\"bpm/task/taskDelay.html?taskId=" + row.id + "\"></span>";
+            } else {
+                return "<span class=\"fa-check-square-o btn btn-outline btn-primary btn-sm\" openDialog=\"处理任务【" + row.subject + "】-【" + row.name + "】\"   qtip=\"办理\" top=\"true\" url=\"bpm/task/taskComplete.html?taskId=" + row.id + "\"></span>";
+            }
+        }
     </script>
 </head>
 <body>
@@ -98,7 +105,7 @@
     <div class="btn-group toolbar">
         <button class="btn btn-outline btn-primary" id="btn_batchHandle">批量处理</button>
     </div>
-      <table ab-grid data-id-field="id" data-url="/bpm/my/todoTaskList">
+      <table ab-grid data-id-field="id" data-url="/custom/my/todoTaskList">
           <thead>
           <tr>
               <th data-checkbox="true">ID</th>
@@ -108,8 +115,10 @@
               			data-value-style="NORMAL-普通-primary,SIGN-会签-info,SIGN_SOURCE-会签_父-info,TRANSFORMING-事项-warning,TURN-转办-info,DELIVERTO-转办-warning,AGENCY-代理-info,">类型</th>
               <th data-field="status" data-formatter="labelFormatter" 
               			data-value-style="NORMAL-普通-primary,SUSPEND-挂起-info,LOCK-锁定-warning,BACK-驳回-warning,DESIGNATE-指派-info,">状态</th>
+              <th data-field="delayFlag" data-formatter="labelFormatter"
+              			data-value-style="false-否-primary,true-是-danger,">是否延期</th>
               <th data-field="createTime" data-formatter=dateTimeFormatter data-sort-name="create_time_" data-sortable="true">任务创建时间</th>
-              <th data-formatter="innerHtmlFormatter" data-title="管理">
+              <th data-formatter="showButtons" data-title="管理">
 					<span class="fa-check-square-o btn btn-outline btn-primary btn-sm" openDialog="处理任务【{subject}】-【{name}】"   qtip="办理" top="true" url="bpm/task/taskComplete.html?taskId={id}"></span>
                     <span class="fa-send btn btn-outline btn-primary btn-sm" openDialog="延期任务【{subject}】-【{name}】"   qtip="延期" top="true" url="bpm/task/taskDelay.html?taskId={id}"></span>
               </th>
