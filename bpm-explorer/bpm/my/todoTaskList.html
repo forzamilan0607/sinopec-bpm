@@ -6,8 +6,8 @@
 	<script type="text/javascript" src="../../build/common/base.js"></script>
 	<script type="text/javascript" src="../../build/common/gridList.js"></script>
     <script type="text/javascript" src="../../build/common/ngEdit.js"></script>
-    <script type="text/javascript" src="../../assets/js/common/bpmForm/bpmService.js"></script>
-    <script type="text/javascript" src="../../assets/js/common/tools/dialogCreator.js"></script>
+    <!--<script type="text/javascript" src="../../assets/js/common/bpmForm/bpmService.js"></script>
+    <script type="text/javascript" src="../../assets/js/common/tools/dialogCreator.js"></script>-->
     <script>
         var taskListApp = angular.module("app", [ 'base', 'baseDirective' ]);
         taskListApp.controller('taskListCtrl', [ '$scope', 'baseService', 'ArrayToolService', '$filter', function($scope, baseService, ArrayToolService) {
@@ -43,7 +43,7 @@
                         var conf = {
                             title: "批量处理",
                             topOpen: true,
-                            url: dialogHelper__.getProjectUrl(url),
+                            url: getProjectUrl(url),
                             width: "100%",
                             height: "100%"
                         };
@@ -118,9 +118,7 @@
               <th data-field="delayFlag" data-formatter="labelFormatter"
               			data-value-style="false-否-primary,true-是-danger,">是否延期</th>
               <th data-field="createTime" data-formatter=dateTimeFormatter data-sort-name="create_time_" data-sortable="true">任务创建时间</th>
-              <th data-formatter="showButtons" data-title="管理">
-					<span class="fa-check-square-o btn btn-outline btn-primary btn-sm" openDialog="处理任务【{subject}】-【{name}】"   qtip="办理" top="true" url="bpm/task/taskComplete.html?taskId={id}"></span>
-                    <span class="fa-send btn btn-outline btn-primary btn-sm" openDialog="延期任务【{subject}】-【{name}】"   qtip="延期" top="true" url="bpm/task/taskDelay.html?taskId={id}"></span>
+              <th data-formatter="showButtons">管理
               </th>
           </tr>
           </thead>
