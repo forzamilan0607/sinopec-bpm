@@ -1,9 +1,7 @@
 package com.dstz.demo.rest.controller;
 
 import com.dstz.agilebpm.component.j2cache.SpringContextUtils;
-import com.dstz.base.api.query.QueryField;
 import com.dstz.base.api.query.QueryFilter;
-import com.dstz.base.api.query.QueryOP;
 import com.dstz.base.api.response.impl.ResultMsg;
 import com.dstz.base.db.model.query.DefaultQueryFilter;
 import com.dstz.base.rest.ControllerTools;
