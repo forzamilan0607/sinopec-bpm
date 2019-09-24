@@ -25,6 +25,12 @@ public class TimeLimit extends BaseModel{
 	* 关联的任务ID
 	*/
 	protected  String taskId;
+
+	protected  String name;
+	/**
+	 * 关联的任务ID
+	 */
+	protected  String subject;
 	/**
 	* 是否延期任务
 	*/
@@ -65,6 +71,43 @@ public class TimeLimit extends BaseModel{
 	 * 字段1
 	 */
 	protected  String remark;
+
+	protected boolean delayFlag;
+
+
+	protected  String delayTimePeriod;
+
+	public boolean getDelayFlag() {
+		return delayFlag;
+	}
+
+	public void setDelayFlag(boolean delayFlag) {
+		this.delayFlag = delayFlag;
+	}
+
+	public String getDelayTimePeriod() {
+		return delayTimePeriod;
+	}
+
+	public void setDelayTimePeriod(String delayTimePeriod) {
+		this.delayTimePeriod = delayTimePeriod;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getSubject() {
+		return subject;
+	}
+
+	public void setSubject(String subject) {
+		this.subject = subject;
+	}
 
 	public String getInstId() {
 		return instId;

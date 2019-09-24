@@ -5,6 +5,8 @@
 		<id property="id" column="id_" jdbcType="VARCHAR"/>
 		<result property="instId" column="inst_id_" jdbcType="VARCHAR"/>
 		<result property="taskId" column="task_id_" jdbcType="VARCHAR"/>
+		<result property="name" column="name_" jdbcType="VARCHAR"/>
+		<result property="subject" column="subject_" jdbcType="VARCHAR"/>
 		<result property="isDelay" column="isDelay" jdbcType="VARCHAR"/>
 		<result property="delayTime" column="delayTime" jdbcType="VARCHAR"/>
 		<result property="delayReason" column="delayReason" jdbcType="VARCHAR"/>
@@ -19,9 +21,10 @@
 
 	<insert id="saveTimeLimitData" parameterType="com.dstz.demo.core.model.TimeLimit">
 		INSERT INTO bpm_timelimit
-		(id_,inst_id_,task_id_,isDelay,delayTime,delayReason,timeLimit,task_start_time,task_deal_time,task_end_time,create_time_,create_by_,remark)
+		(id_,name_,subject_,inst_id_,task_id_,isDelay,delayTime,delayReason,timeLimit,task_start_time,task_deal_time,task_end_time,create_time_,create_by_,remark)
 		VALUES
-		(#{id,jdbcType=VARCHAR}, #{instId,jdbcType=VARCHAR}, #{taskId,jdbcType=VARCHAR},
+		(#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{subject,jdbcType=VARCHAR},
+		 #{instId,jdbcType=VARCHAR}, #{taskId,jdbcType=VARCHAR},
 		#{isDelay,jdbcType=NUMERIC}, #{delayTime}, #{delayReason,jdbcType=VARCHAR},
 		#{timeLimit,jdbcType=VARCHAR}, #{taskStartTime}, #{taskDealTime}, #{taskEndTime},
 		#{createTime}, #{creatBy,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
@@ -72,6 +75,21 @@
 		<foreach item="item" index="index" collection="taskIds" open="(" separator="," close=")">
 			#{item}
 		</foreach>
+	</select>
+
+	<select id="getDelayTaskList" parameterType="java.util.Map" resultMap="TimeLimitBpm">
+		SELECT * FROM bpm_timelimit t
+		<where>
+			<if test="whereSql!=null">
+				${whereSql}
+			</if>
+		</where>
+		<if test="orderBySql!=null">
+			ORDER BY ${orderBySql}
+		</if>
+		<if test="orderBySql==null">
+			ORDER BY t.id_ DESC
+		</if>
 	</select>
 
 	

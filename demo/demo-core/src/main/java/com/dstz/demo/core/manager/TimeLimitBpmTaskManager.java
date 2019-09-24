@@ -1,6 +1,7 @@
 package com.dstz.demo.core.manager;
 
 
+import com.dstz.base.api.query.QueryFilter;
 import com.dstz.bpm.core.model.BpmTask;
 import com.dstz.demo.core.model.TimeLimit;
 
@@ -16,4 +17,6 @@ public interface TimeLimitBpmTaskManager {
     public List<Map<String,Object>> getUserTodoData(String userId);
 
     List<TimeLimit> getTimeLimitList(List<BpmTask> listTodoTask);
+
+    List<TimeLimit> getDelayTaskList(QueryFilter queryFilter);
 }

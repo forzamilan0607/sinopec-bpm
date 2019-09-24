@@ -1,5 +1,6 @@
 package com.dstz.demo.core.manager.impl;
 
+import com.dstz.base.api.query.QueryFilter;
 import com.dstz.base.manager.impl.BaseManager;
 import com.dstz.bpm.core.model.BpmTask;
 import com.dstz.demo.core.dao.TimeLimitBpmTaskDao;
@@ -51,6 +52,11 @@ public class TimeLimitBpmTaskManagerImpl extends BaseManager<String,TimeLimit> i
 		}else{
 			return null;
 		}
+	}
+
+	@Override
+	public List<TimeLimit> getDelayTaskList(QueryFilter queryFilter) {
+		return timeLimitBpmTaskDao.getDelayTaskList(queryFilter);
 	}
 
 	@Override

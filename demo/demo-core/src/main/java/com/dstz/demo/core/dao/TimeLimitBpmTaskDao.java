@@ -1,7 +1,7 @@
 package com.dstz.demo.core.dao;
 
+import com.dstz.base.api.query.QueryFilter;
 import com.dstz.base.dao.BaseDao;
-import com.dstz.bpm.core.model.BpmTask;
 import com.dstz.demo.core.model.TimeLimit;
 import org.apache.ibatis.annotations.Param;
 
@@ -22,4 +22,6 @@ public interface TimeLimitBpmTaskDao extends BaseDao<String, TimeLimit> {
     List<Map<String,Object>> getUserTodoData(String userId);
 
     List<TimeLimit> getTimeLimitList(@Param("taskIds") List<String> taskIds);
+
+    List<TimeLimit> getDelayTaskList(QueryFilter queryFilter);
 }
