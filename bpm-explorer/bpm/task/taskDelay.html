@@ -27,25 +27,58 @@
 			}]);*/
 		var TaskComplateController = ['$scope','baseService',function($scope,baseService){
 			$scope.save =function () {
-				var timeLimit = $scope.timeLimit;
+				var timeLimit = $scope.timeLimit || {};
+				if (!timeLimit.reason) {
+                    $.Dialog.msg("请输入延期原因!");
+					return;
+				}
+				if (!timeLimit.taskEndTime) {
+                    $.Dialog.msg("请输入延期时间!");
+					return;
+				}
+				// 校验延期时间是否大于当前时间
+				var currentTime = new Date().getTime();
+				if (new Date(timeLimit.taskEndTime).getTime() <= currentTime) {
+                    $.Dialog.msg("延期时间必须大于当前时间!");
+                    return;
+				}
+                var ii = layer.load();
 				timeLimit.taskId = $.getParam("taskId");
 				var defer = baseService.postForm(__ctx+"/bpm/task/delayTask",timeLimit);
 				$.getResultMsg(defer,function(){
+                    //关不掉 已经绝望、打一波组合拳吧
+                    top.layer.closeAll('dialog');
+                    layer.closeAll();
+                    parent.layer.closeAll(); // 父窗口把当前窗口关掉
+                    if (window.opener && window.opener.reloadGrid) {
+                        window.opener.reloadGrid();
+                    }
 				},function(){
-
+                    layer.close(ii);
 				});
 			}
 		}];
 	</script>
 </head>
 
-<body ng-controller="TaskComplateController"><table class="form-table">
-	<tr><th><span>延期原因:</span><span class="required">*</span></th>
-		<td><textarea rows="2" cols="20" class="form-control" ng-model="timeLimit.reason"></textarea>
-		</td>
-		<th><span>延期时间:</span><span class="required">*</span></th>
+<body ng-controller="TaskComplateController">
+	<table class="form-table" style="width:80%">
+		<tr>
+			<th>
+				<span>延期原因:</span><span class="required">*</span>
+			</th>
 		<td>
-			<textarea rows="2" cols="20" class="form-control" ng-model="timeLimit.delayTime"></textarea>
+			<textarea rows="2" cols="10" class="form-control ng-pristine ng-invalid ng-invalid-custom-validate" ng-model="timeLimit.reason" desc="延期原因"
+					  ab-validate="{&quot;maxlength&quot;:500,&quot;required&quot;:true}" error-msg="请输入延期原因" data-hasqtip="0" aria-describedby="qtip-0">
+			</textarea>
+		</td>
+	</tr>
+	<tr>
+		<th>
+			<span>延期到:</span><span class="required">*</span>
+		</th>
+		<td>
+			<input class="form-control ng-pristine ng-valid dateformat ng-valid-custom-validate" ng-model="timeLimit.taskEndTime" ab-validate="{&quot;date&quot;:true,&quot;required&quot;:true}" desc="延期时间" ab-date="yyyy-MM-dd HH:mm:ss" lay-key="1" />
 		</td>
 	</tr>
 </table>

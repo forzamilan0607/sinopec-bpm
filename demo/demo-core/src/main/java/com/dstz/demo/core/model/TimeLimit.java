@@ -77,6 +77,16 @@ public class TimeLimit extends BaseModel{
 
 	protected  String delayTimePeriod;
 
+	/**
+	 * 待处理人
+	 */
+	protected String assigneeNames;
+
+	/**
+	 * 期望处理时间
+	 */
+	protected Date expectDealTime;
+
 	public boolean getDelayFlag() {
 		return delayFlag;
 	}
@@ -215,5 +225,21 @@ public class TimeLimit extends BaseModel{
 	@Override
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getAssigneeNames() {
+		return assigneeNames;
+	}
+
+	public void setAssigneeNames(String assigneeNames) {
+		this.assigneeNames = assigneeNames;
+	}
+
+	public Date getExpectDealTime() {
+		return expectDealTime;
+	}
+
+	public void setExpectDealTime(Date expectDealTime) {
+		this.expectDealTime = expectDealTime;
 	}
 }

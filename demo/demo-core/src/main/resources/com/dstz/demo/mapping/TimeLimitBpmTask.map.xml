@@ -21,13 +21,13 @@
 
 	<insert id="saveTimeLimitData" parameterType="com.dstz.demo.core.model.TimeLimit">
 		INSERT INTO bpm_timelimit
-		(id_,name_,subject_,inst_id_,task_id_,isDelay,delayTime,delayReason,timeLimit,task_start_time,task_deal_time,task_end_time,create_time_,create_by_,remark)
+		(id_,name_,subject_,inst_id_,task_id_,isDelay,delayTime,delayReason,timeLimit,task_start_time,task_deal_time,task_end_time,create_time_,create_by_,remark, assignee_names)
 		VALUES
 		(#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{subject,jdbcType=VARCHAR},
 		 #{instId,jdbcType=VARCHAR}, #{taskId,jdbcType=VARCHAR},
 		#{isDelay,jdbcType=NUMERIC}, #{delayTime}, #{delayReason,jdbcType=VARCHAR},
 		#{timeLimit,jdbcType=VARCHAR}, #{taskStartTime}, #{taskDealTime}, #{taskEndTime},
-		#{createTime}, #{creatBy,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
+		#{createTime}, #{creatBy,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{assigneeNames,jdbcType=VARCHAR})
 	</insert>
 
 	<!--<insert id="saveTimeLimitData" parameterType="com.dstz.demo.core.model.TimeLimit">

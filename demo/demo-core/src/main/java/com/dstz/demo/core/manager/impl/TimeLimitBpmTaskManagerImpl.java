@@ -26,9 +26,8 @@ public class TimeLimitBpmTaskManagerImpl extends BaseManager<String,TimeLimit> i
 	}
 
 	@Override
-	public TimeLimit getTimeLimitData(TimeLimit timeLimitData) {
-		TimeLimit resultTimeLimit = this.timeLimitBpmTaskDao.getTimeLimitData(timeLimitData);
-		return resultTimeLimit;
+	public TimeLimit getTimeLimitData(TimeLimit param) {
+		return this.timeLimitBpmTaskDao.getTimeLimitData(param);
 	}
 
 	@Override
