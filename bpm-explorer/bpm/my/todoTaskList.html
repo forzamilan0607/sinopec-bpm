@@ -37,7 +37,7 @@
                 //  获取选中的记录
                 var selectedObjs = $("[ab-grid]").bootstrapTable("getSelections");
                 if (selectedObjs && selectedObjs.length) {
-                    if (isSelectedSameNode(selectedObjs)) {
+                    if (validate4BatchHandle(selectedObjs)) {
                         var ids = selectedObjs.map(item => item.id).join(",");
                         var url = selectedObjs.length > 1 ? "bpm/task/batchTaskHandle.html?taskIds=" + ids : "bpm/task/taskComplete.html?taskId=" + ids;
                         var conf = {
@@ -48,8 +48,6 @@
                             height: "100%"
                         };
                         $.Dialog.open(conf);
-                    } else {
-                        $.Dialog.msg("请选择相同类型的任务!");
                     }
                 } else {
                     $.Dialog.msg("请选择要处理的任务!");
@@ -57,11 +55,20 @@
             });
         }
 
-        function isSelectedSameNode(selectedObjs) {
+        function validate4BatchHandle(selectedObjs) {
             var defId = selectedObjs[0].defId;
             var nodeId = selectedObjs[0].nodeId;
+            if (selectedObjs[0].delayFlag) {
+                $.Dialog.msg("任务[" + selectedObjs[0].name + "]已延期，不能批量处理！");
+                return false;
+            }
             for (var i = 1; i < selectedObjs.length; i++) {
                 if (defId !== selectedObjs[i].defId || nodeId !== selectedObjs[i].nodeId) {
+                    $.Dialog.msg("请选择相同类型的任务!");
+                    return false;
+                }
+                if (selectedObjs[i].delayFlag) {
+                    $.Dialog.msg("任务[" + selectedObjs[i].name + "]已延期，不能批量处理！");
                     return false;
                 }
             }
@@ -69,7 +76,7 @@
         }
         function showButtons(value, row, index) {
             if (row.delayFlag) {
-                return "<span class=\"fa-send btn btn-outline btn-primary btn-sm\" openDialog=\"延期任务【" + row.subject + "】-【" + row.name + "】\"   qtip=\"延期\" top=\"true\" url=\"bpm/task/taskDelay.html?taskId=" + row.id + "\"></span>";
+                return "<span class=\"fa-calendar btn btn-outline btn-primary btn-sm\" openDialog=\"延期任务【" + row.subject + "】-【" + row.name + "】\"   qtip=\"延期处理\" top=\"true\" url=\"bpm/task/taskDelay.html?taskId=" + row.id + "\"></span>";
             } else {
                 return "<span class=\"fa-check-square-o btn btn-outline btn-primary btn-sm\" openDialog=\"处理任务【" + row.subject + "】-【" + row.name + "】\"   qtip=\"办理\" top=\"true\" url=\"bpm/task/taskComplete.html?taskId=" + row.id + "\"></span>";
             }
@@ -118,7 +125,7 @@
               <th data-field="delayFlag" data-formatter="labelFormatter"
               			data-value-style="false-否-primary,true-是-danger,">是否延期</th>
               <th data-field="createTime" data-formatter=dateTimeFormatter data-sort-name="create_time_" data-sortable="true">任务创建时间</th>
-              <th data-field="expectDealTime" data-formatter=dateTimeFormatter data-sort-name="create_time_" data-sortable="true">期望处理时间</th>
+              <th data-field="expectDealTime" data-formatter=dateTimeFormatter >任务截止时间</th>
               <th data-formatter="showButtons">管理</th>
           </tr>
           </thead>

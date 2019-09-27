@@ -160,7 +160,7 @@ public class CustomBpmTaskController extends ControllerTools {
     }
 
     @RequestMapping("/custom/my/todoTaskList")
-    public PageResult popupMsg(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public PageResult todoTaskList(HttpServletRequest request, HttpServletResponse response) throws Exception {
         List<BpmTaskNew> bpmTaskNewList = new Page<>();
         QueryFilter queryFilter = super.getQueryFilter(request);
         List<BpmTask> listTodoTask = bpmTaskManager.getTodoList(ContextUtil.getCurrentUserId(), queryFilter);
@@ -187,7 +187,7 @@ public class CustomBpmTaskController extends ControllerTools {
         Date taskEndTime = DateUtils.parseDate(taskEndTimeStr, "yyyy-MM-dd HH:mm:ss");
         TimeLimit timeLimit = this.timeLimitBpmTaskManager.getTimeLimitData(param);
         Date expectDealTime = DemoUtils.getExpectDealTime(timeLimit.getTaskStartTime(), timeLimit.getTimeLimit());
-        String delayTime = DemoUtils.calcDelayTimePeriod(timeLimit.getTaskStartTime(), expectDealTime);
+        String delayTime = DemoUtils.calcDelayTimePeriod(timeLimit.getTaskStartTime(), taskEndTime);
         timeLimit.setIsDelay(1);
         timeLimit.setDelayTime(delayTime.substring(0, 1));
         timeLimit.setTaskEndTime(taskEndTime);

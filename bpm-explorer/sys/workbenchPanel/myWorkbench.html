@@ -19,6 +19,18 @@
   <link rel="stylesheet" href="../../assets/css/platform/sys/workbench.css">
   <script type="text/javascript">
   	var layoutKey = $.getParam("layoutKey");
+  	setTimeout(function () {
+        /*$.ajax({
+            url: __ctx+'/calendar/schedule/itemDelete',
+            data: {
+                id: itemId,
+            },
+            success: function() {
+                location.reload();
+            }
+        });*/
+        $.Toast.warning("您当前有[7]个待办任务");
+    }, 3000);
   </script>
   
 </head>
