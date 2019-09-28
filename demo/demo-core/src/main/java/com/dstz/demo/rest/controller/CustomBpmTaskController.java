@@ -147,13 +147,11 @@ public class CustomBpmTaskController extends ControllerTools {
                 Date compareDate = timeLimit.getTaskDealTime() == null ? new Date() : timeLimit.getTaskDealTime();
                 timeLimit.setExpectDealTime(expectDealTime);
                 timeLimit.setDelayFlag(expectDealTime.before(compareDate));
-                if (expectDealTime.before(compareDate)) {
+                if (timeLimit.getDelayFlag()) {
                     timeLimit.setDelayTimePeriod(DemoUtils.calcDelayTimePeriod(expectDealTime, compareDate));
                 } else {
-                    timeLimit.setDelayTimePeriod("");
-                }
-                // 过滤掉未延期的任务
-                if (ObjectUtils.nullSafeEquals(0, timeLimit.getIsDelay())) {
+//                    timeLimit.setDelayTimePeriod("");
+                // TODO 过滤掉未延期的任务(对分页会有影响)
                     iterator.remove();
                 }
             }
@@ -181,14 +179,11 @@ public class CustomBpmTaskController extends ControllerTools {
     @RequestMapping("/bpm/task/delayTask")
     public ResultMsg<String> delayTask(HttpServletRequest request, HttpServletResponse response) throws Exception {
         // 计算延期天数
-
         String taskEndTimeStr = RequestUtil.getRQString(request, "taskEndTime");
         String delayReason = RequestUtil.getRQString(request, "reason");
-        TimeLimit param = new TimeLimit();
-        param.setTaskId(RequestUtil.getRQString(request, "taskId"));
         // 延期后的处理时间
         Date taskEndTime = DateUtils.parseDate(taskEndTimeStr, "yyyy-MM-dd HH:mm:ss");
-        TimeLimit timeLimit = this.timeLimitBpmTaskManager.getTimeLimitData(param);
+        TimeLimit timeLimit = this.timeLimitBpmTaskManager.getTimeLimitData(new TimeLimit(RequestUtil.getRQString(request, "taskId")));
 //        Date expectDealTime = DemoUtils.getExpectDealTime(timeLimit.getTaskStartTime(), timeLimit.getTimeLimit());
         // 任务创建时间 与延期后的处理时间比较 计算出实际延期的天数
         String delayTime = DemoUtils.calcDelayTimePeriod(timeLimit.getTaskStartTime(), taskEndTime);

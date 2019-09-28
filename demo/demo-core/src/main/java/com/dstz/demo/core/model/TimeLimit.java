@@ -97,6 +97,13 @@ public class TimeLimit extends BaseModel{
 	 */
 	protected Date applyDate;
 
+	public TimeLimit(String taskId) {
+		this.taskId = taskId;
+	}
+
+	public TimeLimit() {
+	}
+
 	public boolean getDelayFlag() {
 		return delayFlag;
 	}
