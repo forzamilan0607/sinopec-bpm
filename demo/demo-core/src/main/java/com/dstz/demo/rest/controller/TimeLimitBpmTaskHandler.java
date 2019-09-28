@@ -61,6 +61,7 @@ public class TimeLimitBpmTaskHandler {
         TimeLimit resultTimeLimit = staticTimeLimitBpmTaskManager.getTimeLimitData(timeLimitDate);
         timeLimitDate.setId(resultTimeLimit.getId());
         timeLimitDate.setTaskDealTime(new Date());
+        timeLimitDate.setAssigneeNames(bpmTask.getAssigneeNames());
         staticTimeLimitBpmTaskManager.updateTimeLimitData(timeLimitDate);
     }
 

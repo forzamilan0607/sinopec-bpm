@@ -16,6 +16,8 @@ import com.dstz.demo.core.model.BpmTaskNew;
 import com.dstz.demo.core.model.TimeLimit;
 import com.dstz.demo.core.model.dto.BpmTaskBatchDTO;
 import com.dstz.demo.core.model.dto.BpmTaskDTO;
+import com.dstz.demo.core.model.dto.TaskCountDTO;
+import com.dstz.demo.core.utils.DemoConstants;
 import com.dstz.demo.core.utils.DemoUtils;
 import com.dstz.sys.util.ContextUtil;
 import com.github.pagehelper.Page;
@@ -150,10 +152,10 @@ public class CustomBpmTaskController extends ControllerTools {
                 } else {
                     timeLimit.setDelayTimePeriod("");
                 }
-               /* // 过滤掉未延期的任务
+                // 过滤掉未延期的任务
                 if (ObjectUtils.nullSafeEquals(0, timeLimit.getIsDelay())) {
                     iterator.remove();
-                }*/
+                }
             }
             timeLimitList.sort((a, b) -> b.getIsDelay() - a.getIsDelay());
         }
@@ -181,17 +183,27 @@ public class CustomBpmTaskController extends ControllerTools {
         // 计算延期天数
 
         String taskEndTimeStr = RequestUtil.getRQString(request, "taskEndTime");
+        String delayReason = RequestUtil.getRQString(request, "reason");
         TimeLimit param = new TimeLimit();
         param.setTaskId(RequestUtil.getRQString(request, "taskId"));
-        param.setDelayReason(RequestUtil.getRQString(request, "reason"));
+        // 延期后的处理时间
         Date taskEndTime = DateUtils.parseDate(taskEndTimeStr, "yyyy-MM-dd HH:mm:ss");
         TimeLimit timeLimit = this.timeLimitBpmTaskManager.getTimeLimitData(param);
-        Date expectDealTime = DemoUtils.getExpectDealTime(timeLimit.getTaskStartTime(), timeLimit.getTimeLimit());
+//        Date expectDealTime = DemoUtils.getExpectDealTime(timeLimit.getTaskStartTime(), timeLimit.getTimeLimit());
+        // 任务创建时间 与延期后的处理时间比较 计算出实际延期的天数
         String delayTime = DemoUtils.calcDelayTimePeriod(timeLimit.getTaskStartTime(), taskEndTime);
-        timeLimit.setIsDelay(1);
+        timeLimit.setIsDelay(DemoConstants.DelayFlag.YES);
         timeLimit.setDelayTime(delayTime.substring(0, 1));
         timeLimit.setTaskEndTime(taskEndTime);
+        timeLimit.setApplyUser(ContextUtil.getCurrentUserId());
+        timeLimit.setDelayReason(delayReason);
         this.timeLimitBpmTaskManager.updateDelayTask(timeLimit);
         return getSuccessResult("延期任务成功");
+    }
+
+    @RequestMapping("/bpm/task/countTodoAndDelayTasks")
+    public ResultMsg<TaskCountDTO> countTodoAndDelayTasks(HttpServletRequest request, HttpServletResponse response) throws Exception{
+        TaskCountDTO taskCount = this.customBpmTaskManager.countTodoAndDelayTasks(ContextUtil.getCurrentUserId());
+        return this.getSuccessResult(taskCount);
     }
 }

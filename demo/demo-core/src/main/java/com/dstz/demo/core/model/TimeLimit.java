@@ -87,6 +87,16 @@ public class TimeLimit extends BaseModel{
 	 */
 	protected Date expectDealTime;
 
+	/**
+	 * 延期申请人
+	 */
+	protected String applyUser;
+
+	/**
+	 * 延期申请时间
+	 */
+	protected Date applyDate;
+
 	public boolean getDelayFlag() {
 		return delayFlag;
 	}
@@ -241,5 +251,21 @@ public class TimeLimit extends BaseModel{
 
 	public void setExpectDealTime(Date expectDealTime) {
 		this.expectDealTime = expectDealTime;
+	}
+
+	public String getApplyUser() {
+		return applyUser;
+	}
+
+	public void setApplyUser(String applyUser) {
+		this.applyUser = applyUser;
+	}
+
+	public Date getApplyDate() {
+		return applyDate;
+	}
+
+	public void setApplyDate(Date applyDate) {
+		this.applyDate = applyDate;
 	}
 }

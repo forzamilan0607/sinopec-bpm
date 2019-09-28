@@ -17,6 +17,8 @@
 		<result property="createTime" column="create_time_" jdbcType="VARCHAR"/>
 		<result property="creatBy" column="create_by_" jdbcType="VARCHAR"/>
 		<result property="remark" column="remark" jdbcType="VARCHAR"/>
+		<result property="assigneeNames" column="assignee_names" jdbcType="VARCHAR"/>
+		<result property="applyDate" column="apply_date" jdbcType="VARCHAR"/>
 	</resultMap>
 
 	<insert id="saveTimeLimitData" parameterType="com.dstz.demo.core.model.TimeLimit">
@@ -54,7 +56,8 @@
 
 	<update id="updateTimeLimitData" parameterType="com.dstz.demo.core.model.TimeLimit">
 		UPDATE bpm_timelimit SET
-		task_deal_time=#{taskDealTime,jdbcType=VARCHAR}
+		task_deal_time=#{taskDealTime,jdbcType=VARCHAR},
+		assignee_names=#{assigneeNames,jdbcType=VARCHAR}
 		WHERE
 		id_=#{id}
 	</update>
@@ -63,7 +66,9 @@
 		UPDATE bpm_timelimit SET
 		task_end_time=#{taskEndTime},
 		isDelay=#{isDelay},
-		delayReason=#{delayReason}
+		delayReason=#{delayReason},
+		apply_user=${applyUser},
+		apply_date=now()
 		WHERE
 		id_=#{id}
 	</update>
@@ -78,7 +83,8 @@
 	</select>
 
 	<select id="getDelayTaskList" parameterType="java.util.Map" resultMap="TimeLimitBpm">
-		SELECT * FROM bpm_timelimit t
+		SELECT t.*,u.fullname_ AS applyUser FROM bpm_timelimit t
+		LEFT JOIN org_user u ON t.apply_user = u.id_
 		<where>
 			<if test="whereSql!=null">
 				${whereSql}

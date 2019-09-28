@@ -57,11 +57,13 @@
         <th data-field="delayFlag" data-formatter="labelFormatter"
             data-value-style="false-否-primary,true-是-danger,">是否延期</th>
         <th data-field="timeLimit">处理时限</th>
-        <th data-field="taskStartTime" data-formatter=dateTimeFormatter data-sort-name="task_start_time" data-sortable="true">创建时间</th>
-        <th data-field="expectDealTime" data-formatter=dateTimeFormatter >处理截止时间</th>
+        <th data-field="taskStartTime" data-formatter=dateTimeFormatter data-sort-name="task_start_time" data-sortable="true">任务创建时间</th>
+        <th data-field="expectDealTime" data-formatter=dateTimeFormatter >任务截止时间</th>
         <th data-field="taskDealTime" data-formatter=dateTimeFormatter data-sort-name="task_deal_Time" data-sortable="true">实际处理时间</th>
         <th data-field="delayTimePeriod">延期处理时长</th>
-        <th data-field="assigneeNames">待处理人</th>
+        <!--<th data-field="assigneeNames">待处理人</th>-->
+        <th data-field="applyUser">延期申请人</th>
+        <th data-field="delayReason">延期原因</th>
         <th data-formatter="innerHtmlFormatter" data-title="详情">
             <a class="fa-detail btn btn-outline btn-primary btn-sm" iview="特殊标记" openDialog='流程实例详情 【{subject}】' qtip='详情' url='/bpm/instance/instanceDetail.html?id={instId}'></a>
         </th>

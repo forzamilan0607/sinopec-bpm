@@ -23,34 +23,79 @@
 			,bpm_task_identitylink link
 			WHERE t.def_id_ = d.id_
 			AND t.id_ = link.task_id_
-			AND t.assignee_id_ = '0'
-			AND link.permission_code_ in
+			AND
 			(
-				SELECT CONCAT(g.id_, '-org') AS groupName FROM org_group g
-				left join org_relation rel on group_id_ = g.id_
-				WHERE  user_id_ = #{userId}
-				and rel.type_ in ('groupUser','groupUserRole') and rel.status_ = 1
-				union
-				SELECT concat(role.id_, '-role') AS groupName from org_role role
-				left join org_relation relation on role.id_ = relation.role_id_
-				where enabled_ = 1 and relation.status_ =1
-				and relation.user_id_ = #{userId}
-				UNION
-				SELECT concat(relation.group_id_, '-', relation.role_id_, '-post') AS groupName
-				FROM org_relation relation
-				left join org_user tuser on relation.user_id_ = tuser.id_
-				left join org_group tgroup on relation.group_id_ = tgroup.id_
-				left join org_role role on relation.role_id_ = role.id_
-				WHERE relation.user_id_ = #{userId} and relation.status_ = 1
-				and relation.type_ = 'groupUserRole'
-				UNION
-				select concat(${userId}, '-user') AS groupName
-			) or t.assignee_id_ = #{userId}
+				(
+					t.assignee_id_ = '0'
+					AND link.permission_code_ in
+					(
+						SELECT CONCAT(g.id_, '-org') AS groupName FROM org_group g
+						left join org_relation rel on group_id_ = g.id_
+						WHERE user_id_ = #{userId}
+						and rel.type_ in ('groupUser','groupUserRole') and rel.status_ = 1
+						union
+						SELECT concat(role.id_, '-role') AS groupName from org_role role
+						left join org_relation relation on role.id_ = relation.role_id_
+						where enabled_ = 1 and relation.status_ =1
+						and relation.user_id_ = #{userId}
+						UNION
+						SELECT concat(relation.group_id_, '-', relation.role_id_, '-post') AS groupName
+						FROM org_relation relation
+						left join org_user tuser on relation.user_id_ = tuser.id_
+						left join org_group tgroup on relation.group_id_ = tgroup.id_
+						left join org_role role on relation.role_id_ = role.id_
+						WHERE relation.user_id_ = #{userId} and relation.status_ = 1
+						and relation.type_ = 'groupUserRole'
+						UNION
+						select concat(${userId}, '-user') AS groupName
+					)
+				) or t.assignee_id_ = #{userId}
+			)
 		</if>
 		<if test="userId == null or userId =='' ">
 			where t.def_id_ = d.id_
 		</if>
 		group by t.node_id_,t.def_id_,t.name_
+	</select>
+
+	<select id="countTodoAndDelayTasks" resultType="com.dstz.demo.core.model.dto.TaskCountDTO" >
+		SELECT
+			COUNT(task.id_) AS todoTaskCount,
+			COUNT(tl.task_id_) AS delayTaskCount
+		FROM
+		(
+			SELECT t.id_
+			FROM bpm_task t,bpm_definition d,bpm_task_identitylink link
+			WHERE t.def_id_ = d.id_
+			AND t.id_ = link.task_id_
+			AND (
+			  (
+				t.assignee_id_ = '0'
+				AND link.permission_code_ in
+				(
+					SELECT CONCAT(g.id_, '-org') AS groupName FROM org_group g
+					left join org_relation rel on group_id_ = g.id_
+					WHERE  user_id_ = #{userId}
+					and rel.type_ in ('groupUser','groupUserRole') and rel.status_ = 1
+					union
+					SELECT concat(role.id_, '-role') AS groupName from org_role role
+					left join org_relation relation on role.id_ = relation.role_id_
+					where enabled_ = 1 and relation.status_ =1
+					and relation.user_id_ = #{userId}
+					UNION
+					SELECT concat(relation.group_id_, '-', relation.role_id_, '-post') AS groupName
+					FROM org_relation relation
+					left join org_user tuser on relation.user_id_ = tuser.id_
+					left join org_group tgroup on relation.group_id_ = tgroup.id_
+					left join org_role role on relation.role_id_ = role.id_
+					WHERE relation.user_id_ = #{userId} and relation.status_ = 1
+					and relation.type_ = 'groupUserRole'
+					UNION
+					select concat(${userId}, '-user') AS groupName
+				))
+			or t.assignee_id_ = #{userId} )
+		) task
+		LEFT JOIN (SELECT task_id_ FROM bpm_timelimit where task_end_time &lt; now()) tl ON tl.task_id_ = task.id_
 	</select>
 
 	

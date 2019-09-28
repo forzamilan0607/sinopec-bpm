@@ -20,17 +20,23 @@
   <script type="text/javascript">
   	var layoutKey = $.getParam("layoutKey");
   	setTimeout(function () {
-        /*$.ajax({
-            url: __ctx+'/calendar/schedule/itemDelete',
-            data: {
-                id: itemId,
-            },
-            success: function() {
-                location.reload();
+        $.ajax({
+            url: __ctx+'/bpm/task/countTodoAndDelayTasks',
+            success: function(resp) {
+                var data = JSON.parse(resp);
+                if (data.code == 200) {
+                    var taskCount = data.data;
+                    if (taskCount.todoTaskCount > 0) {
+                        if (taskCount.delayTaskCount > 0) {
+				        	$.Toast.warning("您当前有[" + taskCount.todoTaskCount + "]个待办任务,其中[" + taskCount.delayTaskCount + "]个任务已延期，请立即处理");
+                        } else {
+				        	$.Toast.warning("您当前有[" + taskCount.todoTaskCount + "]个待办任务，请即时处理！");
+						}
+                    }
+                }
             }
-        });*/
-        $.Toast.warning("您当前有[7]个待办任务");
-    }, 3000);
+        });
+    }, 1500);
   </script>
   
 </head>
