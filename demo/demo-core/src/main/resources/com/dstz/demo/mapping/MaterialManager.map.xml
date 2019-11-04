@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dstz.demo.core.dao.MaterialManagerDao">
+    <resultMap id="MaterialProcess" type="com.dstz.demo.core.model.MaterialProcess">
+        <id property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="enquiryName" column="enquiry_name" jdbcType="VARCHAR"/>
+        <result property="purchaseAply" column="purchase_aply" jdbcType="VARCHAR"/>
+        <result property="materialNo" column="material_no" jdbcType="VARCHAR"/>
+        <result property="materialDesc" column="material_desc" jdbcType="VARCHAR"/>
+        <result property="unit" column="unit" jdbcType="VARCHAR"/>
+        <result property="number" column="number" jdbcType="VARCHAR"/>
+        <result property="plant" column="plant" jdbcType="VARCHAR"/>
+        <result property="reservedNumber" column="reserved_number" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="reserved" column="reserved" jdbcType="VARCHAR"/>
+        <result property="processId" column="process_id" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap id="BpmInstance" type="com.dstz.bpm.core.model.BpmInstance">
+        <id property="id" column="id_" jdbcType="VARCHAR"/>
+        <result property="subject" column="subject_" jdbcType="VARCHAR"/>
+        <result property="defId" column="def_id_" jdbcType="VARCHAR"/>
+        <result property="actDefId" column="act_def_id_" jdbcType="VARCHAR"/>
+        <result property="defKey" column="def_key_" jdbcType="VARCHAR"/>
+        <result property="defName" column="def_name_" jdbcType="VARCHAR"/>
+        <result property="bizKey" column="biz_key_" jdbcType="VARCHAR"/>
+        <result property="status" column="status_" jdbcType="VARCHAR"/>
+        <result property="endTime" column="end_time_" jdbcType="TIMESTAMP"/>
+        <result property="duration" column="duration_" jdbcType="NUMERIC"/>
+        <result property="typeId" column="type_id_" jdbcType="VARCHAR"/>
+        <result property="actInstId" column="act_inst_id_" jdbcType="VARCHAR"/>
+        <result property="createBy" column="create_by_" jdbcType="VARCHAR"/>
+        <result property="creator" column="creator_" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time_" jdbcType="TIMESTAMP"/>
+        <result property="createOrgId" column="create_org_id_" jdbcType="VARCHAR"/>
+        <result property="updateBy" column="update_by_" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time_" jdbcType="TIMESTAMP"/>
+        <result property="isFormmal" column="is_formmal_" jdbcType="VARCHAR"/>
+        <result property="parentInstId" column="parent_inst_id_" jdbcType="VARCHAR"/>
+        <result property="isForbidden" column="is_forbidden_" jdbcType="NUMERIC"/>
+        <result property="dataMode" column="data_mode_" jdbcType="VARCHAR"/>
+        <result property="supportMobile" column="support_mobile_" jdbcType="NUMERIC"/>
+        <result property="superNodeId" column="super_node_id_" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="create" parameterType="com.dstz.demo.core.model.MaterialProcess">
+		INSERT INTO t_process_material
+		(id,enquiry_name,purchase_aply,material_no,material_desc,unit,number,plant,reserved_number,remark,process_id)
+		VALUES
+		(#{id,jdbcType=VARCHAR}, #{enquiryName,jdbcType=VARCHAR}, #{purchaseAply,jdbcType=VARCHAR},
+		#{materialNo,jdbcType=VARCHAR}, #{materialDesc,jdbcType=VARCHAR}, #{unit,jdbcType=VARCHAR},
+		#{number,jdbcType=VARCHAR}, #{plant,jdbcType=VARCHAR}, #{reservedNumber,jdbcType=VARCHAR},
+		#{remark,jdbcType=VARCHAR}, #{reserved,jdbcType=VARCHAR}, #{processId,jdbcType=VARCHAR})
+	</insert>
+
+    <select id="get"   parameterType="java.lang.String" resultMap="MaterialProcess">
+		SELECT * FROM t_process_material
+		WHERE
+		id=#{id}
+	</select>
+
+    <select id="query" parameterType="java.util.Map" resultMap="MaterialProcess">
+        SELECT * FROM t_process_material
+        <where>
+            <if test="whereSql!=null">
+                ${whereSql}
+            </if>
+        </where>
+        <if test="orderBySql!=null">
+            ORDER BY ${orderBySql}
+        </if>
+        <if test="orderBySql==null">
+            ORDER BY id DESC
+        </if>
+    </select>
+
+    <select id="instanceQuery" parameterType="java.util.Map" resultMap="BpmInstance">
+        SELECT ins.* FROM bpm_instance AS ins
+        INNER JOIN bpm_bus_link AS link
+        ON link.inst_id_ = ins.id_
+        INNER JOIN  t_process_material AS mater
+        ON link.biz_id_ = mater.id
+        <where>
+            <if test="whereSql!=null">
+                ${whereSql}
+            </if>
+        </where>
+        <if test="orderBySql!=null">
+            ORDER BY ${orderBySql}
+        </if>
+        <if test="orderBySql==null">
+            ORDER BY id_ DESC
+        </if>
+    </select>
+
+    <delete id="remove" parameterType="java.lang.String">
+		DELETE FROM t_process_material
+		WHERE
+		(process_id IS NULL OR process_id = '')
+		AND
+		id=#{id}
+	</delete>
+</mapper>

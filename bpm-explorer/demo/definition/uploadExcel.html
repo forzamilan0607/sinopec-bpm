@@ -1,0 +1,38 @@
+<html ng-app="app">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="../../build/common/base.css" rel="stylesheet">
+    <script type="text/javascript" src="../../build/common/base.js"></script>
+    <script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+    <script type="text/javascript">
+        var app = angular.module('app', ['baseDirective']);
+        app.controller("ctrl", [ '$http','$scope', 'baseService','ArrayToolService', function($http,$scope, baseService,ArrayToolService) {
+            $scope.fileUpload =function fileUpload() {
+                var file = document.querySelector('input[type=file]').files[0];
+                if(file == null) return ;
+
+
+                // 构造参数
+                formData = new FormData();
+                formData.append('file', file, file.name);
+                var url = getCtxUrl('/bpm/material/process/import',true);
+                var rtn = $http({
+                    method:'post',
+                    url:url,
+                    data:formData,//向后台发送的数据
+                    headers:{'Content-type':undefined},
+                    transformRequest: angular.identity
+                }).then(function(data) {
+                    console.log(33333,data)
+                })
+            }
+        }])
+    </script>
+</head>
+<body ng-controller="ctrl" class="panel success">
+<div >
+    <input type="file" file-model="myFile" accept=".xls,.xlsx"  >
+    <button ng-click="fileUpload()" >保存</button>
+</div>
+</body>
+</html>

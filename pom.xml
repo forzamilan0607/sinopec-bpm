@@ -35,12 +35,28 @@
             <id>nexus-agile-bpm</id>
             <url>http://nexus.agilebpm.cn/nexus/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>alimaven</id>
+            <url>http://maven.aliyun.com/nexus/content/repositories/central/</url>
+        </repository>
+        <repository>
+            <id>repo1</id>
+            <url>http://repo1.maven.org/maven2/</url>
+        </repository>
     </repositories>
 
     <pluginRepositories>
         <pluginRepository>
             <id>nexus-agile-bpm</id>
             <url>http://nexus.agilebpm.cn/nexus/content/groups/public/</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>alimaven</id>
+            <url>http://maven.aliyun.com/nexus/content/repositories/central/</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>repo1</id>
+            <url>http://repo1.maven.org/maven2/</url>
         </pluginRepository>
     </pluginRepositories>
 

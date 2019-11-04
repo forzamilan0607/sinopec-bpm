@@ -10,22 +10,27 @@ bpmModel.factory('bpmService', ['$rootScope', 'baseService', 'ArrayToolService',
     var bpmTask = null;
     var flowKey = null;
     var bpmService = {};
+    var isCustomInstance = false;
+    var materialId = "";
     /**
      * 初始化流程数据
      */
     bpmService.init = function (scope, initParam) {
-        debugger;
         var param = angular.fromJson(initParam);
         defId = param.defId;
         instanceId = param.instanceId;
         taskId = param.taskId;
         flowKey = param.defKey;
-
+        isCustomInstance = param.isCustomInstance;
+        materialId = param.materialId;
+        console.log(121212,initParam,param,isCustomInstance,!taskId , !isCustomInstance)
         var dataUrl = __ctx + "/bpm/task/getTaskData?taskId=" + taskId;
         if (!taskId) {
             dataUrl = __ctx + "/bpm/instance/getInstanceData?defId=" + defId + "&flowKey=" + flowKey + "&instanceId=" + instanceId + "&readonly=" + param.readonly;
         }
-
+        if(!taskId && isCustomInstance){
+            dataUrl = __ctx + "/bpm/material/process/getInstanceData?materialId="+materialId+"&defId=" + defId + "&flowKey=" + flowKey + "&instanceId=" + instanceId + "&readonly=" + param.readonly;
+        }
         var defer = baseService.get(dataUrl);
 
         $.getResultData(defer, function (data) {
@@ -102,7 +107,12 @@ bpmModel.factory('bpmService', ['$rootScope', 'baseService', 'ArrayToolService',
             }
         }
     };
-
+    bpmService.isCustomInstance = function () {
+        return isCustomInstance;
+    };
+    bpmService.materialId = function () {
+        return materialId;
+    };
     bpmService.isInstance = function () {
         return $.isEmpty(taskId);
     };
@@ -206,7 +216,9 @@ bpmModel.factory('bpmService', ['$rootScope', 'baseService', 'ArrayToolService',
                         formType: scope.form.type,
                         data: busData,
                         action: button.alias,
-                        nodeId: bpmService.getNodeId()
+                        nodeId: bpmService.getNodeId(),
+                        isCustomInstance:bpmService.isCustomInstance(),
+                        businessKey:bpmService.materialId()
                     };
                     //获取更多完成动作配置
                     if (button.configPage) {
@@ -236,6 +248,8 @@ bpmModel.factory('bpmService', ['$rootScope', 'baseService', 'ArrayToolService',
                     ii = layer.load();
                     // 执行动作
                     var url = __ctx + (flowData.taskId ? "/bpm/task/doAction" : "/bpm/instance/doAction");
+                    if(flowData.isCustomInstance)
+                        url = __ctx + "/bpm/material/process/start";
                     var defer = baseService.post(url, flowData);
                     $.getResultMsg(defer, function () {
                         layer.close(ii); //关闭等待框

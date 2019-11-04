@@ -49,7 +49,7 @@
 	            <artifactId>base-api</artifactId>
 	            <version>${agilebpm.version}</version>
 	        </dependency>
-	        
+
 		</dependencies>
 	</dependencyManagement>
 	
