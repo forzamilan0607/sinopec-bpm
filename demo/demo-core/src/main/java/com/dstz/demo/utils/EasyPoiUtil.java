@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
@@ -49,11 +50,12 @@ public class EasyPoiUtil {
         downLoadExcel(fileName, response, workbook);
     }
     private static void downLoadExcel(String fileName, HttpServletResponse response, Workbook workbook) {
+        OutputStream out = null;
         try {
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Disposition",
                     "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
-            response.setContentType("application/msexcel;charset=UTF-8");
+            response.setContentType("application/vnd.ms-exce;charset=UTF-8");
             workbook.write(response.getOutputStream());
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
