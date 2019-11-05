@@ -44,12 +44,13 @@
 
     <insert id="create" parameterType="com.dstz.demo.core.model.MaterialProcess">
 		INSERT INTO t_process_material
-		(id,enquiry_name,purchase_aply,material_no,material_desc,unit,number,plant,reserved_number,remark,process_id)
+		(id,enquiry_name,purchase_aply,material_no,material_desc,unit,number,plant,
+		reserved_number,remark,process_id)
 		VALUES
 		(#{id,jdbcType=VARCHAR}, #{enquiryName,jdbcType=VARCHAR}, #{purchaseAply,jdbcType=VARCHAR},
 		#{materialNo,jdbcType=VARCHAR}, #{materialDesc,jdbcType=VARCHAR}, #{unit,jdbcType=VARCHAR},
 		#{number,jdbcType=VARCHAR}, #{plant,jdbcType=VARCHAR}, #{reservedNumber,jdbcType=VARCHAR},
-		#{remark,jdbcType=VARCHAR}, #{reserved,jdbcType=VARCHAR}, #{processId,jdbcType=VARCHAR})
+		#{remark,jdbcType=VARCHAR}, #{processId,jdbcType=VARCHAR})
 	</insert>
 
     <select id="get"   parameterType="java.lang.String" resultMap="MaterialProcess">

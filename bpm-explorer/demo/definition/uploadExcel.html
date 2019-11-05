@@ -5,13 +5,20 @@
     <script type="text/javascript" src="../../build/common/base.js"></script>
     <script type="text/javascript" src="../../build/common/ngEdit.js"></script>
     <script type="text/javascript">
+        $(function(){
+            window.onload=function(){
+                document.querySelector("#file").addEventListener("change",function () {
+                    //获取到选中的文件
+                    var file = document.querySelector("#file").files[0];
+                    document.getElementById('upload').value =file.name;
+                })
+            }
+        });
         var app = angular.module('app', ['baseDirective']);
         app.controller("ctrl", [ '$http','$scope', 'baseService','ArrayToolService', function($http,$scope, baseService,ArrayToolService) {
             $scope.fileUpload =function fileUpload() {
                 var file = document.querySelector('input[type=file]').files[0];
                 if(file == null) return ;
-
-
                 // 构造参数
                 formData = new FormData();
                 formData.append('file', file, file.name);
@@ -28,11 +35,43 @@
             }
         }])
     </script>
+     <style type="text/css">
+    .filename{
+        width: 270px;
+        height: 36px;
+        line-height: 36px;
+    }
+    .ui-upload {
+        height: 36px;
+        width: 80px;
+        background-color: #00abff;
+        font-size: 14px;
+        line-height: 30px;
+        cursor: pointer;
+        display: inline-block;
+        text-align: center;
+        color: #fff;
+        border-radius: 3px;
+        border: 0px;
+        margin-left: 20px;
+    }
+    .btn{
+        margin-top: 40px;
+        margin-left: 108px;
+        background-color: #BF1C17;
+    }
+</style>
 </head>
 <body ng-controller="ctrl" class="panel success">
-<div >
-    <input type="file" file-model="myFile" accept=".xls,.xlsx"  >
-    <button ng-click="fileUpload()" >保存</button>
+<div style="margin:0 auto;
+text-align:center;
+">
+    <div>
+        <input type="file" file-model="myFile" accept=".xls,.xlsx" id="file" style="display:none;"/>
+        <input  class="filename" type="text" id="upload" readonly="readonly" style="vertical-align: middle;"/>
+        <button class="ui-upload" onclick="document.getElementById('file').click()">选择文件</button>
+    </div>
+    <button class="ui-upload btn" ng-click="fileUpload()" >导入</button>
 </div>
 </body>
 </html>

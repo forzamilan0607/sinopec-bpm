@@ -59,17 +59,23 @@
         <!-- 集成easypoi组件 .导出excel http://easypoi.mydoc.io/ -->
         <dependency>
             <groupId>cn.afterturn</groupId>
-            <artifactId>easypoi-base</artifactId>
+            <artifactId>easypoi-spring-boot-starter</artifactId>
+            <version>4.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
             <version>4.0.0</version>
         </dependency>
         <dependency>
-            <groupId>cn.afterturn</groupId>
-            <artifactId>easypoi-web</artifactId>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml-schemas</artifactId>
             <version>4.0.0</version>
         </dependency>
         <dependency>
-            <groupId>cn.afterturn</groupId>
-            <artifactId>easypoi-annotation</artifactId>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
             <version>4.0.0</version>
         </dependency>
         <dependency>

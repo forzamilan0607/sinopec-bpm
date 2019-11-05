@@ -1,23 +1,16 @@
 package com.dstz.demo.rest.controller;
 
-import cn.afterturn.easypoi.excel.ExcelImportUtil;
-import cn.afterturn.easypoi.excel.entity.ImportParams;
 import cn.afterturn.easypoi.excel.entity.result.ExcelImportResult;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.dstz.base.api.exception.BusinessException;
 import com.dstz.base.api.query.QueryFilter;
-import com.dstz.base.api.query.QueryOP;
 import com.dstz.base.api.response.impl.ResultMsg;
-import com.dstz.base.core.util.AppUtil;
+import com.dstz.base.core.id.IdUtil;
 import com.dstz.base.core.util.StringUtil;
 import com.dstz.base.db.model.page.PageResult;
 import com.dstz.base.rest.ControllerTools;
 import com.dstz.base.rest.util.RequestUtil;
-import com.dstz.bpm.api.constant.ActionType;
 import com.dstz.bpm.api.engine.action.cmd.FlowRequestParam;
-import com.dstz.bpm.api.engine.action.handler.ActionHandler;
-import com.dstz.bpm.api.engine.context.BpmContext;
 import com.dstz.bpm.api.engine.data.BpmFlowDataAccessor;
 import com.dstz.bpm.api.engine.data.result.BpmFlowInstanceData;
 import com.dstz.bpm.api.engine.data.result.FlowData;
@@ -29,14 +22,12 @@ import com.dstz.bpm.core.model.BpmInstance;
 import com.dstz.bpm.engine.action.cmd.DefaultInstanceActionCmd;
 import com.dstz.demo.core.manager.MaterialManager;
 import com.dstz.demo.core.model.MaterialProcess;
-import com.dstz.demo.utils.Upload;
+import com.dstz.demo.utils.EasyPoiUtil;
 import com.dstz.form.api.model.FormType;
 import com.dstz.sys.util.SysPropertyUtil;
 import com.github.pagehelper.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.scripting.xmltags.ForEachSqlNode;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,8 +37,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,34 +75,22 @@ public class MaterialController extends ControllerTools {
      * @Date: 2019/11/1 16:20
      */
     @PostMapping("/import")
-    public ResultMsg<JSONObject> importExcel(MultipartFile file){
+    public ResultMsg<JSONObject> importExcel(MultipartFile file,HttpServletResponse rsp){
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("data", "导入成功");
-        List<MaterialProcess> materialProcessList = new ArrayList<>();
-        ImportParams importParams = new ImportParams();
-        materialProcessList =Upload.importExcel(file,1,1,MaterialProcess.class);
-//        try {
-
-//            ExcelImportResult<MaterialProcess> result = ExcelImportUtil.importExcelMore(file.getInputStream(), MaterialProcess.class,
-//                    importParams);
-//            materialProcessList = result.getList();
-//        } catch (IOException e) {
-//            log.error(e.getMessage(), e);
-//            jsonObject.put("data", "导入失败");
-//            return super.getSuccessResult(jsonObject);
-//        } catch (Exception e) {
-//            log.error(e.getMessage(), e);
-//            jsonObject.put("data", "导入失败");
-//            return super.getSuccessResult(jsonObject);
-//        }
-//        String tmp = SysPropertyUtil.getByAlias("materialPurchaseProcessKEY", "");
-//        BpmDefinition bpmDefinition = bpmDefinitionManager.getByKey(tmp);
-//        if(bpmDefinition == null || bpmDefinition.getId() == null){
-//            jsonObject.put("data", "流程不存在:"+tmp);
-//            return super.getSuccessResult(jsonObject);
-//        }
-        for (MaterialProcess material : materialProcessList) {
-//            material.setProcessId(bpmDefinition.getId());
+        ExcelImportResult<MaterialProcess> result = EasyPoiUtil.importExcel(file,2,1,true,MaterialProcess.class);
+        List<MaterialProcess> successList = result.getList();
+        List<MaterialProcess> failList = result.getFailList();
+        log.info("是否存在验证未通过的数据:" + result.isVerfiyFail());
+        log.info("验证通过的数量:" + successList.size());
+        log.info("验证未通过的数量:" + failList.size());
+        if(result.isVerfiyFail()){
+            EasyPoiUtil.exportExcel(failList,"未通过数据",MaterialProcess.class,"验证未通过数据",rsp);
+            log.error("未通过数据：",failList);
+            throw new BusinessException("数据未通过验证");
+        }
+        for (MaterialProcess material : successList) {
+            material.setId(IdUtil.getSuid());
             materialManager.create(material);
         }
         return super.getSuccessResult(jsonObject);
