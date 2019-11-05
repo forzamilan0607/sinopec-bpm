@@ -11,11 +11,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -50,16 +53,35 @@ public class EasyPoiUtil {
         downLoadExcel(fileName, response, workbook);
     }
     private static void downLoadExcel(String fileName, HttpServletResponse response, Workbook workbook) {
-        OutputStream out = null;
+        response.reset();
+        response.setContentType("application/x-msdownload");
+        fileName = fileName + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+        ServletOutputStream outStream = null;
         try {
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Content-Disposition",
-                    "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
-            response.setContentType("application/vnd.ms-exce;charset=UTF-8");
-            workbook.write(response.getOutputStream());
+            response.setHeader("Content-disposition", "attachment; filename=" + new String(fileName.getBytes("gb2312"), "ISO-8859-1") + ".xlsx");
+            outStream = response.getOutputStream();
+            workbook.write(outStream);
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
+        } finally {
+            try {
+                if(outStream!=null){
+                    outStream.close();
+                }
+            }catch (Exception e){
+
+            }
+
         }
+//        try {
+//            response.setCharacterEncoding("UTF-8");
+//            response.setHeader("Content-Disposition",
+//                    "attachment;filename=" + new String(fileName.getBytes("GBK"),"UTF-8"));
+//            response.setContentType("application/vnd.ms-excel");
+//            workbook.write(response.getOutputStream());
+//        } catch (IOException e) {
+//            throw new RuntimeException(e.getMessage());
+//        }
     }
 
     /**

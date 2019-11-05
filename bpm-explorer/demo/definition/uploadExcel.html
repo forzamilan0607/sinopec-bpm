@@ -29,9 +29,21 @@
                     data:formData,//向后台发送的数据
                     headers:{'Content-type':undefined},
                     transformRequest: angular.identity
-                }).then(function(data) {
-                    console.log(33333,data)
+                }).success(function(data,header,config,status){
+                    $.Dialog.close(data);
                 })
+                .error(function(data,status){
+                    if(status==302){
+                        // 直接下载，用户体验好
+                        var $form = $('<form method="GET"></form>');
+                        $form.attr('action', data.msg);
+                        $form.appendTo($('body'));
+                        $form.submit();
+                        jQuery.Toast.error('导入失败');
+                    }else {
+                        jQuery.Toast.error(data);
+                    }
+                });
             }
         }])
     </script>

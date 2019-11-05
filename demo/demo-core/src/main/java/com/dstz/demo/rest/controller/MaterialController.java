@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
@@ -75,9 +76,9 @@ public class MaterialController extends ControllerTools {
      * @Date: 2019/11/1 16:20
      */
     @PostMapping("/import")
-    public ResultMsg<JSONObject> importExcel(MultipartFile file,HttpServletResponse rsp){
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("data", "导入成功");
+    public ResultMsg<String> importExcel(MultipartFile file,
+                                             HttpServletRequest ret ,
+                                             HttpServletResponse rsp){
         ExcelImportResult<MaterialProcess> result = EasyPoiUtil.importExcel(file,2,1,true,MaterialProcess.class);
         List<MaterialProcess> successList = result.getList();
         List<MaterialProcess> failList = result.getFailList();
@@ -85,15 +86,23 @@ public class MaterialController extends ControllerTools {
         log.info("验证通过的数量:" + successList.size());
         log.info("验证未通过的数量:" + failList.size());
         if(result.isVerfiyFail()){
-            EasyPoiUtil.exportExcel(failList,"未通过数据",MaterialProcess.class,"验证未通过数据",rsp);
-            log.error("未通过数据：",failList);
-            throw new BusinessException("数据未通过验证");
+            log.error("未通过数据：{}",failList);
+            ret.getSession().setAttribute("materialList", failList);
+            RequestDispatcher requestDispatcher = ret.getRequestDispatcher("/bpm/material/process/down/errorExcel" );
+            try {
+                rsp.setStatus(302);
+//                rsp.sendRedirect(ret.getContextPath()+"/bpm/material/process/down/errorExcel");
+//                requestDispatcher.forward(ret, rsp);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return super.getSuccessResult(ret.getContextPath()+"/bpm/material/process/down/errorExcel");
         }
         for (MaterialProcess material : successList) {
             material.setId(IdUtil.getSuid());
             materialManager.create(material);
         }
-        return super.getSuccessResult(jsonObject);
+        return super.getSuccessResult("导入成功");
     }
 
     @RequestMapping("/getInstanceData")
@@ -156,5 +165,11 @@ public class MaterialController extends ControllerTools {
         QueryFilter queryFilter = this.getQueryFilter(request);
         Page<BpmInstance> bpmInstanceList = (Page)this.materialManager.instanceQuery(queryFilter);
         return new PageResult(bpmInstanceList);
+    }
+
+    @RequestMapping("/down/errorExcel")
+    public void getInstanceData(HttpServletRequest ret,HttpServletResponse resp) {
+        List<MaterialProcess> failList = (List<MaterialProcess>) ret.getSession().getAttribute("materialList");
+        EasyPoiUtil.exportExcel(failList,"未通过数据",MaterialProcess.class,"验证未通过数据.xslx",resp);
     }
 }
