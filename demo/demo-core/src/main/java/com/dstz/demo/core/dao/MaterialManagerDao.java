@@ -8,6 +8,7 @@ import com.dstz.demo.core.model.MaterialProcess;
 import org.mybatis.spring.annotation.MapperScan;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: xiangzhi.liu
@@ -16,4 +17,5 @@ import java.util.List;
 @MapperScan
 public interface MaterialManagerDao extends BaseDao<String, MaterialProcess> {
     List<BpmInstance> instanceQuery(QueryFilter paramQueryFilter);
+    Map<String,Object> getInstance(String materialNo);
 }

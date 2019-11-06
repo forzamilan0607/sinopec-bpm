@@ -18,7 +18,10 @@
         app.controller("ctrl", [ '$http','$scope', 'baseService','ArrayToolService', function($http,$scope, baseService,ArrayToolService) {
             $scope.fileUpload =function fileUpload() {
                 var file = document.querySelector('input[type=file]').files[0];
-                if(file == null) return ;
+                if(file == null) {
+                    $.Dialog.error("请选择文件！");
+                    return;
+                }
                 // 构造参数
                 formData = new FormData();
                 formData.append('file', file, file.name);
@@ -30,7 +33,13 @@
                     headers:{'Content-type':undefined},
                     transformRequest: angular.identity
                 }).success(function(data,header,config,status){
-                    $.Dialog.close(data);
+                    msg = data.data
+                    if(!data.isSuccess){
+                        $.Dialog.success(JSON.stringify(msg.validateList));
+                    }else {
+                        $.Dialog.success(msg.msg);
+                        $.Dialog.close(window);
+                    }
                 })
                 .error(function(data,status){
                     if(status==302){
@@ -39,9 +48,10 @@
                         $form.attr('action', data.msg);
                         $form.appendTo($('body'));
                         $form.submit();
-                        jQuery.Toast.error('导入失败');
+                        $.Dialog.error('导入失败');
                     }else {
-                        jQuery.Toast.error(data);
+                        console.log("error:",data)
+                        $.Dialog.error('导入失败');
                     }
                 });
             }

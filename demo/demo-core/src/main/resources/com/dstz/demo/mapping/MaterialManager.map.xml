@@ -52,13 +52,40 @@
 		#{number,jdbcType=VARCHAR}, #{plant,jdbcType=VARCHAR}, #{reservedNumber,jdbcType=VARCHAR},
 		#{remark,jdbcType=VARCHAR}, #{processId,jdbcType=VARCHAR})
 	</insert>
-
+    <update id="update" parameterType="com.dstz.demo.core.model.MaterialProcess">
+		UPDATE t_process_material SET
+		enquiry_name=#{id,jdbcType=VARCHAR},
+		purchase_aply= #{purchaseAply,jdbcType=VARCHAR},
+		material_no=#{materialNo,jdbcType=VARCHAR},
+		material_desc=#{materialDesc,jdbcType=VARCHAR},
+		unit=#{unit,jdbcType=VARCHAR},
+		number=#{number,jdbcType=VARCHAR},
+		plant=#{plant,jdbcType=VARCHAR},
+		reserved_number=#{reservedNumber,jdbcType=VARCHAR},
+		remark=#{remark,jdbcType=VARCHAR}
+		WHERE
+		id=#{id}
+	</update>
     <select id="get"   parameterType="java.lang.String" resultMap="MaterialProcess">
 		SELECT * FROM t_process_material
 		WHERE
 		id=#{id}
 	</select>
-
+    <resultMap id="materialMap" type="java.util.Map">
+        <result property="isInstance" column="isInstance"/>
+        <result property="id" column="id"/>
+    </resultMap>
+    <select id="getInstance"   parameterType="java.lang.String" resultMap="materialMap">
+		SELECT
+		material.id as id,
+		IF(IFNULL( link.id_, 0 )= 0,'false','true') AS isInstance
+		FROM t_process_material AS material
+        LEFT JOIN bpm_bus_link AS link
+        ON link.biz_id_ = material.id
+		WHERE
+		material_no=#{materialNo}
+		limit 1
+	</select>
     <select id="query" parameterType="java.util.Map" resultMap="MaterialProcess">
         SELECT * FROM t_process_material
         <where>

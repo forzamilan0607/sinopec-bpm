@@ -6,7 +6,33 @@
 <script type="text/javascript" src="../../build/common/base.js"></script>
 <script type="text/javascript" src="../../build/common/gridList.js"></script>
 <script type="text/javascript" src="../../build/common/easyLayout.js"></script>
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
 <script type="text/javascript">
+	function batchStart() {
+		//  获取选中的记录
+		var selectedObjs = $("[ab-grid]").bootstrapTable("getSelections");
+		if (!selectedObjs || !selectedObjs.length) {
+			$.Dialog.error("请选择数据！");
+			return;
+		}
+		var ids = selectedObjs.map(item => item.id).join(",");
+		var url = getCtxUrl('/bpm/material/process/start/batch', true);
+		$.ajax({
+			type: "POST",
+			url: url,
+			contentType: "application/json;charset=utf-8",
+			data:JSON.stringify(selectedObjs),
+			dataType: "json",
+			success:function (data) {
+				data = JSON.parse(data);
+				$.Dialog.success(data.msg);
+			},
+			error:function (message) {
+				console.log("提交失败:"+JSON.stringify(message))
+				$.Dialog.error("操作失败");
+			}
+		});
+	}
 </script>
 </head>
 <body class="easy-layout">
@@ -37,7 +63,6 @@
 						<div class="col-sm-8" style="text-align: left;">
 							<button type="button" style="margin-left: 50px" class="btn btn-primary fa-search">查询</button>
 							<button type="button" style="margin-left: 50px" class="btn btn-primary fa-rotate-left">重置</button>
-
 						</div>
 					</div>
 				</form>
@@ -45,6 +70,7 @@
 		</div>
 		<div class="btn-group toolbar">
 			<button class="btn btn-outline btn-primary fa-plus" openDialog="Excel导入" url="uploadExcel">Excel导入</button>
+			<button class="btn btn-outline btn-primary fa-plus"  onclick="batchStart()" >批量处理</button>
 		</div>
 		<table ab-grid data-id-field="id" data-url="bpm/material/process/listJson">
 			<thead>
@@ -69,27 +95,7 @@
 			</tr>
 			</thead>
 		</table>
-		<!--<table ab-grid data-id-field="id" data-url="bpm/material/process/listJson">
-			<thead>
-				<tr>
-					<th data-checkbox="true">序号</th>
-					<th data-field="enquiryName">询价名称</th>
-					<th data-field="purchaseAply">采购申请</th>
-					<th data-field="materialNo">物料编码</th>
-					<th data-field="materialDesc">物料描述</th>
-					<th data-field="unit">单位</th>
-					<th data-field="number">数量</th>
-					<th data-field="plant">车间</th>
-					<th data-field="reservedNumber">预留</th>
-					<th data-field="remark">备注</th>
-					<th data-field="id" data-formatter="innerHtmlFormatter" data-title="管理">
-						<span if="'{actDefId}'" class="fa-send btn btn-outline btn-primary btn-sm" iview="标记" qtip='启动' openDialog="发起申请【{name}】" top="true" url="demo/definition/start.html?defId={processId}"></span>
-						<span if="!'{actDefId}'" class="fa-send btn btn-outline btn-primary btn-sm" qtip='请完成流程设计后再启动流程！'></span>
 
-					</th>
-				</tr>
-			</thead>
-		</table>-->
 	</div>
 </body>
 <script type="text/javascript">

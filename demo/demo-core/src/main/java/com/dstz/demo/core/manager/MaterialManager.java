@@ -7,6 +7,7 @@ import com.dstz.bpm.core.model.BpmInstance;
 import com.dstz.demo.core.model.MaterialProcess;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: xiangzhi.liu
@@ -14,4 +15,5 @@ import java.util.List;
  */
 public interface MaterialManager extends Manager<String, MaterialProcess> {
     List<BpmInstance> instanceQuery(QueryFilter paramQueryFilter);
+    Map<String,Object> getInstance(String materialNo);
 }

@@ -1,12 +1,14 @@
 package com.dstz.demo.rest.controller;
 
 import cn.afterturn.easypoi.excel.entity.result.ExcelImportResult;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.dstz.base.api.exception.BusinessException;
 import com.dstz.base.api.query.QueryFilter;
 import com.dstz.base.api.response.impl.ResultMsg;
 import com.dstz.base.core.id.IdUtil;
 import com.dstz.base.core.util.StringUtil;
+import com.dstz.base.core.util.ValidateUtil;
 import com.dstz.base.db.model.page.PageResult;
 import com.dstz.base.rest.ControllerTools;
 import com.dstz.base.rest.util.RequestUtil;
@@ -38,6 +40,7 @@ import javax.annotation.Resource;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,9 +79,11 @@ public class MaterialController extends ControllerTools {
      * @Date: 2019/11/1 16:20
      */
     @PostMapping("/import")
-    public ResultMsg<String> importExcel(MultipartFile file,
+    public ResultMsg<JSONObject> importExcel(MultipartFile file,
                                              HttpServletRequest ret ,
                                              HttpServletResponse rsp){
+        JSONObject json = new JSONObject();
+        json.put("isSuccess",true);
         ExcelImportResult<MaterialProcess> result = EasyPoiUtil.importExcel(file,2,1,true,MaterialProcess.class);
         List<MaterialProcess> successList = result.getList();
         List<MaterialProcess> failList = result.getFailList();
@@ -88,26 +93,40 @@ public class MaterialController extends ControllerTools {
         if(result.isVerfiyFail()){
             log.error("未通过数据：{}",failList);
             ret.getSession().setAttribute("materialList", failList);
-            RequestDispatcher requestDispatcher = ret.getRequestDispatcher("/bpm/material/process/down/errorExcel" );
-            try {
-                rsp.setStatus(302);
-//                rsp.sendRedirect(ret.getContextPath()+"/bpm/material/process/down/errorExcel");
-//                requestDispatcher.forward(ret, rsp);
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-            return super.getSuccessResult(ret.getContextPath()+"/bpm/material/process/down/errorExcel");
+            rsp.setStatus(302);
+            json.put("isSuccess",false);
+            json.put("url",ret.getContextPath()+"/bpm/material/process/down/errorExcel");
+            return super.getSuccessResult(json);
         }
+        List<String> validateList = new ArrayList<>();
         for (MaterialProcess material : successList) {
-            material.setId(IdUtil.getSuid());
-            materialManager.create(material);
+            // 判断是否存在
+            Map<String,Object> tmp = this.materialManager.getInstance(material.getMaterialNo());
+            if(tmp!=null && tmp.get("id")!=null){
+                if("true".equalsIgnoreCase((String)tmp.get("isInstance"))){
+                    validateList.add("【"+material.getMaterialNo()+"】已经启动流程");
+                    continue;
+                }
+                material.setId((String)tmp.get("id"));
+                materialManager.update(material);
+            } else {
+                material.setId(IdUtil.getSuid());
+                materialManager.create(material);
+            }
         }
-        return super.getSuccessResult("导入成功");
+        if(!validateList.isEmpty()){
+            json.put("isSuccess",false);
+            json.put("validateList", validateList);
+        }
+        return super.getSuccessResult(json);
     }
 
     @RequestMapping("/getInstanceData")
     public ResultMsg<FlowData> getInstanceData(HttpServletRequest request) {
         String materialId = request.getParameter("materialId");
+        if(StringUtils.isBlank(materialId)){
+            materialId = (String)request.getAttribute("materialId");
+        }
         String instanceId = request.getParameter("instanceId");
         Boolean readonly = RequestUtil.getBoolean(request, "readonly", false);
         String flowKey = SysPropertyUtil.getByAlias("materialPurchaseProcessKEY", "");
@@ -144,11 +163,21 @@ public class MaterialController extends ControllerTools {
      */
     @PostMapping("/start")
     public ResultMsg<String> startProcess(@RequestBody FlowRequestParam flowParam){
+        MaterialProcess material = this.materialManager.get(flowParam.getBusinessKey());
+        Map<String,Object> tmp = this.materialManager.getInstance(material.getMaterialNo());
+        if(tmp == null) {
+            return this.getSuccessResult("数据错误！");
+        }
+        if(tmp.get("id")!=null){
+            if("true".equalsIgnoreCase((String)tmp.get("isInstance"))){
+                return this.getSuccessResult("此流程已经启动");
+            }
+        }
         DefaultInstanceActionCmd instanceCmd = new DefaultInstanceActionCmd(flowParam);
         String businessKey = flowParam.getBusinessKey();
         flowParam.setBusinessKey(null);
         String actionName = instanceCmd.executeCmd();
-        MaterialProcess material = this.materialManager.get(businessKey);
+
         this.materialManager.remove(businessKey);
         BpmInstance bpmInstance = bpmInstanceManager.get(instanceCmd.getInstanceId());
         BpmDefinition def = this.bpmDefinitionMananger.getByKey(bpmInstance.getDefKey());
@@ -158,6 +187,28 @@ public class MaterialController extends ControllerTools {
         bpmInstance.setSubject(subject);
         bpmInstanceManager.update(bpmInstance);
         return this.getSuccessResult(instanceCmd.getInstanceId(), actionName + "成功");
+    }
+    @PostMapping("/start/batch")
+    public ResultMsg<String> batchStartProcess(@RequestBody List<MaterialProcess> materialList,HttpServletRequest request){
+        FlowRequestParam flowParam = new FlowRequestParam();
+        flowParam.setAction("start");
+        flowParam.setFormType("INNER");
+        JSONObject json = new JSONObject();
+        String flowKey = SysPropertyUtil.getByAlias("materialPurchaseProcessKEY", "");
+        BpmDefinition def = this.bpmDefinitionMananger.getByKey(flowKey);
+        if (def == null) {
+            throw new BusinessException("流程定义查找失败！ flowKey： " + flowKey, BpmStatusCode.DEF_LOST);
+        }
+        String defId = def.getId();
+        for (MaterialProcess material : materialList) {
+            material.setProcessId(defId);
+            flowParam.setBusinessKey(material.getId());
+            json.put("processMaterial",material);
+            flowParam.setData(json);
+            flowParam.setDefId(defId);
+            startProcess(flowParam);
+        }
+        return this.getSuccessResult("启动成功");
     }
 
     @PostMapping({"instance/listJson"})

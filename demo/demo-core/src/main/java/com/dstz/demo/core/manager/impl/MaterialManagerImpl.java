@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: xiangzhi.liu
@@ -26,5 +27,9 @@ public class MaterialManagerImpl extends BaseManager<String, MaterialProcess> im
     @Override
     public List<BpmInstance> instanceQuery(QueryFilter paramQueryFilter) {
         return materialManagerDao.instanceQuery(paramQueryFilter);
+    }
+    @Override
+    public Map<String,Object> getInstance(String materialNo){
+        return materialManagerDao.getInstance(materialNo);
     }
 }
