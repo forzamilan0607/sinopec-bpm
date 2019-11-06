@@ -17,6 +17,7 @@
 		}
 		var ids = selectedObjs.map(item => item.id).join(",");
 		var url = getCtxUrl('/bpm/material/process/start/batch', true);
+		var ii = layer.load();
 		$.ajax({
 			type: "POST",
 			url: url,
@@ -24,10 +25,11 @@
 			data:JSON.stringify(selectedObjs),
 			dataType: "json",
 			success:function (data) {
-				data = JSON.parse(data);
+			    layer.close(ii);
 				$.Dialog.success(data.msg);
 			},
 			error:function (message) {
+                layer.close(ii);
 				console.log("提交失败:"+JSON.stringify(message))
 				$.Dialog.error("操作失败");
 			}
@@ -49,18 +51,18 @@
 				<form id="searchForm" class="form-horizontal">
 					<div class="form-group" style="margin-right: 0px;">
 						<label class="control-label col-sm-1" for="enquiry_name^VLK">询价名称</label>
-						<div class="col-sm-3">
+						<div class="col-sm-2">
 							<input type="text" class="form-control" id="enquiry_name^VLK">
 						</div>
 						<label class="control-label col-sm-1" for="purchase_aply^VLK">采购单号</label>
-						<div class="col-sm-3">
+						<div class="col-sm-2">
 							<input type="text" class="form-control" id="purchase_aply^VLK">
 						</div>
 						<label class="control-label col-sm-1" for="material_no^VLK">物料编码</label>
-						<div class="col-sm-3">
+						<div class="col-sm-2">
 							<input type="text" class="form-control" id="material_no^VLK">
 						</div>
-						<div class="col-sm-8" style="text-align: left;">
+						<div class="col-sm-3" style="text-align: left;">
 							<button type="button" style="margin-left: 50px" class="btn btn-primary fa-search">查询</button>
 							<button type="button" style="margin-left: 50px" class="btn btn-primary fa-rotate-left">重置</button>
 						</div>
@@ -68,9 +70,9 @@
 				</form>
 			</div>
 		</div>
-		<div class="btn-group toolbar">
+		<div class="btn-group toolbar" style="padding-left: 5px;">
 			<button class="btn btn-outline btn-primary fa-plus" openDialog="Excel导入" url="uploadExcel">Excel导入</button>
-			<button class="btn btn-outline btn-primary fa-plus"  onclick="batchStart()" >批量处理</button>
+			<button class="btn btn-outline btn-primary"  onclick="batchStart()" >批量处理</button>
 		</div>
 		<table ab-grid data-id-field="id" data-url="bpm/material/process/listJson">
 			<thead>
@@ -85,12 +87,11 @@
 				<th data-field="plant">车间</th>
 				<th data-field="reservedNumber">预留</th>
 				<th data-field="remark">备注</th>
-				<!--<th data-field="supportMobile" data-formatter="labelFormatter" data-value-style="1-支持-primary,0-不支持-info,">移动端</th>-->
 				<th data-field="createTime" data-formatter="dateFormatter" data-visible="false">创建时间</th>
 				<th data-field="updateTime" data-formatter="dateTimeFormatter" data-visible="false">更新时间</th>
 				<th data-field="id" data-formatter="innerHtmlFormatter" data-title="管理">
-					<span  if="!'{processId}'" class="fa-send btn btn-outline btn-primary btn-sm" iview="标记" qtip='启动' openDialog="发起申请【{enquiryName}】" top="true" url="demo/definition/start.html?materialId={id}&defId={processId}&isCustomInstance=true"></span>
-					<span  if="'{processId}'" class="fa-detail btn btn-outline btn-primary btn-sm" iview="标记" qtip='流程实例' openDialog="流程实例 " top="true" url="demo/definition/instanceList.html"></span>
+					<span  class="fa-send btn btn-outline btn-primary btn-sm" iview="标记" qtip='启动' openDialog="发起申请【{enquiryName}】" top="true" url="demo/definition/start.html?materialId={id}&defId={processId}&isCustomInstance=true"></span>
+					<span  if="'{processId}'" class="fa-detail btn btn-outline btn-primary btn-sm" iview="标记" qtip='流程实例' openDialog="流程实例 " top="true" url="demo/definition/instanceList.html?id="></span>
 				</th>
 			</tr>
 			</thead>
