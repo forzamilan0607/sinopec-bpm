@@ -191,6 +191,14 @@ bpmModel.factory('bpmService', ['$rootScope', 'baseService', 'ArrayToolService',
                 var button;
                 scope.$root.$on("data:loaded", function (event, data) {
                     scope.buttonList = data.buttonList;
+                    if (window.location.href.indexOf("/demo/definition/start.html") > 0) {
+                        for (var i =0; i < scope.buttonList.length; i++) {
+                            var item = scope.buttonList[i];
+                            if (item.configPage) {
+                                item.configPage = "/.." + item.configPage;
+                            }
+                        }
+                    }
                 })
 
                 /**
