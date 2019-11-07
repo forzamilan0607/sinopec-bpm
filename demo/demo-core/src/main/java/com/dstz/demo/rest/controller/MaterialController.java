@@ -19,8 +19,10 @@ import com.dstz.bpm.api.engine.data.result.FlowData;
 import com.dstz.bpm.api.exception.BpmStatusCode;
 import com.dstz.bpm.core.manager.BpmDefinitionManager;
 import com.dstz.bpm.core.manager.BpmInstanceManager;
+import com.dstz.bpm.core.manager.BpmTaskManager;
 import com.dstz.bpm.core.model.BpmDefinition;
 import com.dstz.bpm.core.model.BpmInstance;
+import com.dstz.bpm.core.model.BpmTask;
 import com.dstz.bpm.engine.action.cmd.DefaultInstanceActionCmd;
 import com.dstz.demo.core.manager.MaterialManager;
 import com.dstz.demo.core.model.MaterialProcess;
@@ -64,6 +66,8 @@ public class MaterialController extends ControllerTools {
     BpmDefinitionManager bpmDefinitionMananger;
     @Resource
     BpmInstanceManager bpmInstanceManager;
+    @Resource
+    BpmTaskManager bpmTaskManager;
 
     @PostMapping({"listJson"})
     public PageResult listJson(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -186,6 +190,14 @@ public class MaterialController extends ControllerTools {
         String subject = StringUtils.replace(bpmInstance.getSubject(),def.getName(),material.getEnquiryName());
         bpmInstance.setSubject(subject);
         bpmInstanceManager.update(bpmInstance);
+        List<BpmTask> bpmTaskList = bpmTaskManager.getByInstId(instanceCmd.getInstanceId());
+        if(bpmTaskList!=null && !bpmTaskList.isEmpty()){
+            for (BpmTask bpmTask : bpmTaskList) {
+                String _tmp = StringUtils.replace(bpmTask.getSubject(),def.getName(),material.getEnquiryName());
+                bpmTask.setSubject(_tmp);
+                bpmTaskManager.update(bpmTask);
+            }
+        }
         return this.getSuccessResult(instanceCmd.getInstanceId(), actionName + "成功");
     }
     @PostMapping("/start/batch")

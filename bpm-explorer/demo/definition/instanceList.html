@@ -15,7 +15,7 @@ $(function(){
 })
 </script>
 </head>
-<body>
+<body ng-controller="InstanceController">
 	<div class="panel-body" style="padding-bottom: 0px;">
 		<!--<form id="searchForm" class="form-horizontal" style="display: none;">
 			<div class="form-group">
@@ -45,6 +45,13 @@ $(function(){
 				</form>
 			</div>
 		</div>-->
+		<form id="searchForm" class="form-horizontal" style="display: none;">
+			<div class="form-group">
+				<div class="col-sm-3">
+					<input type="hidden"  class="form-control" id="material_no^VIN" >
+				</div>
+			</div>
+		</form>
 		<!--grid区域  -->
 		<table ab-grid data-id-field="id" data-url="/bpm/material/process/instance/listJson">
 			<thead>
@@ -61,8 +68,8 @@ $(function(){
 					<th data-field="duration" data-formatter="$.timeLag">持续时间</th>
 
 					<th data-formatter="innerHtmlFormatter" data-title="管理">
-						<a class="fa-detail btn btn-outline btn-primary btn-sm" iview="标记" openDialog='流程实例详情 【{subject}】' qtip='详情' url='/../bpm/instance/instanceDetail.html?id={id}'></a>
-						<span class="fa-cogs btn btn-outline btn-primary btn-sm" openDialog='流程实例任务情况【{subject}】' qtip="任务情况" url="/../bpm/instance/taskOpinionHistory.html?instanceId={id}"></span>
+						<a class="fa-detail btn btn-outline btn-primary btn-sm" iview="标记" openDialog='流程实例详情 【{subject}】' qtip='详情' url='/bpm/instance/instanceDetail.html?id={id}'></a>
+						<span class="fa-cogs btn btn-outline btn-primary btn-sm" openDialog='流程实例任务情况【{subject}】' qtip="任务情况" url="/bpm/instance/taskOpinionHistory.html?instanceId={id}"></span>
 					</th>
 				</tr>
 			</thead>

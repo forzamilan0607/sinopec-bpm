@@ -465,6 +465,7 @@
                 },
                 BootstrapTable.prototype.init = function() {
                     this.extractTaskIds(),
+                    this.extractMaterialNo();
                     this.initLocale(),
                     this.initContainer(),
                     this.initTable(),
@@ -481,6 +482,11 @@
                    if ($("#id_\\^VIN").length > 0) {
                        $("#id_\\^VIN").val(window.location.search.replace("?taskIds=", ""));
                    }
+                },
+                BootstrapTable.prototype.extractMaterialNo = function() {
+                    if ($("#material_no\\^VIN").length > 0) {
+                        $("#material_no\\^VIN").val(window.location.search.replace("?materialNo=", ""));
+                    }
                 },
                 BootstrapTable.prototype.initLocale = function() {
                     if (this.options.locale) {
