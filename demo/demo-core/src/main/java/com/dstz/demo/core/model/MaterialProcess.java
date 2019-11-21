@@ -51,4 +51,6 @@ public class MaterialProcess extends BaseModel {
     private String reserved;
     /** 流程ID */
     private String processId;
+
+    private String instId;
 }
