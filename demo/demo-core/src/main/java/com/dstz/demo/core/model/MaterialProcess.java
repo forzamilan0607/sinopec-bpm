@@ -53,4 +53,10 @@ public class MaterialProcess extends BaseModel {
     private String processId;
 
     private String instId;
+
+    private boolean hasInst;
+
+    public boolean isHasInst() {
+        return this.instId != null;
+    }
 }
