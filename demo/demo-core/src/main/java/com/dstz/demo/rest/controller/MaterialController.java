@@ -73,6 +73,11 @@ public class MaterialController extends ControllerTools {
     public PageResult listJson(HttpServletRequest request, HttpServletResponse response) throws Exception {
         QueryFilter queryFilter = this.getQueryFilter(request);
         List<MaterialProcess> bpmDefinitionList = this.materialManager.query(queryFilter);
+        for (MaterialProcess materialProcess : bpmDefinitionList) {
+            if(materialProcess.isHasInst()){
+                materialProcess.setDisabled(true);
+            }
+        }
         return new PageResult(bpmDefinitionList);
     }
     /**
