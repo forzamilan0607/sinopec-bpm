@@ -27,6 +27,8 @@
 			success:function (data) {
 			    layer.close(ii);
 				$.Dialog.success(data.msg);
+				$("#btn_query").trigger("click");
+
 			},
 			error:function (message) {
                 layer.close(ii);
@@ -63,7 +65,7 @@
 							<input type="text" class="form-control" id="material_no^VLK">
 						</div>
 						<div class="col-sm-3" style="text-align: left;">
-							<button type="button" style="margin-left: 50px" class="btn btn-primary fa-search">查询</button>
+							<button type="button" style="margin-left: 50px" class="btn btn-primary fa-search" id="btn_query">查询</button>
 							<button type="button" style="margin-left: 50px" class="btn btn-primary fa-rotate-left">重置</button>
 						</div>
 					</div>
@@ -71,8 +73,8 @@
 			</div>
 		</div>
 		<div class="btn-group toolbar" style="padding-left: 5px;">
-			<button class="btn btn-outline btn-primary fa-plus" openDialog="Excel导入" url="uploadExcel">Excel导入</button>
-			<button class="btn btn-outline btn-primary"  onclick="batchStart()" >批量处理</button>
+			<button class="btn btn-outline btn-primary fa-plus" top="true" openDialog="Excel导入" dialogConf='"height":150,"width":750' url="demo/definition/uploadExcel.html">Excel导入</button>
+			<button class="btn btn-outline btn-primary"  onclick="batchStart()" >批量启动</button>
 		</div>
 		<table ab-grid data-id-field="id" data-url="bpm/material/process/listJson">
 			<thead>

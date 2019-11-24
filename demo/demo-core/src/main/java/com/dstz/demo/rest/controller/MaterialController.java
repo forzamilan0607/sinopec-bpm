@@ -93,7 +93,7 @@ public class MaterialController extends ControllerTools {
                                              HttpServletResponse rsp){
         JSONObject json = new JSONObject();
         json.put("isSuccess",true);
-        ExcelImportResult<MaterialProcess> result = EasyPoiUtil.importExcel(file,2,1,true,MaterialProcess.class);
+        ExcelImportResult<MaterialProcess> result = EasyPoiUtil.importExcel(file,3,1,true,MaterialProcess.class);
         List<MaterialProcess> successList = result.getList();
         List<MaterialProcess> failList = result.getFailList();
         log.info("是否存在验证未通过的数据:" + result.isVerfiyFail());
@@ -121,6 +121,8 @@ public class MaterialController extends ControllerTools {
             ret.getSession().setAttribute("materialList", failList);
             rsp.setStatus(302);
             json.put("isSuccess",false);
+            json.put("successCount", successList.size());
+            json.put("failedCount", failList.size());
             json.put("url",ret.getContextPath()+"/bpm/material/process/down/errorExcel");
             return super.getSuccessResult(json);
         }
@@ -239,6 +241,6 @@ public class MaterialController extends ControllerTools {
     @RequestMapping("/down/errorExcel")
     public void getInstanceData(HttpServletRequest ret,HttpServletResponse resp) {
         List<MaterialProcess> failList = (List<MaterialProcess>) ret.getSession().getAttribute("materialList");
-        EasyPoiUtil.exportExcel(failList,"未通过数据(其他数据以保存)",MaterialProcess.class,"验证未通过数据",resp);
+        EasyPoiUtil.exportExcel(failList,"导入失败说明",MaterialProcess.class,"导入失败说明",resp);
     }
 }

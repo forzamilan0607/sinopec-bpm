@@ -48,7 +48,7 @@ public class EasyPoiUtil {
         downLoadExcel(fileName, response, workbook);
     }
     private static void defaultExport(List<Map<String, Object>> list, String fileName, HttpServletResponse response) {
-        Workbook workbook = ExcelExportUtil.exportExcel(list, ExcelType.HSSF);
+        Workbook workbook = ExcelExportUtil.exportExcel(list, ExcelType.XSSF);
         if (workbook != null);
         downLoadExcel(fileName, response, workbook);
     }
@@ -58,7 +58,7 @@ public class EasyPoiUtil {
         fileName = fileName + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
         ServletOutputStream outStream = null;
         try {
-            response.setHeader("Content-disposition", "attachment; filename=" + new String(fileName.getBytes("gb2312"), "ISO-8859-1") + ".xlsx");
+            response.setHeader("Content-disposition", "attachment; filename=" + new String(fileName.getBytes("gb2312"), "ISO-8859-1") + ".xls");
             outStream = response.getOutputStream();
             workbook.write(outStream);
         } catch (IOException e) {

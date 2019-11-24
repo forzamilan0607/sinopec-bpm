@@ -15,6 +15,14 @@
             }
         });
         var app = angular.module('app', ['baseDirective']);
+        function closeAndReload() {
+            top.layer.closeAll('dialog');
+            layer.closeAll();
+            parent.layer.closeAll();
+            if (window.opener && window.opener.reloadGrid) {
+                window.opener.reloadGrid();
+            }
+        }
         app.controller("ctrl", [ '$http','$scope', 'baseService','ArrayToolService', function($http,$scope, baseService,ArrayToolService) {
             $scope.fileUpload =function fileUpload() {
                 var file = document.querySelector('input[type=file]').files[0];
@@ -26,6 +34,7 @@
                 formData = new FormData();
                 formData.append('file', file, file.name);
                 var url = getCtxUrl('/bpm/material/process/import',true);
+                var ii = layer.load();
                 var rtn = $http({
                     method:'post',
                     url:url,
@@ -33,25 +42,29 @@
                     headers:{'Content-type':undefined},
                     transformRequest: angular.identity
                 }).success(function(data,header,config,status){
-                    msg = data.data
-                    if(!data.isSuccess){
-                        $.Dialog.success(JSON.stringify(msg.validateList));
+                    layer.close(ii);
+                    var resp = data.data;
+                    if(!resp.isSuccess){
+                        $.Dialog.success(JSON.stringify(resp.validateList), closeAndReload);
                     }else {
-                        $.Dialog.success(msg.msg);
-                        $.Dialog.close(window);
+                        $.Dialog.success("导入成功", closeAndReload);
                     }
                 })
                 .error(function(data,status){
+                    layer.close(ii);
                     if(status==302){
                         // 直接下载，用户体验好
-                        var $form = $('<form method="GET"></form>');
+                        var hasExistErrorForm = $("#errorExcelForm").length > 0;
+                        console.log("hasExistErrorForm = " +  hasExistErrorForm);
+                        var $form = hasExistErrorForm ? $("#errorExcelForm") : $('<form method="GET" id="errorExcelForm"></form>');
                         $form.attr('action', data.data.url);
-                        $form.appendTo($('body'));
+                        !hasExistErrorForm && $form.appendTo($('body'));
                         $form.submit();
-                        $.Dialog.error('导入失败(未通过数据请查《验证未通过数据.xslx》)');
+                        var msg = data.data.successCount > 0 ? "导入成功" + data.data.successCount + "条记录，导入失败" + data.data.failedCount + "条记录，失败原因请查看《导入失败说明.xls》" : '导入失败(详细信息请查看《导入失败说明.xls》)';
+                        $.Dialog.error(msg, closeAndReload);
                     }else {
                         console.log("error:",data)
-                        $.Dialog.error('导入失败');
+                        $.Dialog.error('导入失败', closeAndReload);
                     }
                 });
             }
@@ -77,26 +90,25 @@
         border: 0px;
         margin-left: 20px;
     }
-    .btn{
+    /*.btn{
         margin-top: 40px;
         margin-left: 108px;
         background-color: #BF1C17;
-    }
+    }*/
 </style>
 </head>
-<body ng-controller="ctrl" class="panel success">
-<div style="margin:0 auto;
-text-align:center;
-">
-    <div>
-        <input type="file" file-model="myFile" accept=".xls,.xlsx" id="file" style="display:none;"/>
-        <input  class="filename" type="text" id="upload" readonly="readonly" style="vertical-align: middle;"/>
-        <button class="ui-upload" onclick="document.getElementById('file').click()">选择文件</button>
+<body ng-controller="ctrl" class="panel success" style="overflow: hidden;">
+    <div class="container">
+        <div class="form-group col-xs-7">
+            <input type="file" file-model="myFile" accept=".xls,.xlsx" id="file" style="display:none;"/>
+            <!--<input  class="filename" id="upload" readonly="readonly" style="vertical-align: middle;"/>-->
+            <input  class="form-control" id="upload" readonly="readonly" style="vertical-align: middle;"/>
+        </div>
+        <div class="form-group col-xs-5">
+            <button class="btn btn-primary fa-search" onclick="document.getElementById('file').click()">选择文件</button>
+            <button class="btn btn-primary fa-upload" ng-click="fileUpload()" >导入</button>
+            <a class="btn btn-primary fa-download" href="../template/物料采购计划模板.xlsx"  title="下载模板" mce_href="#">模板下载</a>
+        </div>
     </div>
-    <div>
-        <button class="ui-upload btn" ng-click="fileUpload()" >导入</button>
-        <a class="btn btn-success btn-lg" href="../template/material-purchasing.xlsx"  title="下载模板" mce_href="#">下载模板</a>
-    </div>
-</div>
 </body>
 </html>
