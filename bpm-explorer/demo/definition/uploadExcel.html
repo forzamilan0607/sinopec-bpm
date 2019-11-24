@@ -45,10 +45,10 @@
                     if(status==302){
                         // 直接下载，用户体验好
                         var $form = $('<form method="GET"></form>');
-                        $form.attr('action', data.msg);
+                        $form.attr('action', data.data.url);
                         $form.appendTo($('body'));
                         $form.submit();
-                        $.Dialog.error('导入失败');
+                        $.Dialog.error('导入失败(未通过数据请查《验证未通过数据.xslx》)');
                     }else {
                         console.log("error:",data)
                         $.Dialog.error('导入失败');

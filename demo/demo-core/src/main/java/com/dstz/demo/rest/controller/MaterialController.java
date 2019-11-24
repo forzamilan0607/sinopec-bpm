@@ -99,15 +99,8 @@ public class MaterialController extends ControllerTools {
         log.info("是否存在验证未通过的数据:" + result.isVerfiyFail());
         log.info("验证通过的数量:" + successList.size());
         log.info("验证未通过的数量:" + failList.size());
-        if(result.isVerfiyFail()){
-            log.error("未通过数据：{}",failList);
-            ret.getSession().setAttribute("materialList", failList);
-            rsp.setStatus(302);
-            json.put("isSuccess",false);
-            json.put("url",ret.getContextPath()+"/bpm/material/process/down/errorExcel");
-            return super.getSuccessResult(json);
-        }
         List<String> validateList = new ArrayList<>();
+        //保存成功信息
         for (MaterialProcess material : successList) {
             // 判断是否存在
             Map<String,Object> tmp = this.materialManager.getInstance(material.getMaterialNo());
@@ -122,6 +115,14 @@ public class MaterialController extends ControllerTools {
                 material.setId(IdUtil.getSuid());
                 materialManager.create(material);
             }
+        }
+        if(result.isVerfiyFail()){
+            log.error("未通过数据：{}",failList);
+            ret.getSession().setAttribute("materialList", failList);
+            rsp.setStatus(302);
+            json.put("isSuccess",false);
+            json.put("url",ret.getContextPath()+"/bpm/material/process/down/errorExcel");
+            return super.getSuccessResult(json);
         }
         if(!validateList.isEmpty()){
             json.put("isSuccess",false);
@@ -238,6 +239,6 @@ public class MaterialController extends ControllerTools {
     @RequestMapping("/down/errorExcel")
     public void getInstanceData(HttpServletRequest ret,HttpServletResponse resp) {
         List<MaterialProcess> failList = (List<MaterialProcess>) ret.getSession().getAttribute("materialList");
-        EasyPoiUtil.exportExcel(failList,"未通过数据",MaterialProcess.class,"验证未通过数据.xslx",resp);
+        EasyPoiUtil.exportExcel(failList,"未通过数据(其他数据以保存)",MaterialProcess.class,"验证未通过数据",resp);
     }
 }
