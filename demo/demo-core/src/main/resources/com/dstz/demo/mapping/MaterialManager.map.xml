@@ -45,16 +45,16 @@
     <insert id="create" parameterType="com.dstz.demo.core.model.MaterialProcess">
 		INSERT INTO t_process_material
 		(id,enquiry_name,purchase_aply,material_no,material_desc,unit,number,plant,
-		reserved_number,remark,process_id)
+		reserved_number,remark,process_id,gmt_create,user_create)
 		VALUES
 		(#{id,jdbcType=VARCHAR}, #{enquiryName,jdbcType=VARCHAR}, #{purchaseAply,jdbcType=VARCHAR},
 		#{materialNo,jdbcType=VARCHAR}, #{materialDesc,jdbcType=VARCHAR}, #{unit,jdbcType=VARCHAR},
 		#{number,jdbcType=VARCHAR}, #{plant,jdbcType=VARCHAR}, #{reservedNumber,jdbcType=VARCHAR},
-		#{remark,jdbcType=VARCHAR}, #{processId,jdbcType=VARCHAR})
+		#{remark,jdbcType=VARCHAR}, #{processId,jdbcType=VARCHAR},now(),#{createBy})
 	</insert>
     <update id="update" parameterType="com.dstz.demo.core.model.MaterialProcess">
 		UPDATE t_process_material SET
-		enquiry_name=#{id,jdbcType=VARCHAR},
+		enquiry_name=#{enquiryName,jdbcType=VARCHAR},
 		purchase_aply= #{purchaseAply,jdbcType=VARCHAR},
 		material_no=#{materialNo,jdbcType=VARCHAR},
 		material_desc=#{materialDesc,jdbcType=VARCHAR},
@@ -62,7 +62,9 @@
 		number=#{number,jdbcType=VARCHAR},
 		plant=#{plant,jdbcType=VARCHAR},
 		reserved_number=#{reservedNumber,jdbcType=VARCHAR},
-		remark=#{remark,jdbcType=VARCHAR}
+		remark=#{remark,jdbcType=VARCHAR},
+		update_time = now(),
+		update_by = #{updateBy}
 		WHERE
 		id=#{id}
 	</update>
@@ -78,12 +80,13 @@
     <select id="getInstance"   parameterType="java.lang.String" resultMap="materialMap">
 		SELECT
 		material.id as id,
+		purchase_aply AS purchaseAply,
 		IF(IFNULL( link.id_, 0 )= 0,'false','true') AS isInstance
 		FROM t_process_material AS material
         LEFT JOIN bpm_bus_link AS link
         ON link.biz_id_ = material.id
 		WHERE
-		material_no=#{materialNo}
+		purchase_aply=#{purchaseAply}
 		limit 1
 	</select>
     <select id="query" parameterType="java.util.Map" resultType="com.dstz.demo.core.model.MaterialProcess">

@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.dstz.base.api.exception.BusinessException;
 import com.dstz.base.api.query.QueryFilter;
+import com.dstz.base.api.query.QueryOP;
 import com.dstz.base.api.response.impl.ResultMsg;
 import com.dstz.base.core.id.IdUtil;
 import com.dstz.base.core.util.StringUtil;
@@ -28,6 +29,8 @@ import com.dstz.demo.core.manager.MaterialManager;
 import com.dstz.demo.core.model.MaterialProcess;
 import com.dstz.demo.utils.EasyPoiUtil;
 import com.dstz.form.api.model.FormType;
+import com.dstz.org.api.model.IUser;
+import com.dstz.sys.util.ContextUtil;
 import com.dstz.sys.util.SysPropertyUtil;
 import com.github.pagehelper.Page;
 import lombok.extern.slf4j.Slf4j;
@@ -72,6 +75,11 @@ public class MaterialController extends ControllerTools {
     @PostMapping({"listJson"})
     public PageResult listJson(HttpServletRequest request, HttpServletResponse response) throws Exception {
         QueryFilter queryFilter = this.getQueryFilter(request);
+        IUser user = ContextUtil.getCurrentUser();
+        boolean isAdmin = ContextUtil.isAdmin(user);
+        if (!isAdmin) {
+            queryFilter.addFilter("t.user_create", user.getUserId(), QueryOP.EQUAL);
+        }
         List<MaterialProcess> bpmDefinitionList = this.materialManager.query(queryFilter);
         for (MaterialProcess materialProcess : bpmDefinitionList) {
             if(materialProcess.isHasInst()){
@@ -99,20 +107,27 @@ public class MaterialController extends ControllerTools {
         log.info("是否存在验证未通过的数据:" + result.isVerfiyFail());
         log.info("验证通过的数量:" + successList.size());
         log.info("验证未通过的数量:" + failList.size());
-        List<String> validateList = new ArrayList<>();
+        StringBuilder errorMsg = new StringBuilder();
+        IUser currentUser = ContextUtil.getCurrentUser();
         //保存成功信息
+        int errorCount = 0;
         for (MaterialProcess material : successList) {
             // 判断是否存在
-            Map<String,Object> tmp = this.materialManager.getInstance(material.getMaterialNo());
+            Map<String,Object> tmp = this.materialManager.getInstance(material.getPurchaseAply());
             if(tmp!=null && tmp.get("id")!=null){
                 if("true".equalsIgnoreCase((String)tmp.get("isInstance"))){
-                    validateList.add("【"+material.getMaterialNo()+"】已经启动流程");
+                    if (errorCount++ == 0) {
+                        errorMsg.append("采购申请编号：");
+                    }
+                    errorMsg.append("【"+material.getPurchaseAply()+"】");
                     continue;
                 }
                 material.setId((String)tmp.get("id"));
+                material.setUpdateBy(currentUser.getUserId());
                 materialManager.update(material);
             } else {
                 material.setId(IdUtil.getSuid());
+                material.setCreateBy(currentUser.getUserId());
                 materialManager.create(material);
             }
         }
@@ -126,9 +141,10 @@ public class MaterialController extends ControllerTools {
             json.put("url",ret.getContextPath()+"/bpm/material/process/down/errorExcel");
             return super.getSuccessResult(json);
         }
-        if(!validateList.isEmpty()){
+        if(errorMsg.length() > 0){
+            errorMsg.append("已启动对应流程！");
             json.put("isSuccess",false);
-            json.put("validateList", validateList);
+            json.put("validateList", errorMsg);
         }
         return super.getSuccessResult(json);
     }
@@ -176,20 +192,14 @@ public class MaterialController extends ControllerTools {
     @PostMapping("/start")
     public ResultMsg<String> startProcess(@RequestBody FlowRequestParam flowParam){
         MaterialProcess material = this.materialManager.get(flowParam.getBusinessKey());
-        Map<String,Object> tmp = this.materialManager.getInstance(material.getMaterialNo());
-        if(tmp == null) {
-            return this.getSuccessResult("数据错误！");
-        }
-        if(tmp.get("id")!=null){
-            if("true".equalsIgnoreCase((String)tmp.get("isInstance"))){
-                return this.getSuccessResult("此流程已经启动");
-            }
+        Map<String,Object> tmp = this.materialManager.getInstance(material.getPurchaseAply());
+        if ("true".equalsIgnoreCase((String) tmp.get("isInstance"))) {
+            return this.getSuccessResult("当前流程已经启动");
         }
         DefaultInstanceActionCmd instanceCmd = new DefaultInstanceActionCmd(flowParam);
         String businessKey = flowParam.getBusinessKey();
         flowParam.setBusinessKey(null);
         String actionName = instanceCmd.executeCmd();
-
         this.materialManager.remove(businessKey);
         BpmInstance bpmInstance = bpmInstanceManager.get(instanceCmd.getInstanceId());
         BpmDefinition def = this.bpmDefinitionMananger.getByKey(bpmInstance.getDefKey());

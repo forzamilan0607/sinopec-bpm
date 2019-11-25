@@ -195,7 +195,7 @@ bpmModel.factory('bpmService', ['$rootScope', 'baseService', 'ArrayToolService',
                         for (var i =0; i < scope.buttonList.length; i++) {
                             var item = scope.buttonList[i];
                             if (item.configPage) {
-                                item.configPage = "/.." + item.configPage;
+                                item.configPage = window.location.href.indexOf("/bpm-explorer") > 0 ? "../../bpm-explorer" + item.configPage : "../.." + item.configPage;
                             }
                         }
                     }
