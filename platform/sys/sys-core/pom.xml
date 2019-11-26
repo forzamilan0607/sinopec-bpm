@@ -132,7 +132,7 @@
         </dependency>
          -->
 
-        <!-- org.apache.poi  -->
+        <!-- org.apache.poi
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
@@ -168,6 +168,7 @@
             <artifactId>poi</artifactId>
             <version>3.8-beta4</version>
         </dependency>
+        -->
 
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
