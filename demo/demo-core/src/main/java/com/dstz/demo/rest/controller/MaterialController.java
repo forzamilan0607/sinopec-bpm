@@ -238,7 +238,7 @@ public class MaterialController extends ControllerTools {
             flowParam.setDefId(defId);
             startProcess(flowParam);
         }
-        return this.getSuccessResult("启动成功");
+        return this.getSuccessResult("批量启动成功");
     }
 
     @PostMapping({"instance/listJson"})

@@ -190,7 +190,8 @@ bpmModel.factory('bpmService', ['$rootScope', 'baseService', 'ArrayToolService',
                 var ii;
                 var button;
                 scope.$root.$on("data:loaded", function (event, data) {
-                    scope.buttonList = data.buttonList;
+                    // TODO 过滤掉催办按钮
+                    scope.buttonList = $.grep(data.buttonList, item => item.alias != "reminder");
                     if (window.location.href.indexOf("/demo/definition/start.html") > 0) {
                         for (var i =0; i < scope.buttonList.length; i++) {
                             var item = scope.buttonList[i];
@@ -301,9 +302,9 @@ bpmModel.factory('bpmService', ['$rootScope', 'baseService', 'ArrayToolService',
 					<div ng-if="button.alias==\'flowImage\'" 	buttonAlias="{{button.alias}}"   	ng-click="buttonClick(false,600,800)" 	class="btn btn-primary fa fa-image">流程图</div>\
 			        <div ng-if="button.alias==\'manualEnd\'" 	buttonAlias="{{button.alias}}"   	ng-click="buttonClick(false,300,500)" 	class="btn btn-danger fa fa-ioxhost">人工终止</div>\
 					<div ng-if="button.alias==\'print\'" 		buttonAlias="{{button.alias}}"   	ng-click="buttonClick(false)" 			class="btn btn-primary fa fa-print">打印</div>\
-					<div ng-if="\'start,draft,save,agree,oppose,reject,reject2Start,lock,unlock,taskOpinion,flowImage,manualEnd,print,\'.indexOf(button.alias)==-1" 		buttonAlias="{{button.alias}}"   	ng-click="buttonClick(false)" 			class="btn btn-primary">{{button.name}}</div>\
 				 </span>',
             replace: true
+			// <div ng-if="\'start,draft,save,agree,oppose,reject,reject2Start,lock,unlock,taskOpinion,flowImage,manualEnd,print,\'.indexOf(button.alias)==-1" 		buttonAlias="{{button.alias}}"   	ng-click="buttonClick(false)" 			class="btn btn-primary">{{button.name}}</div>\
         };
     }])
 
@@ -398,12 +399,12 @@ bpmModel.factory('bpmService', ['$rootScope', 'baseService', 'ArrayToolService',
                 }
 
                 scope.postAction = function (flowData, innerWindow) {
-                    ii = layer.load();
+                    var loadLayer = top.layer.load();
                     // 执行动作
                     var url = __ctx + (flowData.taskId ? "/bpm/task/doMultiAction" : "/bpm/instance/doMultiAction");
                     var defer = baseService.post(url, flowData);
                     $.getResultMsg(defer, function () {
-                        layer.close(ii); //关闭等待框
+                        top.layer.close(loadLayer); //关闭等待框
                         scope.execuFn(button.afterScript);
 
                         if (innerWindow) {
@@ -417,7 +418,7 @@ bpmModel.factory('bpmService', ['$rootScope', 'baseService', 'ArrayToolService',
                             window.opener.reloadGrid();
                         }
                     }, function () {
-                        layer.close(ii);
+                        top.layer.close(loadLayer);
                     });
                 }
 
