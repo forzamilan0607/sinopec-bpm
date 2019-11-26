@@ -14,6 +14,11 @@
         <result property="remark" column="remark" jdbcType="VARCHAR"/>
         <result property="reserved" column="reserved" jdbcType="VARCHAR"/>
         <result property="processId" column="process_id" jdbcType="VARCHAR"/>
+        <result property="createTime" column="gmt_create" jdbcType="DATE"/>
+        <result property="updateTime" column="update_time" jdbcType="DATE"/>
+        <result property="createBy" column="user_create" jdbcType="VARCHAR"/>
+        <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
+        <result property="version" column="version" jdbcType="VARCHAR"/>
     </resultMap>
     <resultMap id="BpmInstance" type="com.dstz.bpm.core.model.BpmInstance">
         <id property="id" column="id_" jdbcType="VARCHAR"/>
