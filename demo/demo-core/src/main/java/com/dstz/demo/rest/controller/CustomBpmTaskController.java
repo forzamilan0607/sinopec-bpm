@@ -147,13 +147,13 @@ public class CustomBpmTaskController extends ControllerTools {
                 Date compareDate = timeLimit.getTaskDealTime() == null ? new Date() : timeLimit.getTaskDealTime();
                 timeLimit.setExpectDealTime(expectDealTime);
                 timeLimit.setDelayFlag(expectDealTime.before(compareDate));
-                if (timeLimit.getDelayFlag()) {
+                timeLimit.setDelayTimePeriod(DemoUtils.calcDelayTimePeriod(expectDealTime, compareDate));
+                /*if (timeLimit.getDelayFlag()) {
                     timeLimit.setDelayTimePeriod(DemoUtils.calcDelayTimePeriod(expectDealTime, compareDate));
                 } else {
-//                    timeLimit.setDelayTimePeriod("");
                 // TODO 过滤掉未延期的任务(对分页会有影响)
                     iterator.remove();
-                }
+                }*/
             }
             timeLimitList.sort((a, b) -> b.getIsDelay() - a.getIsDelay());
         }

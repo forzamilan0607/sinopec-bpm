@@ -34,6 +34,7 @@ import com.dstz.sys.util.SysPropertyUtil;
 import com.github.pagehelper.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -254,5 +255,13 @@ public class MaterialController extends ControllerTools {
     public void getInstanceData(HttpServletRequest ret,HttpServletResponse resp) {
         List<MaterialProcess> failList = (List<MaterialProcess>) ret.getSession().getAttribute("materialList");
         EasyPoiUtil.exportExcel(failList,"导入失败说明",MaterialProcess.class,"导入失败说明",resp);
+    }
+
+    @RequestMapping("/deletePurchasePlan")
+    public ResultMsg<String> deletePurchasePlan(HttpServletRequest request){
+        String id = request.getParameter("id");
+        LOG.error("id = {}", id);
+        this.materialManager.remove(id);
+        return super.getSuccessResult("删除成功");
     }
 }

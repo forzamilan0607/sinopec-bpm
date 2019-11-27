@@ -32,13 +32,13 @@
     <div class="panel-body">
         <form id="searchForm" class="form-horizontal">
             <div class="form-group">
-                <label class="control-label col-sm-1" for="subject_^VLK">流程标题</label>
+                <label class="control-label col-sm-1" for="t.subject_^VLK">流程标题</label>
                 <div class="col-sm-3">
-                    <input type="text" class="form-control" id="subject_^VLK">
+                    <input type="text" class="form-control" id="t.subject_^VLK">
                 </div>
-                <label class="control-label col-sm-1" for="name_^VLK">任务名字</label>
+                <label class="control-label col-sm-1" for="t.name_^VLK">任务名称</label>
                 <div class="col-sm-3">
-                    <input type="text" class="form-control" id="name_^VLK"  ng-model="name">
+                    <input type="text" class="form-control" id="t.name_^VLK"  ng-model="name">
                 </div>
                 <div class="col-sm-4" style="text-align:left;">
                     <button type="button" style="margin-left: 50px" class="btn btn-primary fa-search">查询</button>
@@ -51,18 +51,18 @@
 <table ab-grid data-id-field="id" data-url="/bpm/task/getDelayTaskList">
     <thead>
     <tr>
-        <th data-checkbox="true"></th>
+        <!--<th data-checkbox="true"></th>-->
         <th data-field="subject">流程标题</th>
         <th data-field="name">任务名称</th>
         <!--<th data-field="delayFlag" data-formatter="labelFormatter"
             data-value-style="false-否-primary,true-是-danger,">是否延期</th>-->
-        <th data-field="timeLimit">处理时限</th>
+        <th data-field="timeLimit">处理时限(天)</th>
         <th data-field="taskStartTime" data-formatter=dateTimeFormatter data-sort-name="task_start_time" data-sortable="true">任务创建时间</th>
         <th data-field="expectDealTime" data-formatter=dateTimeFormatter >任务截止时间</th>
-        <th data-field="taskDealTime" data-formatter=dateTimeFormatter data-sort-name="task_deal_Time" data-sortable="true">实际处理时间</th>
+        <!--<th data-field="taskDealTime" data-formatter=dateTimeFormatter data-sort-name="task_deal_Time" data-sortable="true">实际处理时间</th>-->
         <th data-field="delayTimePeriod">延期处理时长</th>
         <th data-field="taskEndTime" data-formatter=dateTimeFormatter>延期处理时间</th>
-        <!--<th data-field="assigneeNames">待处理人</th>-->
+        <th data-field="assigneeNames">待处理人</th>
         <th data-field="applyUser">延期申请人</th>
         <th data-field="delayReason">延期原因</th>
         <th data-formatter="innerHtmlFormatter" data-title="详情">

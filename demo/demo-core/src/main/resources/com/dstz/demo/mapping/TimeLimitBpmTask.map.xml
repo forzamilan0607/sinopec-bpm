@@ -82,12 +82,34 @@
 		</foreach>
 	</select>
 
-	<select id="getDelayTaskList" parameterType="java.util.Map" resultMap="TimeLimitBpm">
-		SELECT t.*,u.fullname_ AS applyUser FROM bpm_timelimit t
+	<select id="getDelayTaskList" parameterType="java.util.Map" resultType="com.dstz.demo.core.model.TimeLimit">
+		SELECT
+			t.id_ AS id,
+			t.inst_id_ AS instId,
+			t.task_id_ AS taskId,
+			t.name_ AS name,
+			t.subject_ AS subject,
+			t.isDelay,
+			t.delayTime,
+			t.delayReason,
+			t.timeLimit,
+			t.task_start_time AS taskStartTime,
+			t.task_deal_time AS taskDealTime,
+			t.task_end_time AS taskEndTime,
+			t.create_time_ AS createTime,
+			t.create_by_ AS createBy,
+			t.apply_date AS applyDate,
+			task.assignee_names_ AS assigneeNames,
+			u.fullname_ AS applyUser
+		FROM bpm_timelimit t
+		INNER JOIN bpm_task task ON task.id_ = t.task_id_
 		LEFT JOIN org_user u ON t.apply_user = u.id_
 		<where>
-			<if test="whereSql!=null">
-				${whereSql}
+			<if test="whereSql!= null">
+				${whereSql} AND IFNULL(t.task_deal_time,now())>ADDDATE(t.task_start_time,INTERVAL t.timeLimit DAY)
+			</if>
+			<if test="whereSql==null">
+				IFNULL(t.task_deal_time,now())>ADDDATE(t.task_start_time,INTERVAL t.timeLimit DAY)
 			</if>
 		</where>
 		<if test="orderBySql!=null">

@@ -37,6 +37,28 @@
 			}
 		});
 	}
+	function deletePurchasePlan(id) {
+        $.Dialog.confirm("温馨提示", "确认删除该物料采购申请吗？", function() {
+            var ii = layer.load();
+			var url = getCtxUrl('/bpm/material/process/deletePurchasePlan?id=' + id, true);
+			$.ajax({
+				type: "POST",
+				url: url,
+				contentType: "application/json;charset=utf-8",
+				dataType: "json",
+				success:function (data) {
+                    layer.close(ii);
+					$.Dialog.success(data.msg);
+					$("#btn_query").trigger("click");
+
+				},
+				error:function (message) {
+                    layer.close(ii);
+					$.Dialog.error("删除失败");
+				}
+			});
+        })
+	}
 </script>
 </head>
 <body class="easy-layout">
@@ -93,6 +115,7 @@
 				<th data-field="updateTime" data-formatter="dateTimeFormatter" data-visible="false">更新时间</th>
 				<th data-field="id" data-formatter="innerHtmlFormatter" data-title="管理">
 					<span if="!{hasInst}"  class="fa-send btn btn-outline btn-primary btn-sm" iview="标记" qtip='启动' openDialog="发起申请【{enquiryName}】" top="true" url="demo/definition/start.html?materialId={id}&defId={processId}&isCustomInstance=true"></span>
+					<span if="!{hasInst}" class='btn btn-outline btn-primary fa-trash' onclick="deletePurchasePlan({id})"></span>
 					<a if="{hasInst}" class="fa-detail btn btn-outline btn-primary btn-sm" iview="标记" openDialog='流程实例详情 【{enquiryName}】' qtip='流程实例' url='../../bpm/instance/instanceDetail.html?id={instId}'></a>
 					<!--<span  if="'{processId}'" class="fa-detail btn btn-outline btn-primary btn-sm" iview="标记" qtip='流程实例' openDialog="流程实例 " top="true" url="demo/definition/instanceList.html?materialNo={materialNo}"></span>-->
 				</th>
