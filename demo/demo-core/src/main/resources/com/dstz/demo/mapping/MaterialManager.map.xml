@@ -100,7 +100,9 @@
           t.enquiry_name AS enquiryName,t.purchase_aply AS purchaseAply,
           t.material_no AS materialNo,t.material_desc AS materialDesc,
           t.unit,t.number,t.plant,t.reserved_number AS reservedNumber,
-          t.remark,t.reserved,IFNULL(t.process_id,'411823371026956289') AS processId
+          t.remark,t.reserved,t.process_id AS processId,
+          t.gmt_create AS createTime,t.user_create AS createBy,
+          t.update_time AS updateTime,t.update_by AS updateBy
         FROM t_process_material t
         left join (select inst.id_ AS instId,b.biz_id_ FROM bpm_bus_link b,bpm_instance inst where inst.id_ = b.inst_id_) t2 ON t2.biz_id_ = t.id
         <where>

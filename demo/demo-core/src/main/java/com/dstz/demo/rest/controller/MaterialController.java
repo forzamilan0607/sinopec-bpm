@@ -9,7 +9,6 @@ import com.dstz.base.api.query.QueryOP;
 import com.dstz.base.api.response.impl.ResultMsg;
 import com.dstz.base.core.id.IdUtil;
 import com.dstz.base.core.util.StringUtil;
-import com.dstz.base.core.util.ValidateUtil;
 import com.dstz.base.db.model.page.PageResult;
 import com.dstz.base.rest.ControllerTools;
 import com.dstz.base.rest.util.RequestUtil;
@@ -42,10 +41,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,6 +79,9 @@ public class MaterialController extends ControllerTools {
         }
         List<MaterialProcess> bpmDefinitionList = this.materialManager.query(queryFilter);
         for (MaterialProcess materialProcess : bpmDefinitionList) {
+            if(StringUtils.isBlank(materialProcess.getProcessId())){
+                materialProcess.setProcessId("411823371026956289");
+            }
             if(materialProcess.isHasInst()){
                 materialProcess.setDisabled(true);
             }
@@ -223,6 +223,7 @@ public class MaterialController extends ControllerTools {
         FlowRequestParam flowParam = new FlowRequestParam();
         flowParam.setAction("start");
         flowParam.setFormType("INNER");
+        flowParam.setInstanceId("");
         JSONObject json = new JSONObject();
         String flowKey = SysPropertyUtil.getByAlias("materialPurchaseProcessKEY", "");
         BpmDefinition def = this.bpmDefinitionMananger.getByKey(flowKey);
@@ -233,7 +234,8 @@ public class MaterialController extends ControllerTools {
         for (MaterialProcess material : materialList) {
             material.setProcessId(defId);
             flowParam.setBusinessKey(material.getId());
-            json.put("processMaterial",material);
+            String materialJson = JSON.toJSONStringWithDateFormat(material,"yyyy-MM-dd HH:mm:ss");
+            json.put("processMaterial",materialJson);
             flowParam.setData(json);
             flowParam.setDefId(defId);
             startProcess(flowParam);
