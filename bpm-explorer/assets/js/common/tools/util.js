@@ -540,6 +540,13 @@ jQuery.extend({
 			FastJson.format(result);//处理json循环索引的问题
 		}
 		if(!result.isOk){
+			if (result.msg && result.msg.indexOf("查找不到当前任务") > 0) {
+                console.error(result);
+                if (errorFn){
+                	errorFn(result);
+                };
+				return;
+			}
 			if(!errMsgType || errMsgType ==='toast'){
 				$.Toast.error(result.msg);
 			}else if (errMsgType === 'alert'){

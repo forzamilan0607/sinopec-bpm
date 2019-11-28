@@ -254,14 +254,14 @@ bpmModel.factory('bpmService', ['$rootScope', 'baseService', 'ArrayToolService',
                 }
 
                 scope.postAction = function (flowData, innerWindow) {
-                    ii = layer.load();
+                    ii = top.layer.load();
                     // 执行动作
                     var url = __ctx + (flowData.taskId ? "/bpm/task/doAction" : "/bpm/instance/doAction");
                     if(flowData.isCustomInstance)
                         url = __ctx + "/bpm/material/process/start";
                     var defer = baseService.post(url, flowData);
                     $.getResultMsg(defer, function () {
-                        layer.close(ii); //关闭等待框
+                        top.layer.close(ii); //关闭等待框
                         scope.execuFn(button.afterScript);
 
                         if (innerWindow) {
