@@ -29,7 +29,7 @@ public class MaterialManagerImpl extends BaseManager<String, MaterialProcess> im
         return materialManagerDao.instanceQuery(paramQueryFilter);
     }
     @Override
-    public Map<String,Object> getInstance(String getPurchaseAply){
-        return materialManagerDao.getInstance(getPurchaseAply);
+    public Map<String,Object> getInstance(MaterialProcess materialProcess){
+        return materialManagerDao.getInstance(materialProcess);
     }
 }

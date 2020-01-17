@@ -7,6 +7,8 @@
         <result property="purchaseAply" column="purchase_aply" jdbcType="VARCHAR"/>
         <result property="materialNo" column="material_no" jdbcType="VARCHAR"/>
         <result property="materialDesc" column="material_desc" jdbcType="VARCHAR"/>
+        <result property="erpMaterialNo" column="erp_material_no" jdbcType="VARCHAR"/>
+        <result property="erpMaterialDesc" column="erp_material_desc" jdbcType="VARCHAR"/>
         <result property="unit" column="unit" jdbcType="VARCHAR"/>
         <result property="number" column="number" jdbcType="VARCHAR"/>
         <result property="plant" column="plant" jdbcType="VARCHAR"/>
@@ -50,12 +52,12 @@
     <insert id="create" parameterType="com.dstz.demo.core.model.MaterialProcess">
 		INSERT INTO t_process_material
 		(id,enquiry_name,purchase_aply,material_no,material_desc,unit,number,plant,
-		reserved_number,remark,process_id,gmt_create,user_create)
+		reserved_number,remark,process_id,gmt_create,user_create,erp_material_no,erp_material_desc)
 		VALUES
 		(#{id,jdbcType=VARCHAR}, #{enquiryName,jdbcType=VARCHAR}, #{purchaseAply,jdbcType=VARCHAR},
 		#{materialNo,jdbcType=VARCHAR}, #{materialDesc,jdbcType=VARCHAR}, #{unit,jdbcType=VARCHAR},
 		#{number,jdbcType=VARCHAR}, #{plant,jdbcType=VARCHAR}, #{reservedNumber,jdbcType=VARCHAR},
-		#{remark,jdbcType=VARCHAR}, #{processId,jdbcType=VARCHAR},now(),#{createBy})
+		#{remark,jdbcType=VARCHAR}, #{processId,jdbcType=VARCHAR},now(),#{createBy},#{erpMaterialNo,jdbcType=VARCHAR}, #{erpMaterialDesc,jdbcType=VARCHAR})
 	</insert>
     <update id="update" parameterType="com.dstz.demo.core.model.MaterialProcess">
 		UPDATE t_process_material SET
@@ -63,6 +65,8 @@
 		purchase_aply= #{purchaseAply,jdbcType=VARCHAR},
 		material_no=#{materialNo,jdbcType=VARCHAR},
 		material_desc=#{materialDesc,jdbcType=VARCHAR},
+		erpMaterial_no=#{erpMaterialNo,jdbcType=VARCHAR},
+		erpMaterial_desc=#{erpMaterialDesc,jdbcType=VARCHAR},
 		unit=#{unit,jdbcType=VARCHAR},
 		number=#{number,jdbcType=VARCHAR},
 		plant=#{plant,jdbcType=VARCHAR},
@@ -82,23 +86,31 @@
         <result property="isInstance" column="isInstance"/>
         <result property="id" column="id"/>
     </resultMap>
-    <select id="getInstance"   parameterType="java.lang.String" resultMap="materialMap">
+
+    <select id="getInstance"  parameterType="com.dstz.demo.core.model.MaterialProcess" resultMap="materialMap">
 		SELECT
-		material.id as id,
-		purchase_aply AS purchaseAply,
-		IF(IFNULL( link.id_, 0 )= 0,'false','true') AS isInstance
+            material.id as id,
+            purchase_aply AS purchaseAply,
+            IF(IFNULL( link.id_, 0 )= 0,'false','true') AS isInstance
 		FROM t_process_material AS material
         LEFT JOIN bpm_bus_link AS link
         ON link.biz_id_ = material.id
-		WHERE
-		purchase_aply=#{purchaseAply}
+		WHERE 1=1
+		<if test="materialNo != null and materialNo !='' ">
+		  AND material.material_no = #{materialNo}
+        </if>
+		<if test="purchaseAply != null and purchaseAply !='' ">
+          AND purchase_aply=#{purchaseAply}
+        </if>
 		limit 1
 	</select>
+
     <select id="query" parameterType="java.util.Map" resultType="com.dstz.demo.core.model.MaterialProcess">
         SELECT
           t2.instId,t.id,
           t.enquiry_name AS enquiryName,t.purchase_aply AS purchaseAply,
           t.material_no AS materialNo,t.material_desc AS materialDesc,
+          t.erp_material_no AS erpMaterialNo,t.erp_material_desc AS erpMaterialDesc,
           t.unit,t.number,t.plant,t.reserved_number AS reservedNumber,
           t.remark,t.reserved,t.process_id AS processId,
           t.gmt_create AS createTime,t.user_create AS createBy,
@@ -108,6 +120,9 @@
         <where>
             <if test="whereSql!=null">
                 ${whereSql}
+            </if>
+            <if test="hisUpdateUser != null ">
+                or EXISTS (SELECT 1 FROM t_purchase_plan_his_rec where material_process_id = t.id AND update_user = #{hisUpdateUser})
             </if>
         </where>
         <if test="orderBySql!=null">

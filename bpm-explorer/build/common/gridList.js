@@ -2007,6 +2007,8 @@
                 ,
                 $.initGrid = function() {
                     var url = $("[ab-grid]").attr("data-url");
+                    var customPagination = $("[ab-grid]").attr("data-customPagination");
+                    // var customPagination = $("[ab-grid]").attr("data-customPagination");
                     url = getCtxUrl(url, !0),
                         $("[ab-grid]").bootstrapTable({
                             url: url,
@@ -2014,7 +2016,7 @@
                             contentType: "application/x-www-form-urlencoded",
                             toolbar: ".toolbar",
                             cache: !1,
-                            pagination: !0,
+                            pagination: customPagination === "0" ? false : !0,
                             sortable: !0,
                             sortOrder: "asc",
                             queryParams: $.getQueryParam,

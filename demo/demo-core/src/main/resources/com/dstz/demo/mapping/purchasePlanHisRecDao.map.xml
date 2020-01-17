@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dstz.demo.core.dao.PurchasePlanHisRecManagerDao">
+
+    <insert id="insert" parameterType="com.dstz.demo.core.model.PurchasePlanHisRec">
+		INSERT INTO t_purchase_plan_his_rec
+		(material_process_id,content,update_time,update_user)
+		VALUES
+		(#{materialProcessId,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, now(),#{updateUser})
+	</insert>
+
+
+    <delete id="removeByMaterialProcessId" parameterType="java.lang.String">
+		DELETE FROM t_process_material
+		WHERE
+		material_process_id = #{materialProcessId}
+	</delete>
+</mapper>

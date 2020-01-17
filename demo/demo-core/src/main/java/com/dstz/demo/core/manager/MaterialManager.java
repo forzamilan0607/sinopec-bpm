@@ -15,5 +15,6 @@ import java.util.Map;
  */
 public interface MaterialManager extends Manager<String, MaterialProcess> {
     List<BpmInstance> instanceQuery(QueryFilter paramQueryFilter);
-    Map<String,Object> getInstance(String materialNo);
+
+    Map<String,Object> getInstance(MaterialProcess materialProcess);
 }

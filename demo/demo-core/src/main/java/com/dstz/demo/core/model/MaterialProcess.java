@@ -25,12 +25,12 @@ import java.util.Date;
 public class MaterialProcess extends BaseModel implements IExcelModel, IExcelDataModel {
     /** 询价名称 */
     @Excel(name = "询价名称")
-    @NotBlank(message = "询价名称不能为空")
+    //@NotBlank(message = "询价名称不能为空")
     @Length(max = 50, message = "询价名称长度不能大于50")
     private String enquiryName;
     /** 采购申请 */
     @Excel(name = "采购申请")
-    @NotBlank(message = "采购申请编号不能为空")
+    //@NotBlank(message = "采购申请编号不能为空")
     @Length(max = 30, message = "采购申请编号长度不能大于30")
     private String purchaseAply;
 
@@ -44,24 +44,34 @@ public class MaterialProcess extends BaseModel implements IExcelModel, IExcelDat
     @NotBlank(message = "物料描述不能为空")
     @Length(max = 255, message = "物料描述长度不能大于255")
     private String materialDesc;
+
+    /** 物料编码 */
+    @Excel(name = "ERP物料编码")
+    @Length(max = 50, message = "ERP物料编码长度不能大于50")
+    private String erpMaterialNo;
+    /** 物料描述 */
+    @Excel(name = "ERP物料描述")
+    @Length(max = 255, message = "ERP物料描述长度不能大于255")
+    private String erpMaterialDesc;
+
     /** 单位 */
     @Excel(name = "单位")
-    @NotBlank(message = "单位不能为空")
+    //@NotBlank(message = "单位不能为空")
     @Length(max = 10, message = "单位长度不能大于10")
     private String unit;
     /** 数量 */
     @Excel(name = "数量")
-    @NotNull(message = "数量不能为空")
+    //@NotNull(message = "数量不能为空")
     @Pattern(regexp = "^(([1-9]{1}\\d{0,9})|([0]{1}))(\\.(\\d){0,2})?$", message = "数量只能输入1至10位和1至2位小数")
     private String number;
     /** 车间 */
     @Excel(name = "车间")
-    @NotBlank(message = "车间不能为空")
+    //@NotBlank(message = "车间不能为空")
     @Length(max = 50, message = "车间长度不能大于50")
     private String plant;
     /** 预留单号 */
     @Excel(name = "预留单号")
-    @NotBlank(message = "预留单号不能为空")
+    //@NotBlank(message = "预留单号不能为空")
     @Length(max = 30, message = "预留单号长度不能大于30")
     private String reservedNumber;
     /** 备注 */
@@ -79,6 +89,14 @@ public class MaterialProcess extends BaseModel implements IExcelModel, IExcelDat
 
     private boolean hasInst;
     private boolean disabled;
+
+    public MaterialProcess() {
+    }
+
+    public MaterialProcess(String materialNo, String purchaseAply) {
+        this.materialNo = materialNo;
+        this.purchaseAply = purchaseAply;
+    }
 
     @Excel(name = "失败原因", width = 100)
     private String errorMsg;
@@ -108,4 +126,6 @@ public class MaterialProcess extends BaseModel implements IExcelModel, IExcelDat
     public void setRowNum(int rowNum) {
         this.rowNum = rowNum;
     }
+
+
 }

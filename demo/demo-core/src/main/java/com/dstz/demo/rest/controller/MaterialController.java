@@ -9,7 +9,9 @@ import com.dstz.base.api.query.QueryOP;
 import com.dstz.base.api.response.impl.ResultMsg;
 import com.dstz.base.core.id.IdUtil;
 import com.dstz.base.core.util.StringUtil;
+import com.dstz.base.core.validate.ValidateUtil;
 import com.dstz.base.db.model.page.PageResult;
+import com.dstz.base.db.model.query.DefaultQueryField;
 import com.dstz.base.rest.ControllerTools;
 import com.dstz.base.rest.util.RequestUtil;
 import com.dstz.bpm.api.engine.action.cmd.FlowRequestParam;
@@ -25,6 +27,7 @@ import com.dstz.bpm.core.model.BpmInstance;
 import com.dstz.bpm.core.model.BpmTask;
 import com.dstz.bpm.engine.action.cmd.DefaultInstanceActionCmd;
 import com.dstz.demo.core.manager.MaterialManager;
+import com.dstz.demo.core.manager.PurchasePlanHisRecManager;
 import com.dstz.demo.core.model.MaterialProcess;
 import com.dstz.demo.utils.EasyPoiUtil;
 import com.dstz.form.api.model.FormType;
@@ -34,6 +37,7 @@ import com.dstz.sys.util.SysPropertyUtil;
 import com.github.pagehelper.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -70,6 +74,9 @@ public class MaterialController extends ControllerTools {
     @Resource
     BpmTaskManager bpmTaskManager;
 
+    @Resource
+    private PurchasePlanHisRecManager purchasePlanHisRecManager;
+
     @PostMapping({"listJson"})
     public PageResult listJson(HttpServletRequest request, HttpServletResponse response) throws Exception {
         QueryFilter queryFilter = this.getQueryFilter(request);
@@ -77,6 +84,15 @@ public class MaterialController extends ControllerTools {
         boolean isAdmin = ContextUtil.isAdmin(user);
         if (!isAdmin) {
             queryFilter.addFilter("t.user_create", user.getUserId(), QueryOP.EQUAL);
+            queryFilter.addParamsFilter("hisUpdateUser", user.getUserId());
+        }
+        if (null != queryFilter.getFieldLogic() && !CollectionUtils.isEmpty(queryFilter.getFieldLogic().getWhereClauses())) {
+            queryFilter.getFieldLogic().getWhereClauses().forEach(item -> {
+                DefaultQueryField dqf = (DefaultQueryField) item;
+                if (ObjectUtils.nullSafeEquals(dqf.getField(), "id_")) {
+                    dqf.setField("id");
+                }
+            });
         }
         List<MaterialProcess> bpmDefinitionList = this.materialManager.query(queryFilter);
         for (MaterialProcess materialProcess : bpmDefinitionList) {
@@ -97,35 +113,33 @@ public class MaterialController extends ControllerTools {
      * @Date: 2019/11/1 16:20
      */
     @PostMapping("/import")
-    public ResultMsg<JSONObject> importExcel(MultipartFile file,
-                                             HttpServletRequest ret ,
-                                             HttpServletResponse rsp){
+    public ResultMsg<JSONObject> importExcel(MultipartFile file, HttpServletRequest ret , HttpServletResponse rsp){
         JSONObject json = new JSONObject();
         json.put("isSuccess",true);
         ExcelImportResult<MaterialProcess> result = EasyPoiUtil.importExcel(file,3,1,true,MaterialProcess.class);
         List<MaterialProcess> successList = result.getList();
         List<MaterialProcess> failList = result.getFailList();
-        log.info("是否存在验证未通过的数据:" + result.isVerfiyFail());
-        log.info("验证通过的数量:" + successList.size());
-        log.info("验证未通过的数量:" + failList.size());
+        log.info("是否存在验证未通过的数据:" + result.isVerfiyFail() + ", 验证通过的数量:" + successList.size() + "验证未通过的数量:" + failList.size());
         StringBuilder errorMsg = new StringBuilder();
         IUser currentUser = ContextUtil.getCurrentUser();
         //保存成功信息
         int errorCount = 0;
         for (MaterialProcess material : successList) {
             // 判断是否存在
-            Map<String,Object> tmp = this.materialManager.getInstance(material.getPurchaseAply());
-            if(tmp!=null && tmp.get("id")!=null){
-                if("true".equalsIgnoreCase((String)tmp.get("isInstance"))){
+            Map<String,Object> existedData = this.materialManager.getInstance(new MaterialProcess(material.getMaterialNo(), material.getPurchaseAply()));
+            if(existedData != null && existedData.get("id") != null){
+                if("true".equalsIgnoreCase((String)existedData.get("isInstance"))){
                     if (errorCount++ == 0) {
                         errorMsg.append("采购申请编号：");
                     }
                     errorMsg.append("【"+material.getPurchaseAply()+"】");
                     continue;
                 }
-                material.setId((String)tmp.get("id"));
+                material.setId((String)existedData.get("id"));
                 material.setUpdateBy(currentUser.getUserId());
                 materialManager.update(material);
+                // 同时更新采购计划历史记录
+                this.purchasePlanHisRecManager.update(material);
             } else {
                 material.setId(IdUtil.getSuid());
                 material.setCreateBy(currentUser.getUserId());
@@ -193,7 +207,7 @@ public class MaterialController extends ControllerTools {
     @PostMapping("/start")
     public ResultMsg<String> startProcess(@RequestBody FlowRequestParam flowParam){
         MaterialProcess material = this.materialManager.get(flowParam.getBusinessKey());
-        Map<String,Object> tmp = this.materialManager.getInstance(material.getPurchaseAply());
+        Map<String,Object> tmp = this.materialManager.getInstance(new MaterialProcess(material.getMaterialNo(), material.getPurchaseAply()));
         if ("true".equalsIgnoreCase((String) tmp.get("isInstance"))) {
             return this.getSuccessResult("当前流程已经启动");
         }

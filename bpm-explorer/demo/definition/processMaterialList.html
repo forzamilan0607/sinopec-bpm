@@ -37,6 +37,28 @@
 			}
 		});
 	}
+
+    /**
+	 * 批量补充信息
+     */
+	function batchSupplement() {
+		//  获取选中的记录
+		var selectedObjs = $("[ab-grid]").bootstrapTable("getSelections");
+		if (!selectedObjs || !selectedObjs.length) {
+			$.Dialog.error("请选择要补充的数据！");
+			return;
+		}
+        var ids = selectedObjs.map(item => item.id).join(",");
+        var url = "demo/definition/batchUpdatePurchasePlan.html?taskIds=" + ids;
+        var conf = {
+            title: "批量补充物料采购计划",
+            topOpen: true,
+            url: getProjectUrl(url),
+            width: "100%",
+            height: "100%"
+        };
+        $.Dialog.open(conf);
+	}
 	function deletePurchasePlan(id) {
         $.Dialog.confirm("温馨提示", "确认删除该物料采购申请吗？", function() {
             var ii = layer.load();
@@ -97,6 +119,7 @@
 		<div class="btn-group toolbar" style="padding-left: 5px;">
 			<button class="btn btn-outline btn-primary fa-plus" top="true" openDialog="Excel导入" dialogConf='"height":150,"width":750' url="demo/definition/uploadExcel.html">Excel导入</button>
 			<button class="btn btn-outline btn-primary"  onclick="batchStart()" >批量启动</button>
+			<button class="btn btn-outline btn-primary"  onclick="batchSupplement()" >补充信息</button>
 		</div>
 		<table ab-grid data-id-field="id" data-url="bpm/material/process/listJson">
 			<thead>
@@ -106,6 +129,8 @@
 				<th data-field="purchaseAply">采购申请</th>
 				<th data-field="materialNo">物料编码</th>
 				<th data-field="materialDesc">物料描述</th>
+				<th data-field="erpMaterialNo">ERP物料编码</th>
+				<th data-field="erpMaterialDesc">ERP物料描述</th>
 				<th data-field="unit">单位</th>
 				<th data-field="number">数量</th>
 				<th data-field="plant">车间</th>

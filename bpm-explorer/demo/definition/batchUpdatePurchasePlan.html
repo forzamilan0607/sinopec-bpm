@@ -1,0 +1,91 @@
+<html ng-app="bpm">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>批量补充采购计划</title>
+	<link href="../../build/common/base.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/base.js"></script>
+	<script type="text/javascript" src="../../build/common/gridList.js"></script>
+	<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+	<script type="text/javascript" src="../../assets/js/common/bpmForm/bpmService.js"></script>
+	<script type="text/javascript" src="../../build/common/custForm.js"></script>
+	<style media="print">.print-hidden{display:none}</style>
+
+
+	<script type="text/javascript">
+		var purchasePlanController = ['$scope','baseService',function($scope,baseService){
+			//$scope.bpmInitParam = {"ids":$.getParam("ids")};
+		}];
+
+		var globalData = [];
+        function batchSave(){
+            /*var selectedObjs = $("[ab-grid]").bootstrapTable("getSelections");
+            console.log(selectedObjs.length);*/
+            alert(globalData.length);
+		}
+        function erpMaterialNoFormatter(value, row, index){
+			return "<input value=" + value + " name=\"erpMaterialNo\" onblur=\"changeData("+ index +", this)\"/>";
+        }
+        function changeData(index, obj) {
+            var value = $(obj).val();
+            var name = $(obj).attr('name');
+            //通过 index 获取指定的行
+            var row = $("[ab-grid]").bootstrapTable('getOptions').data[index];
+            //将 input 的值存进 row 中
+            row[name] = value;
+            if (globalData.length) {
+                for (var i = 0; i < globalData.length; i++) {
+                    var item = globalData[i];
+                    if (item.id == row.id) {
+                        item[name] = value;
+					}
+				}
+			} else {
+                globalData.push(row);
+			}
+            //更新指定的行，调用 'updateRow' 则会将 row 数据更新到 data 中，然后再重新加载
+            $("[ab-grid]").bootstrapTable('updateRow',{index: index, row: row});
+        }
+
+	</script>
+</head>
+	<body ng-controller="purchasePlanController">
+		<div data-options="region:'center',border:false">
+			<!--<div class="btn-group toolbar" style="padding-left: 5px; text-align: center;">
+				<button class="btn btn-outline btn-primary"  onclick="batchSave()" >保存</button>
+			</div>-->
+			<form id="searchForm" class="form-horizontal" style="display: none;">
+				<div class="form-group">
+					<div class="col-sm-3">
+						<input type="hidden"  class="form-control" id="id_^VIN" >
+					</div>
+				</div>
+			</form>
+			<table ab-grid data-id-field="id" data-url="bpm/material/process/listJson" data-customPagination="0">
+				<thead>
+				<tr>
+					<th data-field="id">序号</th>
+					<th data-field="materialNo">物料编码</th>
+					<th data-field="materialDesc">物料描述</th>
+					<th data-field="erpMaterialNo" data-formatter="erpMaterialNoFormatter">ERP物料编码</th>
+					<th data-field="erpMaterialDesc" data-formatter="erpMaterialDescFormatter">ERP物料描述</th>
+					<th data-field="enquiryName" data-formatter="enquiryNameFormatter">询价名称</th>
+					<th data-field="purchaseAply" data-formatter="purchaseAplyFormatter">采购申请</th>
+					<th data-field="unit" data-formatter="unitFormatter">单位</th>
+					<th data-field="number" data-formatter="numberFormatter">数量</th>
+					<th data-field="plant" data-formatter="plantFormatter">车间</th>
+					<th data-field="reservedNumber" data-formatter="reservedNumberFormatter">预留</th>
+					<th data-field="remark" data-formatter="remarkFormatter">备注</th>
+					<!--<th data-field="id" data-formatter="innerHtmlFormatter" data-title="管理">
+						<span if="!{hasInst}"  class="fa-send btn btn-outline btn-primary btn-sm" iview="标记" qtip='启动' openDialog="发起申请【{enquiryName}】" top="true" url="demo/definition/start.html?materialId={id}&defId={processId}&isCustomInstance=true"></span>
+						<span if="!{hasInst}" class='btn btn-outline btn-primary fa-trash' onclick="deletePurchasePlan({id})"></span>
+						<a if="{hasInst}" class="fa-detail btn btn-outline btn-primary btn-sm" iview="标记" openDialog='流程实例详情 【{enquiryName}】' qtip='流程实例' url='../../bpm/instance/instanceDetail.html?id={instId}'></a>
+						&lt;!&ndash;<span  if="'{processId}'" class="fa-detail btn btn-outline btn-primary btn-sm" iview="标记" qtip='流程实例' openDialog="流程实例 " top="true" url="demo/definition/instanceList.html?materialNo={materialNo}"></span>&ndash;&gt;
+					</th>-->
+				</tr>
+				</thead>
+			</table>
+
+		</div>
+
+	</body>
+</html>

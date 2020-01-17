@@ -18,5 +18,5 @@ import java.util.Map;
 public interface MaterialManagerDao extends BaseDao<String, MaterialProcess> {
     List<BpmInstance> instanceQuery(QueryFilter paramQueryFilter);
 
-    Map<String,Object> getInstance(String purchaseAply);
+    Map<String,Object> getInstance(MaterialProcess materialProcess);
 }
