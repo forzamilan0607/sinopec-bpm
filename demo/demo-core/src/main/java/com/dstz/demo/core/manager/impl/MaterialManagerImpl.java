@@ -32,4 +32,9 @@ public class MaterialManagerImpl extends BaseManager<String, MaterialProcess> im
     public Map<String,Object> getInstance(MaterialProcess materialProcess){
         return materialManagerDao.getInstance(materialProcess);
     }
+
+    @Override
+    public List<String> queryMaterialProcIdsByCurrentUser(String userId) {
+        return this.materialManagerDao.queryMaterialProcIdsByCurrentUser(userId);
+    }
 }

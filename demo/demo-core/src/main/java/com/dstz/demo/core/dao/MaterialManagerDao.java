@@ -5,6 +5,7 @@ import com.dstz.base.dao.BaseDao;
 import com.dstz.bpm.core.model.BpmInstance;
 import com.dstz.demo.core.model.DemoSub;
 import com.dstz.demo.core.model.MaterialProcess;
+import org.apache.ibatis.annotations.Param;
 import org.mybatis.spring.annotation.MapperScan;
 
 import java.util.List;
@@ -19,4 +20,6 @@ public interface MaterialManagerDao extends BaseDao<String, MaterialProcess> {
     List<BpmInstance> instanceQuery(QueryFilter paramQueryFilter);
 
     Map<String,Object> getInstance(MaterialProcess materialProcess);
+
+    List<String> queryMaterialProcIdsByCurrentUser(@Param("userId") String userId);
 }

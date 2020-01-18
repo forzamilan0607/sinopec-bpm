@@ -84,7 +84,11 @@ public class MaterialController extends ControllerTools {
         boolean isAdmin = ContextUtil.isAdmin(user);
         if (!isAdmin) {
             queryFilter.addFilter("t.user_create", user.getUserId(), QueryOP.EQUAL);
+            List<String> ids = this.materialManager.queryMaterialProcIdsByCurrentUser(user.getUserId());
             queryFilter.addParamsFilter("hisUpdateUser", user.getUserId());
+            if (!CollectionUtils.isEmpty(ids)) {
+                queryFilter.addParamsFilter("ids", ids);
+            }
         }
         if (null != queryFilter.getFieldLogic() && !CollectionUtils.isEmpty(queryFilter.getFieldLogic().getWhereClauses())) {
             queryFilter.getFieldLogic().getWhereClauses().forEach(item -> {

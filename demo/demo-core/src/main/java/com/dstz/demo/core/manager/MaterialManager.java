@@ -17,4 +17,6 @@ public interface MaterialManager extends Manager<String, MaterialProcess> {
     List<BpmInstance> instanceQuery(QueryFilter paramQueryFilter);
 
     Map<String,Object> getInstance(MaterialProcess materialProcess);
+
+    List<String> queryMaterialProcIdsByCurrentUser(String userId);
 }
