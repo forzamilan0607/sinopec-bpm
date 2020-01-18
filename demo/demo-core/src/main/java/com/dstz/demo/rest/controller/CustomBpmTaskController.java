@@ -3,14 +3,12 @@ package com.dstz.demo.rest.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.dstz.base.api.query.QueryFilter;
 import com.dstz.base.api.response.impl.ResultMsg;
-import com.dstz.base.core.validate.ValidateUtil;
 import com.dstz.base.db.model.page.PageResult;
 import com.dstz.base.rest.ControllerTools;
 import com.dstz.base.rest.util.RequestUtil;
 import com.dstz.bpm.api.engine.action.cmd.FlowRequestParam;
 import com.dstz.bpm.core.manager.BpmTaskManager;
 import com.dstz.bpm.core.manager.TaskIdentityLinkManager;
-import com.dstz.bpm.core.model.BpmTask;
 import com.dstz.bpm.engine.action.cmd.DefualtTaskActionCmd;
 import com.dstz.demo.core.manager.CustomBpmTaskManager;
 import com.dstz.demo.core.manager.TimeLimitBpmTaskManager;
@@ -24,12 +22,10 @@ import com.dstz.demo.core.utils.DemoUtils;
 import com.dstz.sys.util.ContextUtil;
 import com.github.pagehelper.Page;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.cache.RedisCache;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,7 +34,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 public class CustomBpmTaskController extends ControllerTools {
@@ -55,9 +50,6 @@ public class CustomBpmTaskController extends ControllerTools {
 
     @Autowired
     private TaskIdentityLinkManager taskIdentityLinkManager;
-
-    @Autowired
-    private RedisCache redisCache;
 
     @RequestMapping("/bpm/task/getMultiTaskData")
     public ResultMsg<JSONObject> getMultiTaskData(HttpServletRequest request){
@@ -176,9 +168,6 @@ public class CustomBpmTaskController extends ControllerTools {
         queryFilter.addParamsFilter("userRights", userRights);
         queryFilter.addParamsFilter("userId", ContextUtil.getCurrentUserId());
         List<BpmTaskNew> bpmTaskNewList = this.customBpmTaskManager.queryToDoList(queryFilter);
-        if (CollectionUtils.isNotEmpty(bpmTaskNewList)) {
-            this.redisCache.put(userId, bpmTaskNewList.stream().map(item -> item.getInstId()).collect(Collectors.toList()));
-        }
         /*List<BpmTask> listTodoTask = bpmTaskManager.getTodoList(ContextUtil.getCurrentUserId(), queryFilter);
         if (CollectionUtils.isNotEmpty(listTodoTask)) {
             List<TimeLimit> listTimeLimit = timeLimitBpmTaskManager.getTimeLimitList(listTodoTask);

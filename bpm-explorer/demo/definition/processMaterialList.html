@@ -146,9 +146,9 @@
 				<th data-field="createTime" data-formatter="dateFormatter" data-visible="false">创建时间</th>
 				<th data-field="updateTime" data-formatter="dateTimeFormatter" data-visible="false">更新时间</th>
 				<th data-field="id" data-formatter="innerHtmlFormatter" data-title="管理">
-					<span if="!{hasInst}"  class="fa-send btn btn-outline btn-primary btn-sm" iview="标记" qtip='启动' openDialog="发起申请【{enquiryName}】" top="true" url="demo/definition/start.html?materialId={id}&defId={processId}&isCustomInstance=true"></span>
+					<span if="!{hasInst}"  class="fa-send btn btn-outline btn-primary btn-sm" iview="标记" qtip='启动' openDialog="发起申请【{materialDesc}】" top="true" url="demo/definition/start.html?materialId={id}&defId={processId}&isCustomInstance=true"></span>
 					<span if="!{hasInst}" class='btn btn-outline btn-primary fa-trash' onclick="deletePurchasePlan({id})"></span>
-					<a if="{hasInst}" class="fa-detail btn btn-outline btn-primary btn-sm" iview="标记" openDialog='流程实例详情 【{enquiryName}】' qtip='流程实例' url='../../bpm/instance/instanceDetail.html?id={instId}'></a>
+					<a if="{hasInst}" class="fa-detail btn btn-outline btn-primary btn-sm" iview="标记" openDialog='流程实例详情 【{materialDesc}】' qtip='流程实例' url='../../bpm/instance/instanceDetail.html?id={instId}'></a>
 					<!--<span  if="'{processId}'" class="fa-detail btn btn-outline btn-primary btn-sm" iview="标记" qtip='流程实例' openDialog="流程实例 " top="true" url="demo/definition/instanceList.html?materialNo={materialNo}"></span>-->
 				</th>
 			</tr>
