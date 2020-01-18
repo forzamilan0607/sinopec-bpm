@@ -293,6 +293,7 @@ public class MaterialController extends ControllerTools {
         String id = request.getParameter("id");
         LOG.error("id = {}", id);
         this.materialManager.remove(id);
+        this.purchasePlanHisRecManager.removeByMaterialProcessId(id);
         return super.getSuccessResult("删除成功");
     }
 }
