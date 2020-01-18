@@ -1,8 +1,10 @@
 package com.dstz.demo.core.manager.impl;
 
+import com.dstz.base.api.query.QueryFilter;
 import com.dstz.base.manager.impl.BaseManager;
 import com.dstz.demo.core.dao.CustomBpmTaskDao;
 import com.dstz.demo.core.manager.CustomBpmTaskManager;
+import com.dstz.demo.core.model.BpmTaskNew;
 import com.dstz.demo.core.model.dto.BpmTaskDTO;
 import com.dstz.demo.core.model.dto.TaskCountDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,5 +31,15 @@ public class CustomBpmTaskManagerImpl extends BaseManager<String, BpmTaskDTO> im
 	@Override
 	public TaskCountDTO countTodoAndDelayTasks(String userId) {
 		return this.customBpmTaskDao.countTodoAndDelayTasks(userId);
+	}
+
+	@Override
+	public List<BpmTaskNew> queryBpmTaskNewList(QueryFilter queryFilter) {
+		return this.customBpmTaskDao.queryBpmTaskNewList(queryFilter);
+	}
+
+	@Override
+	public List<BpmTaskNew> queryToDoList(QueryFilter queryFilter) {
+		return this.customBpmTaskDao.queryToDoList(queryFilter);
 	}
 }

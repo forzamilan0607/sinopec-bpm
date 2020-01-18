@@ -1,7 +1,6 @@
 package com.dstz.demo.core.manager.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.dstz.base.manager.impl.BaseManager;
 import com.dstz.demo.core.dao.PurchasePlanHisRecManagerDao;
 import com.dstz.demo.core.manager.PurchasePlanHisRecManager;
 import com.dstz.demo.core.model.MaterialProcess;
@@ -10,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service("purchasePlanHisRecManager")
-public class PurchasePlanHisRecManagerImpl extends BaseManager<String, PurchasePlanHisRec> implements PurchasePlanHisRecManager {
+public class PurchasePlanHisRecManagerImpl implements PurchasePlanHisRecManager {
 
     @Autowired
     private PurchasePlanHisRecManagerDao purchasePlanHisRecManagerDao;

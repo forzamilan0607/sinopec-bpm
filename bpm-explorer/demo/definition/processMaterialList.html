@@ -15,6 +15,13 @@
 			$.Dialog.error("请选择数据！");
 			return;
 		}
+		for (var i = 0; i < selectedObjs.length; i++) {
+		    var item = selectedObjs[i];
+		    if (item.hasInst) {
+				$.Dialog.error("物料[" + item.materialDesc + "]流程实例已启动！");
+		        return;
+			}
+		}
 		var ids = selectedObjs.map(item => item.id).join(",");
 		var url = getCtxUrl('/bpm/material/process/start/batch', true);
 		var ii = layer.load();

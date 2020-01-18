@@ -8,7 +8,16 @@
 	<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
 	<script type="text/javascript" src="../../assets/js/common/bpmForm/bpmService.js"></script>
 	<script type="text/javascript" src="../../build/common/custForm.js"></script>
-	<style media="print">.print-hidden{display:none}</style>
+	<style media="print">
+		.print-hidden {
+			display:none
+		}
+	</style>
+	<style>
+		td {
+			white-space: nowrap;
+		}
+	</style>
 
 
 	<script type="text/javascript">
@@ -17,14 +26,47 @@
 		}];
 
 		var globalData = [];
-        function batchSave(){
+        function doBatchSupplement(){
             /*var selectedObjs = $("[ab-grid]").bootstrapTable("getSelections");
             console.log(selectedObjs.length);*/
-            alert(globalData.length);
+            var ii = layer.load();
+            var url = getCtxUrl('/bpm/material/process/batchSupplement');
+            $.ajax({
+                type: "POST",
+                url: url,
+                data:JSON.stringify(globalData),
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success:function (data) {
+                    layer.close(ii);
+                    $.Dialog.success(data.msg);
+                    //关不掉 已经绝望、打一波组合拳吧
+                    top.layer.closeAll('dialog');
+                    layer.closeAll();
+                    parent.layer.closeAll(); // 父窗口把当前窗口关掉
+                    if (window.opener && window.opener.reloadGrid) {
+                        window.opener.reloadGrid();
+                    }
+
+                },
+                error:function (message) {
+                    layer.close(ii);
+                    $.Dialog.error("保存失败");
+                }
+            });
 		}
-        function erpMaterialNoFormatter(value, row, index){
-			return "<input value=" + value + " name=\"erpMaterialNo\" onblur=\"changeData("+ index +", this)\"/>";
-        }
+		$(function () {
+		    ["erpMaterialNo", "erpMaterialDesc", "enquiryName", "purchaseAply", "unit", "number", "plant", "reservedNumber", "remark"].forEach((item, index) => {
+		        window[item + "Formatter"] = function (value ,row, index) {
+                    value = value == undefined ? "" : value;
+                    return "<input value=\'" + value  + "\' name=\'" + item + "\' onblur=\"changeData("+ index +", this)\"/>";
+                }
+			});
+        });
+        /*function erpMaterialNoFormatter(value, row, index){
+            value = value == undefined ? "" : value;
+			return "<input value=\'" + value  + "\' name=\"erpMaterialNo\" onblur=\"changeData("+ index +", this)\"/>";
+        }*/
         function changeData(index, obj) {
             var value = $(obj).val();
             var name = $(obj).attr('name');
@@ -32,27 +74,31 @@
             var row = $("[ab-grid]").bootstrapTable('getOptions').data[index];
             //将 input 的值存进 row 中
             row[name] = value;
-            if (globalData.length) {
-                for (var i = 0; i < globalData.length; i++) {
-                    var item = globalData[i];
-                    if (item.id == row.id) {
-                        item[name] = value;
-					}
-				}
-			} else {
+            if (!updateGlobalData(row)) {
                 globalData.push(row);
 			}
             //更新指定的行，调用 'updateRow' 则会将 row 数据更新到 data 中，然后再重新加载
             $("[ab-grid]").bootstrapTable('updateRow',{index: index, row: row});
         }
 
+        function updateGlobalData(row) {
+            for (var i = 0; i < globalData.length; i++) {
+                var item = globalData[i];
+                if (item.id == row.id) {
+                    item[name] = value;
+                    return true;
+                }
+            }
+            return false;
+        }
+
 	</script>
 </head>
 	<body ng-controller="purchasePlanController">
 		<div data-options="region:'center',border:false">
-			<!--<div class="btn-group toolbar" style="padding-left: 5px; text-align: center;">
-				<button class="btn btn-outline btn-primary"  onclick="batchSave()" >保存</button>
-			</div>-->
+			<div class="btn-group toolbar">
+				<button type="button" style="margin-left: 30px" class="btn btn-primary fa-save" onclick="doBatchSupplement()">保存</button>
+			</div>
 			<form id="searchForm" class="form-horizontal" style="display: none;">
 				<div class="form-group">
 					<div class="col-sm-3">
@@ -60,10 +106,10 @@
 					</div>
 				</div>
 			</form>
-			<table ab-grid data-id-field="id" data-url="bpm/material/process/listJson" data-customPagination="0">
+			<table ab-grid data-id-field="id" data-url="bpm/material/process/listJson" data-customPagination="0" data-showColumns="0" data-showRefresh="0">
 				<thead>
 				<tr>
-					<th data-field="id">序号</th>
+					<th data-field="id" data-visible="false">序号</th>
 					<th data-field="materialNo">物料编码</th>
 					<th data-field="materialDesc">物料描述</th>
 					<th data-field="erpMaterialNo" data-formatter="erpMaterialNoFormatter">ERP物料编码</th>
@@ -73,8 +119,8 @@
 					<th data-field="unit" data-formatter="unitFormatter">单位</th>
 					<th data-field="number" data-formatter="numberFormatter">数量</th>
 					<th data-field="plant" data-formatter="plantFormatter">车间</th>
-					<th data-field="reservedNumber" data-formatter="reservedNumberFormatter">预留</th>
-					<th data-field="remark" data-formatter="remarkFormatter">备注</th>
+					<th data-field="reservedNumber" data-formatter="reservedNumberFormatter" data-width="100px">预留</th>
+					<th data-field="remark" data-formatter="remarkFormatter" data-width="300px">备注</th>
 					<!--<th data-field="id" data-formatter="innerHtmlFormatter" data-title="管理">
 						<span if="!{hasInst}"  class="fa-send btn btn-outline btn-primary btn-sm" iview="标记" qtip='启动' openDialog="发起申请【{enquiryName}】" top="true" url="demo/definition/start.html?materialId={id}&defId={processId}&isCustomInstance=true"></span>
 						<span if="!{hasInst}" class='btn btn-outline btn-primary fa-trash' onclick="deletePurchasePlan({id})"></span>
@@ -84,7 +130,6 @@
 				</tr>
 				</thead>
 			</table>
-
 		</div>
 
 	</body>

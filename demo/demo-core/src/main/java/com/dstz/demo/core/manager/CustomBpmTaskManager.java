@@ -1,5 +1,7 @@
 package com.dstz.demo.core.manager;
 
+import com.dstz.base.api.query.QueryFilter;
+import com.dstz.demo.core.model.BpmTaskNew;
 import com.dstz.demo.core.model.dto.BpmTaskDTO;
 import com.dstz.demo.core.model.dto.TaskCountDTO;
 
@@ -12,4 +14,8 @@ public interface CustomBpmTaskManager {
     List<String> queryTaskNames(String userId);
 
     TaskCountDTO countTodoAndDelayTasks(String userId);
+
+    List<BpmTaskNew> queryBpmTaskNewList(QueryFilter queryFilter);
+
+    List<BpmTaskNew> queryToDoList(QueryFilter queryFilter);
 }

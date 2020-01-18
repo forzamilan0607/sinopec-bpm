@@ -2008,7 +2008,8 @@
                 $.initGrid = function() {
                     var url = $("[ab-grid]").attr("data-url");
                     var customPagination = $("[ab-grid]").attr("data-customPagination");
-                    // var customPagination = $("[ab-grid]").attr("data-customPagination");
+                    var customShowColumns = $("[ab-grid]").attr("data-showColumns");
+                    var customShowRefresh = $("[ab-grid]").attr("data-showRefresh");
                     url = getCtxUrl(url, !0),
                         $("[ab-grid]").bootstrapTable({
                             url: url,
@@ -2026,8 +2027,8 @@
                             pageList: [10, 25, 50, 100],
                             search: !1,
                             strictSearch: !1,
-                            showColumns: !0,
-                            showRefresh: !0,
+                            showColumns: customShowColumns === "0" ? false : !0,
+                            showRefresh: customShowRefresh === "0" ? false : !0,
                             minimumCountColumns: 2,
                             clickToSelect: !0,
                             uniqueId: "id",

@@ -3,11 +3,13 @@ package com.dstz.demo.rest.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.dstz.base.api.query.QueryFilter;
 import com.dstz.base.api.response.impl.ResultMsg;
+import com.dstz.base.core.validate.ValidateUtil;
 import com.dstz.base.db.model.page.PageResult;
 import com.dstz.base.rest.ControllerTools;
 import com.dstz.base.rest.util.RequestUtil;
 import com.dstz.bpm.api.engine.action.cmd.FlowRequestParam;
 import com.dstz.bpm.core.manager.BpmTaskManager;
+import com.dstz.bpm.core.manager.TaskIdentityLinkManager;
 import com.dstz.bpm.core.model.BpmTask;
 import com.dstz.bpm.engine.action.cmd.DefualtTaskActionCmd;
 import com.dstz.demo.core.manager.CustomBpmTaskManager;
@@ -27,6 +29,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.cache.RedisCache;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,10 +37,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 public class CustomBpmTaskController extends ControllerTools {
@@ -51,6 +52,12 @@ public class CustomBpmTaskController extends ControllerTools {
 
     @Autowired
     private TimeLimitBpmTaskManager timeLimitBpmTaskManager;
+
+    @Autowired
+    private TaskIdentityLinkManager taskIdentityLinkManager;
+
+    @Autowired
+    private RedisCache redisCache;
 
     @RequestMapping("/bpm/task/getMultiTaskData")
     public ResultMsg<JSONObject> getMultiTaskData(HttpServletRequest request){
@@ -115,7 +122,7 @@ public class CustomBpmTaskController extends ControllerTools {
     @RequestMapping("/bpm/task/getTaskList")
     public PageResult<BpmTaskNew> getTaskList(HttpServletRequest request, HttpServletResponse reponse) throws Exception{
         QueryFilter queryFilter = this.getQueryFilter(request);
-        List<BpmTask> bpmTaskList = this.bpmTaskManager.query(queryFilter);
+       /* List<BpmTask> bpmTaskList = this.bpmTaskManager.query(queryFilter);
         List<BpmTaskNew> bpmTaskNewList = new Page<>();
         if (CollectionUtils.isNotEmpty(bpmTaskList)) {
             List<TimeLimit> listTimeLimit = timeLimitBpmTaskManager.getTimeLimitList(bpmTaskList);
@@ -126,7 +133,9 @@ public class CustomBpmTaskController extends ControllerTools {
             }
         }
         Page<BpmTaskNew> pageList = (Page) bpmTaskNewList;
-        return new PageResult(pageList);
+        return new PageResult(pageList);*/
+        List<BpmTaskNew> bpmTaskNewList = this.customBpmTaskManager.queryBpmTaskNewList(queryFilter);
+        return new PageResult(bpmTaskNewList);
     }
 
     @RequestMapping("/bpm/task/getDelayTaskList")
@@ -161,9 +170,16 @@ public class CustomBpmTaskController extends ControllerTools {
 
     @RequestMapping("/custom/my/todoTaskList")
     public PageResult todoTaskList(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        List<BpmTaskNew> bpmTaskNewList = new Page<>();
         QueryFilter queryFilter = super.getQueryFilter(request);
-        List<BpmTask> listTodoTask = bpmTaskManager.getTodoList(ContextUtil.getCurrentUserId(), queryFilter);
+        String userId = ContextUtil.getCurrentUserId();
+        Set<String> userRights = this.taskIdentityLinkManager.getUserRights(userId);
+        queryFilter.addParamsFilter("userRights", userRights);
+        queryFilter.addParamsFilter("userId", ContextUtil.getCurrentUserId());
+        List<BpmTaskNew> bpmTaskNewList = this.customBpmTaskManager.queryToDoList(queryFilter);
+        if (CollectionUtils.isNotEmpty(bpmTaskNewList)) {
+            this.redisCache.put(userId, bpmTaskNewList.stream().map(item -> item.getInstId()).collect(Collectors.toList()));
+        }
+        /*List<BpmTask> listTodoTask = bpmTaskManager.getTodoList(ContextUtil.getCurrentUserId(), queryFilter);
         if (CollectionUtils.isNotEmpty(listTodoTask)) {
             List<TimeLimit> listTimeLimit = timeLimitBpmTaskManager.getTimeLimitList(listTodoTask);
             for (BpmTask task : listTodoTask) {
@@ -172,8 +188,8 @@ public class CustomBpmTaskController extends ControllerTools {
                 }
             }
         }
-        Page<BpmTaskNew> pageList = (Page) bpmTaskNewList;
-        return new PageResult(pageList);
+        Page<BpmTaskNew> pageList = (Page) bpmTaskNewList;*/
+        return new PageResult(bpmTaskNewList);
     }
 
     @RequestMapping("/bpm/task/delayTask")

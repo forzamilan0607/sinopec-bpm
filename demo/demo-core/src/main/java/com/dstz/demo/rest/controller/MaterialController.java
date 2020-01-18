@@ -99,9 +99,10 @@ public class MaterialController extends ControllerTools {
             if(StringUtils.isBlank(materialProcess.getProcessId())){
                 materialProcess.setProcessId("411823371026956289");
             }
-            if(materialProcess.isHasInst()){
+            // 不需要禁用checkbox 因为要做信息的补充
+            /*if(materialProcess.isHasInst()){
                 materialProcess.setDisabled(true);
-            }
+            }*/
         }
         return new PageResult(bpmDefinitionList);
     }
@@ -218,15 +219,15 @@ public class MaterialController extends ControllerTools {
         this.materialManager.remove(businessKey);
         BpmInstance bpmInstance = bpmInstanceManager.get(instanceCmd.getInstanceId());
         BpmDefinition def = this.bpmDefinitionMananger.getByKey(bpmInstance.getDefKey());
-        String defName = StringUtils.replace(bpmInstance.getDefName(),def.getName(),material.getEnquiryName());
+        String defName = StringUtils.replace(bpmInstance.getDefName(),def.getName(),material.getMaterialDesc());
         bpmInstance.setDefName(defName);
-        String subject = StringUtils.replace(bpmInstance.getSubject(),def.getName(),material.getEnquiryName());
+        String subject = StringUtils.replace(bpmInstance.getSubject(),def.getName(),material.getMaterialDesc());
         bpmInstance.setSubject(subject);
         bpmInstanceManager.update(bpmInstance);
         List<BpmTask> bpmTaskList = bpmTaskManager.getByInstId(instanceCmd.getInstanceId());
         if(bpmTaskList!=null && !bpmTaskList.isEmpty()){
             for (BpmTask bpmTask : bpmTaskList) {
-                String _tmp = StringUtils.replace(bpmTask.getSubject(),def.getName(),material.getEnquiryName());
+                String _tmp = StringUtils.replace(bpmTask.getSubject(),def.getName(),material.getMaterialDesc());
                 bpmTask.setSubject(_tmp);
                 bpmTaskManager.update(bpmTask);
             }
@@ -253,9 +254,25 @@ public class MaterialController extends ControllerTools {
             json.put("processMaterial",materialJson);
             flowParam.setData(json);
             flowParam.setDefId(defId);
-            startProcess(flowParam);
+            this.startProcess(flowParam);
         }
         return this.getSuccessResult("批量启动成功");
+    }
+
+
+    /**
+     * 批量补充物料采购计划信息
+     * @param materialList
+     * @return
+     */
+    @PostMapping("/batchSupplement")
+    public ResultMsg<String> batchSupplement(@RequestBody List<MaterialProcess> materialList){
+        materialList.forEach(item -> {
+            item.setUpdateBy(ContextUtil.getCurrentUserId());
+            this.materialManager.update(item);
+            this.purchasePlanHisRecManager.update(item);
+        });
+        return this.getSuccessResult("保存成功");
     }
 
     @PostMapping({"instance/listJson"})

@@ -98,6 +98,58 @@
 		LEFT JOIN (SELECT task_id_ FROM bpm_timelimit where task_end_time &lt; now()) tl ON tl.task_id_ = task.id_
 	</select>
 
-	
+	<select id="queryBpmTaskNewList" parameterType="java.util.Map" resultType="com.dstz.demo.core.model.BpmTaskNew">
+		SELECT
+			t.id_ AS id,t.name_ AS name,t.subject_ AS subject,t.inst_id_ AS instId,
+			t.task_id_ AS taskId,t.node_id_ AS nodeId,t.def_id_ AS defId,t.assignee_id_ AS assigneeId,
+			t.assignee_names_ AS assigneeNames,t.status_ AS status,t.priority_ AS priority,
+			t.due_time_ AS dueTime,t.task_type_ AS taskType,t.parent_id_ AS parentId,t.act_inst_id_ AS actInstId,
+			t.act_execution_id_ AS actExecutionId,t.type_id_ AS typeId,t.create_time_ AS createTime,
+			t.create_by_ AS createBy,t.support_mobile_ AS supportMobile,t.back_node_ AS backNode,
+			t2.task_end_time &lt; now() AS delayFlag,t2.task_end_time AS expectDealTime
+		FROM bpm_task t
+		LEFT JOIN bpm_timelimit t2 ON t.id_ = t2.task_id_
+		<where>
+			<if test="whereSql!=null">
+				${whereSql}
+			</if>
+		</where>
+		<if test="orderBySql!=null">
+			ORDER BY ${orderBySql}
+		</if>
+		<if test="orderBySql==null">
+			ORDER BY t.id_ DESC
+		</if>
+	</select>
+
+	<select id="queryToDoList" parameterType="java.util.Map" resultType="com.dstz.demo.core.model.BpmTaskNew">
+		SELECT
+			t.id_ AS id,t.name_ AS name,t.subject_ AS subject,t.inst_id_ AS instId,
+			t.task_id_ AS taskId,t.node_id_ AS nodeId,t.def_id_ AS defId,t.assignee_id_ AS assigneeId,
+			t.assignee_names_ AS assigneeNames,t.status_ AS status,t.priority_ AS priority,
+			t.due_time_ AS dueTime,t.task_type_ AS taskType,t.parent_id_ AS parentId,t.act_inst_id_ AS actInstId,
+			t.act_execution_id_ AS actExecutionId,t.type_id_ AS typeId,t.create_time_ AS createTime,
+			t.create_by_ AS createBy,t.support_mobile_ AS supportMobile,t.back_node_ AS backNode,
+			t2.task_end_time &lt; now() AS delayFlag,t2.task_end_time AS expectDealTime
+		FROM bpm_task t
+		LEFT JOIN bpm_timelimit t2 ON t.id_ = t2.task_id_
+		LEFT JOIN bpm_task_identitylink link on t.id_ = link.task_id_
+		<if test="supportMobile">
+			inner join bpm_definition def on t.def_id_ = def.id_ and def.support_mobile_ = '1'
+		</if>
+		<where>
+			<if test="whereSql!=null">
+				${whereSql}
+			</if>
+			and ((t.assignee_id_ = '0' and link.permission_code_ in  <foreach collection="userRights" index="index" item="permissionCode" open="(" separator="," close=")">#{permissionCode}</foreach> )
+			or t.assignee_id_ = #{userId})
+		</where>
+		<if test="orderBySql!=null">
+			ORDER BY ${orderBySql}
+		</if>
+		<if test="orderBySql==null">
+			ORDER BY t.priority_ DESC, t.id_ DESC
+		</if>
+	</select>
 	
 </mapper>
