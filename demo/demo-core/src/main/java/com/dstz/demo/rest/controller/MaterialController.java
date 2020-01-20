@@ -328,7 +328,7 @@ public class MaterialController extends ControllerTools {
     }
 
     @PostMapping("/exportData")
-    public ResultMsg<String> exportData(HttpServletRequest request, HttpServletResponse response){
+    public void exportData(HttpServletRequest request, HttpServletResponse response){
         Workbook workbook = null;
         try {
             String ids = request.getParameter("ids");
@@ -346,13 +346,8 @@ public class MaterialController extends ControllerTools {
             exportParams.setTitleHeight((short) 20);
             workbook = ExcelExportUtil.exportExcel(exportParams, MaterialProcess.class, materialList);
             workbook.write(response.getOutputStream());
-            return this.getSuccessResult("导出成功");
         } catch (IOException e) {
             e.printStackTrace();
-            ResultMsg<String> resultMsg = new ResultMsg<String>();
-            resultMsg.setOk(false);
-            resultMsg.setMsg("导出失败");
-            return resultMsg;
         } finally {
             IOUtils.closeQuietly(workbook);
         }
