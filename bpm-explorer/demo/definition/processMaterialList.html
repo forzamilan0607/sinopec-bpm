@@ -7,6 +7,11 @@
 <script type="text/javascript" src="../../build/common/gridList.js"></script>
 <script type="text/javascript" src="../../build/common/easyLayout.js"></script>
 <script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+<style>
+	td {
+		white-space: nowrap;
+	}
+</style>
 <script type="text/javascript">
 	function batchStart() {
 		//  获取选中的记录
@@ -22,7 +27,7 @@
 		        return;
 			}
 		}
-		var ids = selectedObjs.map(item => item.id).join(",");
+//		var ids = selectedObjs.map(item => item.id).join(",");
 		var url = getCtxUrl('/bpm/material/process/start/batch', true);
 		var ii = layer.load();
 		$.ajax({
@@ -43,6 +48,24 @@
 				$.Dialog.error("操作失败");
 			}
 		});
+	}
+	function exportData() {
+		//  获取选中的记录
+		var selectedObjs = $("[ab-grid]").bootstrapTable("getSelections");
+		if (!selectedObjs || !selectedObjs.length) {
+			$.Dialog.error("请选择要导出的数据！");
+			return;
+		}
+        var ids = selectedObjs.map(item => item.id).join(",");
+		$("#ids").val(ids);
+		$("#myForm").submit();
+        var $form = $('<form method="post"/>');
+        var url = getCtxUrl("/bpm/material/process/exportData", true);
+        $form.attr('action', url);
+		$form.append('<input type="hidden" name="ids" value="' + ids + '" />');
+        $(document.body).append($form);
+        $form[0].submit();
+        $form.remove();
 	}
 
     /**
@@ -91,6 +114,9 @@
 </script>
 </head>
 <body class="easy-layout">
+	<!--<form method="post" action="/bpm/material/process/exportData" id="myForm">
+		<input type="hidden" id="ids" />
+	</form>-->
 	<div data-options="region:'center',border:false">
 		<!--搜索 .search-panel 必须 -->
 		<div class=" search-panel">
@@ -126,12 +152,19 @@
 		<div class="btn-group toolbar" style="padding-left: 5px;">
 			<button class="btn btn-outline btn-primary fa-plus" top="true" openDialog="Excel导入" dialogConf='"height":150,"width":750' url="demo/definition/uploadExcel.html">Excel导入</button>
 			<button class="btn btn-outline btn-primary"  onclick="batchStart()" >批量启动</button>
-			<button class="btn btn-outline btn-primary"  onclick="batchSupplement()" >补充信息</button>
+			<!--<button class="btn btn-outline btn-primary"  onclick="batchSupplement()" >补充信息</button>-->
+			<button class="btn btn-outline btn-primary"  onclick="exportData()" >导出</button>
 		</div>
 		<table ab-grid data-id-field="id" data-url="bpm/material/process/listJson">
 			<thead>
 			<tr>
 				<th data-checkbox="true">序号</th>
+				<th data-field="id" data-formatter="innerHtmlFormatter" data-title="管理">
+					<span if="!{hasInst}"  class="fa-send btn btn-outline btn-primary btn-sm" iview="标记" qtip='启动' openDialog="发起申请【{materialDesc}】" top="true" url="demo/definition/start.html?materialId={id}&defId={processId}&isCustomInstance=true"></span>
+					<span if="!{hasInst}" class='btn btn-outline btn-primary fa-trash' onclick="deletePurchasePlan('{id}')"></span>
+					<a if="{hasInst}" class="fa-detail btn btn-outline btn-primary btn-sm" iview="标记" openDialog='流程实例详情 【{materialDesc}】' qtip='流程实例' url='../../bpm/instance/instanceDetail.html?id={instId}'></a>
+					<!--<span  if="'{processId}'" class="fa-detail btn btn-outline btn-primary btn-sm" iview="标记" qtip='流程实例' openDialog="流程实例 " top="true" url="demo/definition/instanceList.html?materialNo={materialNo}"></span>-->
+				</th>
 				<th data-field="enquiryName">询价名称</th>
 				<th data-field="purchaseAply">采购申请</th>
 				<th data-field="materialNo">物料编码</th>
@@ -145,12 +178,6 @@
 				<th data-field="remark">备注</th>
 				<th data-field="createTime" data-formatter="dateFormatter" data-visible="false">创建时间</th>
 				<th data-field="updateTime" data-formatter="dateTimeFormatter" data-visible="false">更新时间</th>
-				<th data-field="id" data-formatter="innerHtmlFormatter" data-title="管理">
-					<span if="!{hasInst}"  class="fa-send btn btn-outline btn-primary btn-sm" iview="标记" qtip='启动' openDialog="发起申请【{materialDesc}】" top="true" url="demo/definition/start.html?materialId={id}&defId={processId}&isCustomInstance=true"></span>
-					<span if="!{hasInst}" class='btn btn-outline btn-primary fa-trash' onclick="deletePurchasePlan('{id}')"></span>
-					<a if="{hasInst}" class="fa-detail btn btn-outline btn-primary btn-sm" iview="标记" openDialog='流程实例详情 【{materialDesc}】' qtip='流程实例' url='../../bpm/instance/instanceDetail.html?id={instId}'></a>
-					<!--<span  if="'{processId}'" class="fa-detail btn btn-outline btn-primary btn-sm" iview="标记" qtip='流程实例' openDialog="流程实例 " top="true" url="demo/definition/instanceList.html?materialNo={materialNo}"></span>-->
-				</th>
 			</tr>
 			</thead>
 		</table>

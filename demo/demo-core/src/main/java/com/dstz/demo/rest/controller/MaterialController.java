@@ -1,5 +1,8 @@
 package com.dstz.demo.rest.controller;
 
+import cn.afterturn.easypoi.excel.ExcelExportUtil;
+import cn.afterturn.easypoi.excel.entity.ExportParams;
+import cn.afterturn.easypoi.excel.entity.enmus.ExcelType;
 import cn.afterturn.easypoi.excel.entity.result.ExcelImportResult;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -9,9 +12,9 @@ import com.dstz.base.api.query.QueryOP;
 import com.dstz.base.api.response.impl.ResultMsg;
 import com.dstz.base.core.id.IdUtil;
 import com.dstz.base.core.util.StringUtil;
-import com.dstz.base.core.validate.ValidateUtil;
 import com.dstz.base.db.model.page.PageResult;
 import com.dstz.base.db.model.query.DefaultQueryField;
+import com.dstz.base.db.model.query.DefaultQueryFilter;
 import com.dstz.base.rest.ControllerTools;
 import com.dstz.base.rest.util.RequestUtil;
 import com.dstz.bpm.api.engine.action.cmd.FlowRequestParam;
@@ -36,7 +39,9 @@ import com.dstz.sys.util.ContextUtil;
 import com.dstz.sys.util.SysPropertyUtil;
 import com.github.pagehelper.Page;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,9 +53,14 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 物料采购流程
@@ -121,34 +131,39 @@ public class MaterialController extends ControllerTools {
     public ResultMsg<JSONObject> importExcel(MultipartFile file, HttpServletRequest ret , HttpServletResponse rsp){
         JSONObject json = new JSONObject();
         json.put("isSuccess",true);
-        ExcelImportResult<MaterialProcess> result = EasyPoiUtil.importExcel(file,3,1,true,MaterialProcess.class);
+        ExcelImportResult<MaterialProcess> result = EasyPoiUtil.importExcel(file,1,1,true,MaterialProcess.class);
         List<MaterialProcess> successList = result.getList();
         List<MaterialProcess> failList = result.getFailList();
         log.info("是否存在验证未通过的数据:" + result.isVerfiyFail() + ", 验证通过的数量:" + successList.size() + "验证未通过的数量:" + failList.size());
         StringBuilder errorMsg = new StringBuilder();
         IUser currentUser = ContextUtil.getCurrentUser();
         //保存成功信息
-        int errorCount = 0;
-        for (MaterialProcess material : successList) {
-            // 判断是否存在
-            Map<String,Object> existedData = this.materialManager.getInstance(new MaterialProcess(material.getMaterialNo(), material.getPurchaseAply()));
-            if(existedData != null && existedData.get("id") != null){
-                if("true".equalsIgnoreCase((String)existedData.get("isInstance"))){
-                    if (errorCount++ == 0) {
-                        errorMsg.append("采购申请编号：");
-                    }
-                    errorMsg.append("【"+material.getPurchaseAply()+"】");
-                    continue;
+        if (!CollectionUtils.isEmpty(successList)) {
+            QueryFilter queryFilter = new DefaultQueryFilter();
+            queryFilter.addFilter("t.material_no", successList.stream().map(item -> item.getMaterialNo()).collect(Collectors.toList()), QueryOP.IN);
+            List<MaterialProcess> existedData = this.materialManager.query(queryFilter);
+            for (MaterialProcess material : successList) {
+                // 判断是否存在
+                MaterialProcess item = this.findItem(material, existedData);
+                if (null != item) {
+//                if(existedData != null && existedData.get("id") != null){
+                    /*if("true".equalsIgnoreCase((String)existedData.get("isInstance"))){
+                        if (errorCount++ == 0) {
+                            errorMsg.append("采购申请编号：");
+                        }
+                        errorMsg.append("【"+material.getPurchaseAply()+"】");
+                        continue;
+                    }*/
+                    material.setId(item.getId());
+                    material.setUpdateBy(currentUser.getUserId());
+                    materialManager.update(material);
+                    // 同时更新采购计划历史记录
+                    this.purchasePlanHisRecManager.update(material);
+                } else {
+                    material.setId(IdUtil.getSuid());
+                    material.setCreateBy(currentUser.getUserId());
+                    materialManager.create(material);
                 }
-                material.setId((String)existedData.get("id"));
-                material.setUpdateBy(currentUser.getUserId());
-                materialManager.update(material);
-                // 同时更新采购计划历史记录
-                this.purchasePlanHisRecManager.update(material);
-            } else {
-                material.setId(IdUtil.getSuid());
-                material.setCreateBy(currentUser.getUserId());
-                materialManager.create(material);
             }
         }
         if(result.isVerfiyFail()){
@@ -167,6 +182,17 @@ public class MaterialController extends ControllerTools {
             json.put("validateList", errorMsg);
         }
         return super.getSuccessResult(json);
+    }
+
+    private MaterialProcess findItem(MaterialProcess material, List<MaterialProcess> existedData) {
+        if (!CollectionUtils.isEmpty(existedData)) {
+            for (MaterialProcess item : existedData) {
+                if (ObjectUtils.nullSafeEquals(material.getMaterialNo(), item.getMaterialNo())) {
+                    return item;
+                }
+            }
+        }
+        return null;
     }
 
     @RequestMapping("/getInstanceData")
@@ -299,5 +325,36 @@ public class MaterialController extends ControllerTools {
         this.materialManager.remove(id);
         this.purchasePlanHisRecManager.removeByMaterialProcessId(id);
         return super.getSuccessResult("删除成功");
+    }
+
+    @PostMapping("/exportData")
+    public ResultMsg<String> exportData(HttpServletRequest request, HttpServletResponse response){
+        Workbook workbook = null;
+        try {
+            String ids = request.getParameter("ids");
+            QueryFilter queryFilter = new DefaultQueryFilter();
+            queryFilter.addFilter("t.id", ids, QueryOP.IN);
+            List<MaterialProcess> materialList = this.materialManager.query(queryFilter);
+            request.setCharacterEncoding("UTF-8");
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("application/x-download");
+            String sdf = new SimpleDateFormat("yyyyMMddhhmmss").format(new Date());
+            String fileName = URLEncoder.encode("物料采购计划表-" + sdf + ".xlsx", "UTF-8");
+            response.addHeader("Content-Disposition", "attachment;filename=" + fileName);
+            ExportParams exportParams = new ExportParams("物料采购计划表", "sheet1");
+            exportParams.setType(ExcelType.XSSF);
+            exportParams.setTitleHeight((short) 20);
+            workbook = ExcelExportUtil.exportExcel(exportParams, MaterialProcess.class, materialList);
+            workbook.write(response.getOutputStream());
+            return this.getSuccessResult("导出成功");
+        } catch (IOException e) {
+            e.printStackTrace();
+            ResultMsg<String> resultMsg = new ResultMsg<String>();
+            resultMsg.setOk(false);
+            resultMsg.setMsg("导出失败");
+            return resultMsg;
+        } finally {
+            IOUtils.closeQuietly(workbook);
+        }
     }
 }
