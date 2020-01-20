@@ -11,7 +11,7 @@
 
 
     <delete id="removeByMaterialProcessId" parameterType="java.lang.String">
-		DELETE FROM t_process_material
+		DELETE FROM t_purchase_plan_his_rec
 		WHERE
 		material_process_id = #{materialProcessId}
 	</delete>
