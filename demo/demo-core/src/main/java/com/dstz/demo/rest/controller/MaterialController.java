@@ -38,6 +38,7 @@ import com.dstz.org.api.model.IUser;
 import com.dstz.sys.util.ContextUtil;
 import com.dstz.sys.util.SysPropertyUtil;
 import com.github.pagehelper.Page;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -139,10 +140,11 @@ public class MaterialController extends ControllerTools {
         IUser currentUser = ContextUtil.getCurrentUser();
         //保存成功信息
         if (!CollectionUtils.isEmpty(successList)) {
+            List<MaterialProcess> resultList = this.filterData(successList);
             QueryFilter queryFilter = new DefaultQueryFilter();
-            queryFilter.addFilter("t.material_no", successList.stream().map(item -> item.getMaterialNo()).collect(Collectors.toList()), QueryOP.IN);
+            queryFilter.addFilter("t.material_no", resultList.stream().map(item -> item.getMaterialNo()).collect(Collectors.toList()), QueryOP.IN);
             List<MaterialProcess> existedData = this.materialManager.query(queryFilter);
-            for (MaterialProcess material : successList) {
+            for (MaterialProcess material : resultList) {
                 // 判断是否存在
                 MaterialProcess item = this.findItem(material, existedData);
                 if (null != item) {
@@ -182,6 +184,17 @@ public class MaterialController extends ControllerTools {
             json.put("validateList", errorMsg);
         }
         return super.getSuccessResult(json);
+    }
+
+    private List<MaterialProcess> filterData(List<MaterialProcess> successList) {
+        // 按物料ID分组
+        Map<String, List<MaterialProcess>> groupMap = successList.stream().collect(Collectors.groupingBy(MaterialProcess::getMaterialNo));
+        List<MaterialProcess> resultList = Lists.newArrayList();
+        // 相同物料ID的，只取最后一条记录
+        groupMap.forEach((k, v) -> {
+            resultList.add(v.get(v.size() - 1));
+        });
+        return resultList;
     }
 
     private MaterialProcess findItem(MaterialProcess material, List<MaterialProcess> existedData) {

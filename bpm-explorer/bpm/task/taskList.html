@@ -3,6 +3,11 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>流程任务</title>
 	<link href="../../build/common/base.css" rel="stylesheet">
+    <style>
+        td {
+            white-space: nowrap;
+        }
+    </style>
 	<script type="text/javascript" src="../../build/common/base.js"></script>
 	<script type="text/javascript" src="../../build/common/gridList.js"></script>
     <script type="text/javascript" src="../../build/common/ngEdit.js"></script>
@@ -45,18 +50,18 @@
           <thead>
           <tr>
               <th data-checkbox="true"></th>
+              <th data-formatter="showButtons">管理</th>
               <th data-field="subject">流程标题</th>
               <th data-field="name">任务名称</th>
               <th data-field="assigneeNames">候选人</th>
-              <th data-field="taskType" data-formatter="labelFormatter" 
+              <th data-field="taskType" data-formatter="labelFormatter"
               			data-value-style="NORMAL-普通-primary,SIGN-会签-info,SIGN_SOURCE-会签_父-info,ADD_SIGN-加签-info,TRANSFORMING-事项-warning,">类型</th>
-              <th data-field="status" data-formatter="labelFormatter" 
+              <th data-field="status" data-formatter="labelFormatter"
               			data-value-style="NORMAL-普通-primary,SUSPEND-挂起-info,LOCK-锁定-warning,BACK-驳回-warning,DESIGNATE-指派-info,TURN-转办-info,AGENCY-代理-info,">状态</th>
               <th data-field="delayFlag" data-formatter="labelFormatter"
                   data-value-style="false-否-primary,true-是-danger,">是否延期</th>
               <th data-field="createTime" data-formatter=dateTimeFormatter data-sort-name="create_time_" data-sortable="true">任务创建时间</th>
               <th data-field="expectDealTime" data-formatter=dateTimeFormatter >任务截止时间</th>
-              <th data-formatter="showButtons">管理</th>
           </tr>
           </thead>
       </table>
