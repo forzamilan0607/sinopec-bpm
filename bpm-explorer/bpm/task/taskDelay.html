@@ -33,8 +33,12 @@
 					return;
 				}
 				if (!timeLimit.taskEndTime) {
-                    $.Dialog.msg("请输入延期时间!");
-					return;
+				    if ($("#txt_taskEndTime").val() == '' || $("#txt_taskEndTime").val() == null) {
+						$.Dialog.msg("请输入延期时间!");
+						return;
+					} else {
+				        timeLimit.taskEndTime = $("#txt_taskEndTime").val();
+					}
 				}
 				// 校验延期时间是否大于当前时间
 				var currentTime = new Date().getTime();
@@ -78,7 +82,7 @@
 			<span>延期到:</span><span class="required">*</span>
 		</th>
 		<td>
-			<input class="form-control ng-pristine ng-valid dateformat ng-valid-custom-validate" ng-model="timeLimit.taskEndTime" ab-validate="{&quot;date&quot;:true,&quot;required&quot;:true}" desc="延期时间" ab-date="yyyy-MM-dd HH:mm:ss" lay-key="1" />
+			<input class="form-control ng-pristine ng-valid dateformat ng-valid-custom-validate" id="txt_taskEndTime" ng-model="timeLimit.taskEndTime" ab-validate="{&quot;date&quot;:true,&quot;required&quot;:true}" desc="延期时间" ab-date="yyyy-MM-dd HH:mm:ss"  />
 		</td>
 	</tr>
 </table>

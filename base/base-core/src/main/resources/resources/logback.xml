@@ -10,7 +10,7 @@
     <logger name="com.dstz.base" level="ERROR"/>
 
 
-    <root level="error">
+    <root level="debug">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>
