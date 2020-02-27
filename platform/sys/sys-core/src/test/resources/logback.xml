@@ -32,10 +32,10 @@
         </triggeringPolicy>
     </appender>
 
-    <logger name="com.dstz.sys" level="DEBUG" />
+    <logger name="com.dstz.sys" level="ERROR" />
 
     <!-- 日志输出级别 -->
-    <root level="INFO">
+    <root level="error">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>

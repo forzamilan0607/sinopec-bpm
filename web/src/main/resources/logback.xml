@@ -35,10 +35,10 @@
     <logger name="com.dstz.sys.simplemq" level="DEBUG"/>
     <logger name="org.springframework.jdbc.core" level="DEBUG"/>
     
-    <logger name="org.springframework.data.redis" level="INFO"/>
+    <logger name="org.springframework.data.redis" level="ERROR"/>
     <logger name="io.lettuce" level="INFO"/>
     <!-- 日志输出级别 -->
-    <root level="INFO">
+    <root level="error">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>
