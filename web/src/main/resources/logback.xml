@@ -31,7 +31,7 @@
     </appender>
 
     <!-- 修改日志级别不用重启服务器。所以默认是 info。请不要把debug 提交，若要查看更详细日志请开启  trace-->
-    <logger name="com.dstz" level="TRACE"/>
+    <logger name="com.dstz.demo" level="TRACE"/>
     <logger name="com.dstz.sys.simplemq" level="DEBUG"/>
     <logger name="org.springframework.jdbc.core" level="DEBUG"/>
     
