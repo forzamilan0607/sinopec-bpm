@@ -1,0 +1,58 @@
+<html ng-app="bpm">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>批量任务处理</title>
+	<link href="../../build/common/base.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/base.js"></script>
+	<script type="text/javascript" src="../../build/common/gridList.js"></script>
+	<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+	<script type="text/javascript" src="../../assets/js/common/bpmForm/bpmService.js"></script>
+	<script type="text/javascript" src="../../build/common/custForm.js"></script>
+	<style>
+		td {
+			white-space: nowrap;
+		}
+	</style>
+
+
+	<script type="text/javascript">
+		$(function() {
+		})
+		/*var PurchasePlanHisController = ['$scope','baseService',function($scope,baseService){
+
+		}];*/
+	</script>
+</head>
+	<body ng-controller="PurchasePlanHisController">
+		<div>
+			<form id="searchForm" class="form-horizontal" style="display: none;">
+				<div class="form-group">
+					<div class="col-sm-3">
+						<input type="hidden" class="form-control" id="id_^VIN" >
+					</div>
+				</div>
+			</form>
+			<table ab-grid data-id-field="id" data-url="/bpm/material/process/queryPurchasePlanHis" data-customPagination="0" data-showColumns="0" data-showRefresh="0">
+				<thead>
+					<tr>
+						<!--<th data-field="createTime" data-formatter="dateFormatter" >创建时间</th>
+						<th data-field="createBy" >创建人</th>-->
+						<th data-field="updateTime" data-formatter="dateTimeFormatter" >更新时间</th>
+						<th data-field="updateBy" >更新人</th>
+						<th data-field="enquiryName">询价名称</th>
+						<th data-field="purchaseAply">采购申请</th>
+						<th data-field="materialNo">物料编码</th>
+						<th data-field="materialDesc">物料描述</th>
+						<th data-field="erpMaterialNo">ERP物料编码</th>
+						<th data-field="erpMaterialDesc">ERP物料描述</th>
+						<th data-field="unit">单位</th>
+						<th data-field="number">数量</th>
+						<th data-field="plant">车间</th>
+						<th data-field="reservedNumber">预留</th>
+						<th data-field="remark">备注</th>
+					</tr>
+				</thead>
+			</table>
+		</div>
+	</body>
+</html>

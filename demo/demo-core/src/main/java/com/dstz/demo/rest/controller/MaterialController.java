@@ -32,6 +32,7 @@ import com.dstz.bpm.engine.action.cmd.DefaultInstanceActionCmd;
 import com.dstz.demo.core.manager.MaterialManager;
 import com.dstz.demo.core.manager.PurchasePlanHisRecManager;
 import com.dstz.demo.core.model.MaterialProcess;
+import com.dstz.demo.core.model.PurchasePlanHisRec;
 import com.dstz.demo.utils.EasyPoiUtil;
 import com.dstz.form.api.model.FormType;
 import com.dstz.org.api.model.IUser;
@@ -39,6 +40,7 @@ import com.dstz.sys.util.ContextUtil;
 import com.dstz.sys.util.SysPropertyUtil;
 import com.github.pagehelper.Page;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -165,6 +167,8 @@ public class MaterialController extends ControllerTools {
                     material.setId(IdUtil.getSuid());
                     material.setCreateBy(currentUser.getUserId());
                     materialManager.create(material);
+                    material.setUpdateTime(new Date());
+                    this.purchasePlanHisRecManager.update(material);
                 }
             }
         }
@@ -268,6 +272,11 @@ public class MaterialController extends ControllerTools {
         bpmInstance.setSubject(subject);
         bpmInstanceManager.update(bpmInstance);
         List<BpmTask> bpmTaskList = bpmTaskManager.getByInstId(instanceCmd.getInstanceId());
+        // 更新关联的采购计划历史记录
+        Map<String, Object> params = new HashMap<>();
+        params.put("materialId", material.getId());
+        params.put("instId", bpmInstance.getId());
+        this.purchasePlanHisRecManager.updateByInst(params);
         if(bpmTaskList!=null && !bpmTaskList.isEmpty()){
             for (BpmTask bpmTask : bpmTaskList) {
                 String _tmp = StringUtils.replace(bpmTask.getSubject(),def.getName(),material.getMaterialDesc());
@@ -364,5 +373,28 @@ public class MaterialController extends ControllerTools {
         } finally {
             IOUtils.closeQuietly(workbook);
         }
+    }
+
+    @PostMapping({"queryPurchasePlanHis"})
+    public PageResult queryPurchasePlanHis(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        QueryFilter queryFilter = this.getQueryFilter(request);
+        String sql = queryFilter.getFieldLogic().getWhereClauses().get(0).getSql();
+        String materialId = sql.replace("id_ in  (\"", "").replace("\")", "");
+        List<PurchasePlanHisRec> data = this.purchasePlanHisRecManager.queryListByMaterialId(materialId);
+        List<MaterialProcess> resultList = Lists.newArrayList();
+        if (!CollectionUtils.isEmpty(data)) {
+            int length = data.size();
+            for (int i = 0; i < length; i++) {
+                PurchasePlanHisRec item = data.get(i);
+                MaterialProcess materialProcess = JSONObject.parseObject(item.getContent(), MaterialProcess.class);
+                /*if (i + 1 == length) {
+                    materialProcess.setCreateBy(item.getUpdateUser());
+                } else {
+                }*/
+                materialProcess.setUpdateBy(item.getUpdateUser());
+                resultList.add(materialProcess);
+            }
+        }
+        return new PageResult(resultList);
     }
 }

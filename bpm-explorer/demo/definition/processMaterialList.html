@@ -163,7 +163,7 @@
 					<span if="!{hasInst}"  class="fa-send btn btn-outline btn-primary btn-sm" iview="标记" qtip='启动' openDialog="发起申请【{materialDesc}】" top="true" url="demo/definition/start.html?materialId={id}&defId={processId}&isCustomInstance=true"></span>
 					<span if="!{hasInst}" class='btn btn-outline btn-primary fa-trash' onclick="deletePurchasePlan('{id}')"></span>
 					<a if="{hasInst}" class="fa-detail btn btn-outline btn-primary btn-sm" iview="标记" openDialog='流程实例详情 【{materialDesc}】' qtip='流程实例' url='../../bpm/instance/instanceDetail.html?id={instId}'></a>
-					<!--<span  if="'{processId}'" class="fa-detail btn btn-outline btn-primary btn-sm" iview="标记" qtip='流程实例' openDialog="流程实例 " top="true" url="demo/definition/instanceList.html?materialNo={materialNo}"></span>-->
+					<span if="{hasInst}" class="fa-history btn btn-outline btn-primary btn-sm" qtip='历史记录' openDialog="历史记录 " top="true" url="demo/definition/purchasePlanHis.html?taskIds={id}"></span>
 				</th>
 				<th data-field="enquiryName">询价名称</th>
 				<th data-field="purchaseAply">采购申请</th>

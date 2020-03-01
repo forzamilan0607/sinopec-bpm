@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.dstz.demo.core.dao.PurchasePlanHisRecManagerDao">
+<mapper namespace="com.dstz.demo.core.dao.PurchasePlanHisRecDao">
 
     <insert id="insert" parameterType="com.dstz.demo.core.model.PurchasePlanHisRec">
 		INSERT INTO t_purchase_plan_his_rec
@@ -9,10 +9,28 @@
 		(#{materialProcessId,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, now(),#{updateUser})
 	</insert>
 
+	<update id="updateByInst" parameterType="java.util.HashMap">
+		update t_purchase_plan_his_rec set material_process_id = (select biz_id_ from bpm_bus_link where inst_id_ = #{instId} and biz_code_ = 'processMaterial' limit 1)
+		where material_process_id = #{materialId}
+	</update>
+
 
     <delete id="removeByMaterialProcessId" parameterType="java.lang.String">
 		DELETE FROM t_purchase_plan_his_rec
 		WHERE
 		material_process_id = #{materialProcessId}
 	</delete>
+
+	<select id="queryListByMaterialId" parameterType="java.lang.String" resultType="com.dstz.demo.core.model.PurchasePlanHisRec">
+		SELECT
+			t.id,
+			t.material_process_id AS materialProcessId,
+			t.content,
+			t.update_time AS updateTime,
+			u.fullname_ AS updateUser
+		FROM t_purchase_plan_his_rec t
+		INNER JOIN (SELECT id_,fullname_ FROM org_user) u ON t.update_user = u.id_
+		WHERE t.material_process_id = #{materialId}
+		ORDER BY updateTime DESC
+	</select>
 </mapper>
