@@ -1944,7 +1944,12 @@
                     $obj.unbind("click"),
                         $obj.click(function() {
                             $.search(this)
-                        })
+                        });
+                    $("#searchForm input[type=text]").bind("keydown", function (e) {
+                        if (e.keyCode == 13) {
+                            $obj.trigger("click");
+                        }
+                    })
                 }
                 ,
                 $.handlerReSetSearch = function() {

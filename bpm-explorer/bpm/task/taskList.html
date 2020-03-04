@@ -21,13 +21,13 @@
          <div class="panel-body">
              <form id="searchForm" class="form-horizontal">
                  <div class="form-group">
-                     <label class="control-label col-sm-1" for="subject_^VLK">流程标题</label>
+                     <label class="control-label col-sm-1" for="t.subject_^VLK">流程标题</label>
                      <div class="col-sm-3">
-                         <input type="text" class="form-control" id="subject_^VLK">
+                         <input type="text" class="form-control" id="t.subject_^VLK">
                      </div>
-                     <label class="control-label col-sm-1" for="name_^VLK">任务名称</label>
+                     <label class="control-label col-sm-1" for="t.name_^VLK">任务名称</label>
                      <div class="col-sm-3">
-                         <input type="text" class="form-control text_taskName" id="name_^VLK" style="display: none;" ng-model="taskName">
+                         <input type="text" class="form-control text_taskName" id="t.name_^VLK" style="display: none;" ng-model="taskName">
                          <select ng-model="taskName" ng-options="taskNode.name as taskNode.name for taskNode in taskNodes"  class="form-control">
                              <option value="">请选择</option>
                          </select>

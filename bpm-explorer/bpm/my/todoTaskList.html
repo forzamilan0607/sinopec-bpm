@@ -95,19 +95,19 @@
          <div class="panel-body">
              <form id="searchForm" class="form-horizontal">
                  <div class="form-group">
-                     <label class="control-label col-sm-1" for="subject_^VLK">流程标题</label>
+                     <label class="control-label col-sm-1" for="t.subject_^VLK">流程标题</label>
                      <div class="col-sm-3">
-                         <input type="text" class="form-control" id="subject_^VLK">
+                         <input type="text" class="form-control" id="t.subject_^VLK">
                      </div>
-                     <label class="control-label col-sm-1" for="name_^VLK">任务名字</label>
+                     <label class="control-label col-sm-1" for="t.name_^VLK">任务名字</label>
                      <div class="col-sm-3">
-                         <input type="text" class="form-control" id="name_^VLK" style="display: none;" ng-model="taskName">
+                         <input type="text" class="form-control" id="t.name_^VLK" style="display: none;" ng-model="taskName">
                          <select ng-model="taskName" ng-options="taskNode.name as taskNode.name for taskNode in taskNodes"  class="form-control">
                              <option value="">请选择</option>
                          </select>
                      </div>
                      <div class="col-sm-4" style="text-align:left;">
-                     		<button type="button" style="margin-left: 50px" class="btn btn-primary fa-search">查询</button>
+                     		<button id="btn_query" type="button" style="margin-left: 50px" class="btn btn-primary fa-search">查询</button>
 							<button type="button" style="margin-left: 50px" class="btn btn-primary fa-rotate-left">重置</button>
                      </div>
                  </div>

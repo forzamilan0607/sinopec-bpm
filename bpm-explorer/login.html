@@ -26,6 +26,12 @@
 		 			window.location = "index.html";
 		 		})
 		 	 }
+             $scope.enterEvent = function(e) {
+                 var keycode = window.event ? e.keyCode : e.which;
+                 if (keycode == 13) {
+                     $scope.login();
+                 }
+             }
 		 	 
 		 }]);
 
@@ -58,8 +64,8 @@
             <div class="col-sm-5">
                 <form>
                     <h4 class="no-margins">登录：</h4>
-                    <input type="text" class="form-control uname" ng-model="user.account"  placeholder="用户名" />
-                    <input type="password" class="form-control pword m-b" ng-model="user.password" placeholder="密码" />
+                    <input type="text" class="form-control uname" ng-model="user.account"  placeholder="用户名" ng-keyup="enterEvent($event)" />
+                    <input type="password" class="form-control pword m-b" ng-model="user.password" placeholder="密码" ng-keyup="enterEvent($event)" />
                     <span class="btn btn-primary btn-block" ng-click="login()">登录</span>
                 </form>
             </div>
