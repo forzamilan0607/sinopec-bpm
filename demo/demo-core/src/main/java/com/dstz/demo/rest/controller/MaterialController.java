@@ -114,7 +114,7 @@ public class MaterialController extends ControllerTools {
         List<MaterialProcess> bpmDefinitionList = this.materialManager.query(queryFilter);
         for (MaterialProcess materialProcess : bpmDefinitionList) {
             if(StringUtils.isBlank(materialProcess.getProcessId())){
-                materialProcess.setProcessId("411823371026956289");
+                materialProcess.setProcessId(this.extractProcessId());
             }
             // 不需要禁用checkbox 因为要做信息的补充
             /*if(materialProcess.isHasInst()){
@@ -220,7 +220,8 @@ public class MaterialController extends ControllerTools {
         }
         String instanceId = request.getParameter("instanceId");
         Boolean readonly = RequestUtil.getBoolean(request, "readonly", false);
-        String flowKey = SysPropertyUtil.getByAlias("materialPurchaseProcessKEY", "");
+//        String flowKey = SysPropertyUtil.getByAlias("materialPurchaseProcessKEY", "");
+        String flowKey = this.getFlowKey();
         String nodeId = RequestUtil.getString(request, "nodeId");
         BpmDefinition def = this.bpmDefinitionMananger.getByKey(flowKey);
         if (def == null) {
@@ -243,6 +244,30 @@ public class MaterialController extends ControllerTools {
             bpmFlowInstanceData.setData(json);
             return this.getSuccessResult(data);
         }
+    }
+
+    private String getFlowKey() {
+        // 获取当前组织ID
+        String groupId = ContextUtil.getCurrentGroupId();
+        Map<String, String> map = JSONObject.parseObject(SysPropertyUtil.getByAlias("group-process"), Map.class);
+        if (!CollectionUtils.isEmpty(map)) {
+            if (map.containsKey(groupId)) {
+                return map.get(groupId);
+            }
+        }
+        return "goodsPurchasePlan";
+    }
+
+    private String extractProcessId() {
+        // 获取当前组织ID
+        String groupId = ContextUtil.getCurrentGroupId();
+        Map<String, String> map = JSONObject.parseObject(SysPropertyUtil.getByAlias("group-processId"), Map.class);
+        if (!CollectionUtils.isEmpty(map)) {
+            if (map.containsKey(groupId)) {
+                return map.get(groupId);
+            }
+        }
+        return "411823371026956289";
     }
 
     /**
@@ -293,7 +318,7 @@ public class MaterialController extends ControllerTools {
         flowParam.setFormType("INNER");
         flowParam.setInstanceId("");
         JSONObject json = new JSONObject();
-        String flowKey = SysPropertyUtil.getByAlias("materialPurchaseProcessKEY", "");
+        String flowKey = this.getFlowKey();
         BpmDefinition def = this.bpmDefinitionMananger.getByKey(flowKey);
         if (def == null) {
             throw new BusinessException("流程定义查找失败！ flowKey： " + flowKey, BpmStatusCode.DEF_LOST);
