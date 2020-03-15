@@ -1,11 +1,8 @@
 <div class="ivu-form ivu-form-label-right"><table class="form-table">
-    <tbody><tr class="firstRow">
-        <th>询价名称</th>
-        <td><input type="text" class=" form-control" ng-model="data.processMaterial.enquiryName" ab-basic-permission="permission.processMaterial.t_process_material.enquiryName" desc="物料流程-询价名称" ></td>
-    </tr>
-    <tr>
-        <th>采购申请</th>
-        <td><input type="text" class=" form-control" ng-model="data.processMaterial.purchaseAply" ab-basic-permission="permission.processMaterial.t_process_material.purchaseAply" desc="物料流程-采购申请" ></td>
+    <tbody>
+    <tr class="firstRow">
+        <th>需求计划号</th>
+        <td><input type="text" class=" form-control" ng-model="data.processMaterial.reqPlanNo" ab-basic-permission="permission.processMaterial.t_process_material.reqPlanNo" desc="物料流程-需求计划号" ></td>
     </tr>
     <tr>
         <th>物料编码</th>
@@ -14,14 +11,6 @@
     <tr>
         <th>物料描述</th>
         <td><input type="text" class=" form-control" ng-model="data.processMaterial.materialDesc" ab-basic-permission="permission.processMaterial.t_process_material.materialDesc" desc="物料流程-物料描述" ></td>
-    </tr>
-    <tr>
-        <th>ERP物料编码</th>
-        <td><input type="text" class=" form-control" ng-model="data.processMaterial.erpMaterialNo" ab-basic-permission="permission.processMaterial.t_process_material.erpMaterialNo" desc="物料流程-物料编码" ></td>
-    </tr>
-    <tr>
-        <th>ERP物料描述</th>
-        <td><input type="text" class=" form-control" ng-model="data.processMaterial.erpMaterialDesc" ab-basic-permission="permission.processMaterial.t_process_material.erpMaterialDesc" desc="物料流程-物料描述" ></td>
     </tr>
     <tr>
         <th>单位</th>
@@ -36,16 +25,52 @@
         <td><input type="text" class=" form-control" ng-model="data.processMaterial.plant" ab-basic-permission="permission.processMaterial.t_process_material.plant" desc="物料流程-车间" ></td>
     </tr>
     <tr>
+        <th>车间计划员备注</th>
+        <td><textarea type="text" class=" form-control" ng-model="data.processMaterial.workshopPlannerRemark" ab-basic-permission="permission.processMaterial.t_process_material.workshopPlannerRemark" desc="物料流程-车间" ></textarea></td>
+    </tr>
+    <tr>
         <th>预留单号</th>
         <td><input type="text" class=" form-control" ng-model="data.processMaterial.reservedNumber" ab-basic-permission="permission.processMaterial.t_process_material.reservedNumber" desc="物料流程-预留单号" ></td>
     </tr>
     <tr>
-        <th>预留</th>
-        <td><input type="text" class=" form-control" ng-model="data.processMaterial.reserved" ab-basic-permission="permission.processMaterial.t_process_material.reserved" desc="物料流程-预留" ></td>
+        <th>采购申请号</th>
+        <td><input type="text" class=" form-control" ng-model="data.processMaterial.purchaseAply" ab-basic-permission="permission.processMaterial.t_process_material.purchaseAply" desc="物料流程-采购申请" ></td>
+    </tr>
+    <tr>
+        <th>询价书名称</th>
+        <td><input type="text" class=" form-control" ng-model="data.processMaterial.enquiryName" ab-basic-permission="permission.processMaterial.t_process_material.enquiryName" desc="物料流程-询价名称" ></td>
+    </tr>
+    <tr>
+        <th>供应部计划岗位备注</th>
+        <td><textarea type="text" class=" form-control" ng-model="data.processMaterial.supplyPlanPostRemark" ab-basic-permission="permission.processMaterial.t_process_material.supplyPlanPostRemark" desc="物料流程-供应部计划岗位备注" ></textarea></td>
+    </tr>
+    <tr>
+        <th>采购订单号</th>
+        <td><input type="text" class=" form-control" ng-model="data.processMaterial.purchaseOrderNo" ab-basic-permission="permission.processMaterial.t_process_material.purchaseOrderNo" desc="物料流程-采购订单号" ></td>
+    </tr>
+    <tr>
+        <th>ERP订单号</th>
+        <td><input type="text" class=" form-control" ng-model="data.processMaterial.erpOrderNo" ab-basic-permission="permission.processMaterial.t_process_material.erpOrderNo" desc="物料流程-ERP订单号" ></td>
+    </tr>
+    <tr>
+        <th>合同号</th>
+        <td><input type="text" class=" form-control" ng-model="data.processMaterial.contractNo" ab-basic-permission="permission.processMaterial.t_process_material.contractNo" desc="物料流程-合同号" ></td>
     </tr>
     <tr>
         <th>备注</th>
         <td><textarea type="text" class=" form-control" ng-model="data.processMaterial.remark" ab-basic-permission="permission.processMaterial.t_process_material.remark" desc="物料流程-备注" ></textarea></td>
+    </tr>
+    <tr>
+        <th>库存凭证号</th>
+        <td><input type="text" class=" form-control" ng-model="data.processMaterial.stockVoucherNo" ab-basic-permission="permission.processMaterial.t_process_material.stockVoucherNo" desc="物料流程-库存凭证号" ></td>
+    </tr>
+    <tr>
+        <th>入库时间</th>
+        <td><input type="text" class=" form-control" ng-model="data.processMaterial.inStockDate" ab-basic-permission="permission.processMaterial.t_process_material.inStockDate" desc="物料流程-入库时间" ></td>
+    </tr>
+    <tr>
+        <th>出库时间</th>
+        <td><input type="text" class=" form-control" ng-model="data.processMaterial.outStockDate" ab-basic-permission="permission.processMaterial.t_process_material.outStockDate" desc="物料流程-出库时间" ></td>
     </tr>
     </tbody></table>
 </div>

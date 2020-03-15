@@ -560,3 +560,56 @@ CREATE TABLE `bpm_user_agency_log` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='业务流程用户代理日志';
 
 
+CREATE TABLE `t_process_material` (
+  `id` varchar(50) COLLATE utf8_bin NOT NULL COMMENT '主键',
+  `enquiry_name` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT '询价名称',
+  `purchase_aply` varchar(30) COLLATE utf8_bin DEFAULT NULL COMMENT '采购申请',
+  `material_no` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT '物料编码',
+  `material_desc` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '物料描述',
+  `unit` varchar(10) COLLATE utf8_bin DEFAULT NULL COMMENT '单位',
+  `number` decimal(10,4) DEFAULT NULL COMMENT '数量',
+  `plant` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT '车间',
+  `reserved_number` varchar(30) COLLATE utf8_bin DEFAULT NULL COMMENT '预留单号',
+  `reserved` varchar(30) COLLATE utf8_bin DEFAULT NULL COMMENT '预留',
+  `remark` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '备注',
+  `gmt_create` datetime DEFAULT NULL COMMENT '创建时间',
+  `user_create` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '创建人',
+  `process_id` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '流程ID',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_by` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '修改人',
+  `erp_material_no` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT 'ERP物料编码',
+  `erp_material_desc` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT 'ERP物料描述',
+  PRIMARY KEY (`id`),
+  KEY `idx_material_no` (`material_no`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='物料流程';
+
+-- 20200315 update
+
+CREATE TABLE `t_process_material` (
+  `id` varchar(50) COLLATE utf8_bin NOT NULL COMMENT '主键',
+  `enquiry_name` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT '询价书名称',
+  `purchase_aply` varchar(30) COLLATE utf8_bin DEFAULT NULL COMMENT '采购申请号',
+  `material_no` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT '物料编码',
+  `material_desc` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '物料描述',
+  `unit` varchar(10) COLLATE utf8_bin DEFAULT NULL COMMENT '单位',
+  `number` decimal(10,4) DEFAULT NULL COMMENT '数量',
+  `plant` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT '车间',
+  `reserved_number` varchar(30) COLLATE utf8_bin DEFAULT NULL COMMENT '预留单号',
+  `remark` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '备注',
+  `gmt_create` datetime DEFAULT NULL COMMENT '创建时间',
+  `user_create` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '创建人',
+  `process_id` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '流程ID',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `update_by` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '修改人',
+  `req_plan_no` varchar(40) COLLATE utf8_bin DEFAULT NULL COMMENT '需求计划号',
+  `workshop_planner_remark` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '车间计划员备注',
+  `supply_plan_post_remark` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '供应部计划岗位备注',
+  `purchase_order_no` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT '采购订单号',
+  `erp_order_no` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT 'ERP订单号',
+  `contract_no` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT '合同号',
+  `stock_voucher_no` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT '库存凭证号',
+  `in_stock_date` datetime DEFAULT NULL COMMENT '入库时间',
+  `out_stock_date` datetime DEFAULT NULL COMMENT '出库时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_material_no` (`material_no`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='物料流程';

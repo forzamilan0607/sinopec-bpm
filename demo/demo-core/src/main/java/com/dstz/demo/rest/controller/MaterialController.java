@@ -59,10 +59,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -93,6 +90,7 @@ public class MaterialController extends ControllerTools {
     @PostMapping({"listJson"})
     public PageResult listJson(HttpServletRequest request, HttpServletResponse response) throws Exception {
         QueryFilter queryFilter = this.getQueryFilter(request);
+        this.convertFilter(queryFilter);
         IUser user = ContextUtil.getCurrentUser();
         boolean isAdmin = ContextUtil.isAdmin(user);
         if (!isAdmin) {
@@ -123,6 +121,31 @@ public class MaterialController extends ControllerTools {
         }
         return new PageResult(bpmDefinitionList);
     }
+
+    private void convertFilter(QueryFilter queryFilter) {
+        DefaultQueryField searchCondition = null;
+        String value = "";
+        Iterator iter = queryFilter.getFieldLogic().getWhereClauses().iterator();
+        while (iter.hasNext()) {
+            DefaultQueryField dqf = (DefaultQueryField) iter.next();
+            System.out.println(dqf.getField() + "=" + dqf.getValue());
+            if (ObjectUtils.nullSafeEquals("searchValue", dqf.getField())) {
+                value = dqf.getValue() + "";
+                iter.remove();
+            }
+            if (ObjectUtils.nullSafeEquals("searchCondition", dqf.getField())) {
+                dqf.setField(dqf.getValue() + "");
+                searchCondition = dqf;
+            }
+            if (ObjectUtils.nullSafeEquals("gmt_create2", dqf.getField())) {
+                dqf.setField("gmt_create2");
+            }
+        }
+        if (null != searchCondition) {
+            searchCondition.setValue(value);
+        }
+    }
+
     /**
      * @Description: 
      * @Param: 导入

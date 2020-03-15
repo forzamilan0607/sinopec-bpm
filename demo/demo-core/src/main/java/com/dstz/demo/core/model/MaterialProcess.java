@@ -24,36 +24,21 @@ import java.util.Date;
 @Data
 public class MaterialProcess extends BaseModel implements IExcelModel, IExcelDataModel {
 
-    /** 询价名称 */
-    @Excel(name = "询价名称", width = 20)
-    //@NotBlank(message = "询价名称不能为空")
-    @Length(max = 50, message = "询价名称长度不能大于50")
-    private String enquiryName;
-    /** 采购申请 */
-    @Excel(name = "采购申请", width = 20)
-    //@NotBlank(message = "采购申请编号不能为空")
-    @Length(max = 30, message = "采购申请编号长度不能大于30")
-    private String purchaseAply;
+    @Excel(name = "需求计划号", width = 20)
+    @Length(max = 40, message = "需求计划号长度不能大于40")
+    private String reqPlanNo;
 
     /** 物料编码 */
     @Excel(name = "物料编码", width = 20)
     @NotBlank(message = "物料编码不能为空")
     @Length(max = 50, message = "物料编码长度不能大于50")
     private String materialNo;
+
     /** 物料描述 */
     @Excel(name = "物料描述", width = 35)
     @NotBlank(message = "物料描述不能为空")
     @Length(max = 255, message = "物料描述长度不能大于255")
     private String materialDesc;
-
-    /** 物料编码 */
-    @Excel(name = "ERP物料编码", width = 20)
-    @Length(max = 50, message = "ERP物料编码长度不能大于50")
-    private String erpMaterialNo;
-    /** 物料描述 */
-    @Excel(name = "ERP物料描述", width = 35)
-    @Length(max = 255, message = "ERP物料描述长度不能大于255")
-    private String erpMaterialDesc;
 
     /** 单位 */
     @Excel(name = "单位", width = 10)
@@ -65,24 +50,66 @@ public class MaterialProcess extends BaseModel implements IExcelModel, IExcelDat
     //@NotNull(message = "数量不能为空")
     @Pattern(regexp = "^(([1-9]{1}\\d{0,9})|([0]{1}))(\\.(\\d){0,2})?$", message = "数量只能输入1至10位和1至2位小数")
     private String number;
+
     /** 车间 */
     @Excel(name = "车间", width = 20)
-    //@NotBlank(message = "车间不能为空")
     @Length(max = 50, message = "车间长度不能大于50")
     private String plant;
+
+    @Excel(name = "车间计划员备注", width = 60)
+    @Length(max = 255, message = "车间计划员备注长度不能大于255")
+    private String workshopPlannerRemark;
+
     /** 预留单号 */
     @Excel(name = "预留单号", width = 20)
-    //@NotBlank(message = "预留单号不能为空")
     @Length(max = 30, message = "预留单号长度不能大于30")
     private String reservedNumber;
+
+    /** 采购申请号 */
+    @Excel(name = "采购申请号", width = 20)
+    @Length(max = 30, message = "采购申请号长度不能大于30")
+    private String purchaseAply;
+
+    /** 询价书名称 */
+    @Excel(name = "询价书名称", width = 20)
+    //@NotBlank(message = "询价名称不能为空")
+    @Length(max = 50, message = "询价书名称长度不能大于50")
+    private String enquiryName;
+
+
+    @Excel(name = "供应部计划岗位备注", width = 60)
+    @Length(max = 255, message = "供应部计划岗位备注长度不能大于255")
+    private String supplyPlanPostRemark;
+
+    @Excel(name = "采购订单号", width = 30)
+    @Length(max = 50, message = "采购订单号长度不能大于50")
+    private String purchaseOrderNo;
+
+    @Excel(name = "ERP订单号", width = 30)
+    @Length(max = 50, message = "ERP订单号长度不能大于50")
+    private String erpOrderNo;
+
+    @Excel(name = "合同号", width = 30)
+    @Length(max = 50, message = "合同号长度不能大于50")
+    private String contractNo;
+
     /** 备注 */
     @Excel(name = "备注", width = 60)
     @Length(max = 255, message = "备注信息长度不能大于30")
     private String remark;
-    /** 预留 */
-    @Excel(name = "预留", width = 20)
-    @Length(max = 30, message = "预留长度不能大于30")
-    private String reserved;
+
+    @Excel(name = "库存凭证号", width = 30)
+    @Length(max = 50, message = "库存凭证号长度不能大于50")
+    private String stockVoucherNo;
+
+    @Excel(name = "入库时间", width = 20, importFormat = "yyyy-MM-dd")
+    @Pattern(regexp = "\\d{4}(\\-)\\d{1,2}\\1\\d{1,2}", message = "入库时间格式不正确！必须是[年-月-日]，示例：2020-03-01")
+    private String inStockDate;
+
+    @Excel(name = "出库时间", width = 20, importFormat = "yyyy-MM-dd")
+    @Pattern(regexp = "\\d{4}(\\-)\\d{1,2}\\1\\d{1,2}", message = "出库时间格式不正确！必须是[年-月-日]，示例：2020-03-01")
+    private String outStockDate;
+
     /** 流程ID */
     private String processId;
 

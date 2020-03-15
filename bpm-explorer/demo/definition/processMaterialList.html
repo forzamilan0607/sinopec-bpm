@@ -3,16 +3,27 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>物料流程</title>
 <link href="../../build/common/base.css" rel="stylesheet">
+<link href="../../assets/js/plugins/layer/laydate/theme/default/laydate.css" rel="stylesheet">
 <script type="text/javascript" src="../../build/common/base.js"></script>
 <script type="text/javascript" src="../../build/common/gridList.js"></script>
 <script type="text/javascript" src="../../build/common/easyLayout.js"></script>
 <script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+<script type="text/javascript" src="../../assets/js/plugins/layer/laydate/laydate.js"></script>
 <style>
 	td {
 		white-space: nowrap;
 	}
 </style>
 <script type="text/javascript">
+	$(function () {
+        lay('.test-item').each(function(){
+            laydate.render({
+                elem: this,
+//                type: 'datetime',
+				trigger: 'click'
+            });
+        });
+    })
 	function batchStart() {
 		//  获取选中的记录
 		var selectedObjs = $("[ab-grid]").bootstrapTable("getSelections");
@@ -129,19 +140,33 @@
 			<div class="panel-body">
 				<form id="searchForm" class="form-horizontal">
 					<div class="form-group" style="margin-right: 0px;">
-						<label class="control-label col-sm-1" for="enquiry_name^VLK">询价名称</label>
+						<!--需求计划号，预留单号，询价书名称，采购订单号，ERP订单号，合同号，库存凭证号-->
+						<!--<label class="control-label col-sm-1" for="searchCondition^VEQ">查询条件</label>-->
 						<div class="col-sm-2">
-							<input type="text" class="form-control" id="enquiry_name^VLK">
+							<!--<input type="text" class="form-control" id="enquiry_name^VLK">-->
+							<select id="searchCondition^VEQ" class="form-control">
+								<option value="">请选择查询条件</option>
+								<option value="req_plan_no">需求计划号</option>
+								<option value="reserved_number">预留单号</option>
+								<option value="enquiry_name">询价书名称</option>
+								<option value="purchase_order_no">采购订单号</option>
+								<option value="erp_order_no">ERP订单号</option>
+								<option value="contract_no">合同号</option>
+								<option value="stock_voucher_no">库存凭证号</option>
+							</select>
 						</div>
-						<label class="control-label col-sm-1" for="purchase_aply^VLK">采购单号</label>
+						<!--<label class="control-label col-sm-1" for="searchValue^VEQ">查询值</label>-->
 						<div class="col-sm-2">
-							<input type="text" class="form-control" id="purchase_aply^VLK">
+							<input type="text" class="form-control" id="searchValue^VEQ" placeholder="请输入查询值">
 						</div>
-						<label class="control-label col-sm-1" for="material_no^VLK">物料编码</label>
+						<!--<label class="control-label col-sm-1" for="gmt_create^VGE">创建开始时间</label>-->
 						<div class="col-sm-2">
-							<input type="text" class="form-control" id="material_no^VLK">
+							<input class="form-control test-item" id="gmt_create^VGE" placeholder="创建开始时间" ab-date="yyyy-MM-dd HH:mm:ss">
 						</div>
-						<div class="col-sm-3" style="text-align: left;">
+						<div class="col-sm-2">
+							<input class="form-control test-item" id="gmt_create2^VLE" placeholder="创建结束时间" ab-date="yyyy-MM-dd HH:mm:ss">
+						</div>
+						<div class="col-sm-4" style="text-align: left;">
 							<button type="button" style="margin-left: 50px" class="btn btn-primary fa-search" id="btn_query">查询</button>
 							<button type="button" style="margin-left: 50px" class="btn btn-primary fa-rotate-left">重置</button>
 						</div>
@@ -165,19 +190,26 @@
 					<a if="{hasInst}" class="fa-detail btn btn-outline btn-primary btn-sm" iview="标记" openDialog='流程实例详情 【{materialDesc}】' qtip='流程实例' url='../../bpm/instance/instanceDetail.html?id={instId}'></a>
 					<span if="{hasInst}" class="fa-history btn btn-outline btn-primary btn-sm" qtip='历史记录' openDialog="历史记录 " top="true" url="demo/definition/purchasePlanHis.html?taskIds={id}"></span>
 				</th>
-				<th data-field="enquiryName">询价名称</th>
-				<th data-field="purchaseAply">采购申请</th>
+				<th data-field="reqPlanNo">需求计划号</th>
 				<th data-field="materialNo">物料编码</th>
 				<th data-field="materialDesc">物料描述</th>
-				<th data-field="erpMaterialNo">ERP物料编码</th>
-				<th data-field="erpMaterialDesc">ERP物料描述</th>
 				<th data-field="unit">单位</th>
 				<th data-field="number">数量</th>
 				<th data-field="plant">车间</th>
-				<th data-field="reservedNumber">预留</th>
+				<th data-field="workshopPlannerRemark">车间计划员备注</th>
+				<th data-field="reservedNumber">预留单号</th>
+				<th data-field="purchaseAply">采购申请号</th>
+				<th data-field="enquiryName">询价书名称</th>
+				<th data-field="supplyPlanPostRemark">供应部计划岗位备注</th>
+				<th data-field="purchaseOrderNo">采购订单号</th>
+				<th data-field="erpOrderNo">ERP订单号</th>
+				<th data-field="contractNo">合同号</th>
 				<th data-field="remark">备注</th>
-				<th data-field="createTime" data-formatter="dateFormatter" data-visible="false">创建时间</th>
-				<th data-field="updateTime" data-formatter="dateTimeFormatter" data-visible="false">更新时间</th>
+				<th data-field="stockVoucherNo">库存凭证号</th>
+				<th data-field="inStockDate" data-formatter="dateFormatter" >入库时间</th>
+				<th data-field="outStockDate" data-formatter="dateFormatter" >出库时间</th>
+				<th data-field="createTime" data-formatter="dateFormatter" >创建时间</th>
+				<th data-field="updateTime" data-formatter="dateTimeFormatter" >更新时间</th>
 			</tr>
 			</thead>
 		</table>

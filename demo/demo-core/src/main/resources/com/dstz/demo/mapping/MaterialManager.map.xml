@@ -2,25 +2,30 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.dstz.demo.core.dao.MaterialManagerDao">
     <resultMap id="MaterialProcess" type="com.dstz.demo.core.model.MaterialProcess">
-        <id property="id" column="id" jdbcType="VARCHAR"/>
-        <result property="enquiryName" column="enquiry_name" jdbcType="VARCHAR"/>
-        <result property="purchaseAply" column="purchase_aply" jdbcType="VARCHAR"/>
-        <result property="materialNo" column="material_no" jdbcType="VARCHAR"/>
-        <result property="materialDesc" column="material_desc" jdbcType="VARCHAR"/>
-        <result property="erpMaterialNo" column="erp_material_no" jdbcType="VARCHAR"/>
-        <result property="erpMaterialDesc" column="erp_material_desc" jdbcType="VARCHAR"/>
-        <result property="unit" column="unit" jdbcType="VARCHAR"/>
-        <result property="number" column="number" jdbcType="VARCHAR"/>
-        <result property="plant" column="plant" jdbcType="VARCHAR"/>
-        <result property="reservedNumber" column="reserved_number" jdbcType="VARCHAR"/>
-        <result property="remark" column="remark" jdbcType="VARCHAR"/>
-        <result property="reserved" column="reserved" jdbcType="VARCHAR"/>
-        <result property="processId" column="process_id" jdbcType="VARCHAR"/>
-        <result property="createTime" column="gmt_create" jdbcType="DATE"/>
-        <result property="updateTime" column="update_time" jdbcType="DATE"/>
-        <result property="createBy" column="user_create" jdbcType="VARCHAR"/>
-        <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
-        <result property="version" column="version" jdbcType="VARCHAR"/>
+        <result property="id" column="id"/>
+        <result property="enquiryName" column="enquiry_name"/>
+        <result property="purchaseAply" column="purchase_aply"/>
+        <result property="materialNo" column="material_no"/>
+        <result property="materialDesc" column="material_desc"/>
+        <result property="unit" column="unit"/>
+        <result property="number" column="number"/>
+        <result property="plant" column="plant"/>
+        <result property="reservedNumber" column="reserved_number"/>
+        <result property="remark" column="remark"/>
+        <result property="createTime" column="gmt_create"/>
+        <result property="createBy" column="user_create"/>
+        <result property="processId" column="process_id"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="reqPlanNo" column="req_plan_no"/>
+        <result property="workshopPlannerRemark" column="workshop_planner_remark"/>
+        <result property="supplyPlanPostRemark" column="supply_plan_post_remark"/>
+        <result property="purchaseOrderNo" column="purchase_order_no"/>
+        <result property="erpOrderNo" column="erp_order_no"/>
+        <result property="contractNo" column="contract_no"/>
+        <result property="stockVoucherNo" column="stock_voucher_no"/>
+        <result property="inStockDate" column="in_stock_date"/>
+        <result property="outStockDate" column="out_stock_date"/>
     </resultMap>
     <resultMap id="BpmInstance" type="com.dstz.bpm.core.model.BpmInstance">
         <id property="id" column="id_" jdbcType="VARCHAR"/>
@@ -50,33 +55,83 @@
     </resultMap>
 
     <insert id="create" parameterType="com.dstz.demo.core.model.MaterialProcess">
-		INSERT INTO t_process_material
-		(id,enquiry_name,purchase_aply,material_no,material_desc,unit,number,plant,
-		reserved_number,remark,process_id,gmt_create,user_create,erp_material_no,erp_material_desc)
-		VALUES
-		(#{id,jdbcType=VARCHAR}, #{enquiryName,jdbcType=VARCHAR}, #{purchaseAply,jdbcType=VARCHAR},
-		#{materialNo,jdbcType=VARCHAR}, #{materialDesc,jdbcType=VARCHAR}, #{unit,jdbcType=VARCHAR},
-		#{number,jdbcType=VARCHAR}, #{plant,jdbcType=VARCHAR}, #{reservedNumber,jdbcType=VARCHAR},
-		#{remark,jdbcType=VARCHAR}, #{processId,jdbcType=VARCHAR},now(),#{createBy},#{erpMaterialNo,jdbcType=VARCHAR}, #{erpMaterialDesc,jdbcType=VARCHAR})
+        insert into t_process_material
+		(
+			`id`,
+			`enquiry_name`,
+			`purchase_aply`,
+			`material_no`,
+			`material_desc`,
+			`unit`,
+			`number`,
+			`plant`,
+			`reserved_number`,
+			`remark`,
+			`gmt_create`,
+			`user_create`,
+			`process_id`,
+			`req_plan_no`,
+			`workshop_planner_remark`,
+			`supply_plan_post_remark`,
+			`purchase_order_no`,
+			`erp_order_no`,
+			`contract_no`,
+			`stock_voucher_no`,
+			`in_stock_date`,
+			`out_stock_date`
+		)
+		values
+		(
+			#{id},
+			#{enquiryName},
+			#{purchaseAply},
+			#{materialNo},
+			#{materialDesc},
+			#{unit},
+			#{number},
+			#{plant},
+			#{reservedNumber},
+			#{remark},
+			now(),
+			#{createBy},
+			#{processId},
+			#{reqPlanNo},
+			#{workshopPlannerRemark},
+			#{supplyPlanPostRemark},
+			#{purchaseOrderNo},
+			#{erpOrderNo},
+			#{contractNo},
+			#{stockVoucherNo},
+			#{inStockDate},
+			#{outStockDate}
+		)
 	</insert>
     <update id="update" parameterType="com.dstz.demo.core.model.MaterialProcess">
-		UPDATE t_process_material SET
-		enquiry_name=#{enquiryName,jdbcType=VARCHAR},
-		purchase_aply= #{purchaseAply,jdbcType=VARCHAR},
-		material_no=#{materialNo,jdbcType=VARCHAR},
-		material_desc=#{materialDesc,jdbcType=VARCHAR},
-		erp_material_no=#{erpMaterialNo,jdbcType=VARCHAR},
-		erp_material_desc=#{erpMaterialDesc,jdbcType=VARCHAR},
-		unit=#{unit,jdbcType=VARCHAR},
-		number=#{number,jdbcType=VARCHAR},
-		plant=#{plant,jdbcType=VARCHAR},
-		reserved_number=#{reservedNumber,jdbcType=VARCHAR},
-		remark=#{remark,jdbcType=VARCHAR},
-		update_time = now(),
-		update_by = #{updateBy}
-		WHERE
-		id=#{id}
+        update t_process_material SET
+        `enquiry_name` = #{enquiryName},
+        `purchase_aply` = #{purchaseAply},
+        `material_no` = #{materialNo},
+        `material_desc` = #{materialDesc},
+        `unit` = #{unit},
+        `number` = #{number},
+        `plant` = #{plant},
+        `reserved_number` = #{reservedNumber},
+        `remark` = #{remark},
+        `process_id` = #{processId},
+        `update_time` = now(),
+        `update_by` = #{updateBy},
+        `req_plan_no` = #{reqPlanNo},
+        `workshop_planner_remark` = #{workshopPlannerRemark},
+        `supply_plan_post_remark` = #{supplyPlanPostRemark},
+        `purchase_order_no` = #{purchaseOrderNo},
+        `erp_order_no` = #{erpOrderNo},
+        `contract_no` = #{contractNo},
+        `stock_voucher_no` = #{stockVoucherNo},
+        `in_stock_date` = #{inStockDate},
+        `out_stock_date` = #{outStockDate}
+        where id = #{id}
 	</update>
+
     <select id="get"   parameterType="java.lang.String" resultMap="MaterialProcess">
 		SELECT * FROM t_process_material
 		WHERE
@@ -107,14 +162,30 @@
 
     <select id="query" parameterType="java.util.Map" resultType="com.dstz.demo.core.model.MaterialProcess">
         SELECT
-          t2.instId,t.id,
-          t.enquiry_name AS enquiryName,t.purchase_aply AS purchaseAply,
-          t.material_no AS materialNo,t.material_desc AS materialDesc,
-          t.erp_material_no AS erpMaterialNo,t.erp_material_desc AS erpMaterialDesc,
-          t.unit,t.number,t.plant,t.reserved_number AS reservedNumber,
-          t.remark,t.reserved,t.process_id AS processId,
-          t.gmt_create AS createTime,t.user_create AS createBy,
-          t.update_time AS updateTime,t.update_by AS updateBy
+            t2.instId,
+            t.id,
+            t.req_plan_no AS reqPlanNo,
+            t.material_no AS materialNo,
+            t.material_desc AS materialDesc,
+            t.unit AS unit,
+            t.number AS number,
+            t.plant AS plant,
+            t.workshop_planner_remark AS workshopPlannerRemark,
+            t.reserved_number AS reservedNumber,
+            t.purchase_aply AS purchaseAply,
+            t.enquiry_name AS enquiryName,
+            t.supply_plan_post_remark AS supplyPlanPostRemark,
+            t.purchase_order_no AS purchaseOrderNo,
+            t.erp_order_no AS erpOrderNo,
+            t.contract_no AS contractNo,
+            t.remark AS remark,
+            t.stock_voucher_no AS stockVoucherNo,
+            t.in_stock_date AS inStockDate,
+            t.out_stock_date AS outStockDate,
+            t.gmt_create AS createTime,
+            t.user_create AS createBy,
+            t.update_time AS updateTime,
+            t.update_by AS updateBy
         FROM t_process_material t
         left join (select inst.id_ AS instId,b.biz_id_ FROM bpm_bus_link b,bpm_instance inst where inst.id_ = b.inst_id_) t2 ON t2.biz_id_ = t.id
         <where>
