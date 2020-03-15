@@ -101,14 +101,14 @@ public class MaterialController extends ControllerTools {
                 queryFilter.addParamsFilter("ids", ids);
             }
         }
-        if (null != queryFilter.getFieldLogic() && !CollectionUtils.isEmpty(queryFilter.getFieldLogic().getWhereClauses())) {
+        /*if (null != queryFilter.getFieldLogic() && !CollectionUtils.isEmpty(queryFilter.getFieldLogic().getWhereClauses())) {
             queryFilter.getFieldLogic().getWhereClauses().forEach(item -> {
                 DefaultQueryField dqf = (DefaultQueryField) item;
                 if (ObjectUtils.nullSafeEquals(dqf.getField(), "id_")) {
                     dqf.setField("id");
                 }
             });
-        }
+        }*/
         List<MaterialProcess> bpmDefinitionList = this.materialManager.query(queryFilter);
         for (MaterialProcess materialProcess : bpmDefinitionList) {
             if(StringUtils.isBlank(materialProcess.getProcessId())){
@@ -126,9 +126,13 @@ public class MaterialController extends ControllerTools {
         DefaultQueryField searchCondition = null;
         String value = "";
         Iterator iter = queryFilter.getFieldLogic().getWhereClauses().iterator();
+        String startDate = null;
+        String endDate = null;
         while (iter.hasNext()) {
             DefaultQueryField dqf = (DefaultQueryField) iter.next();
-            System.out.println(dqf.getField() + "=" + dqf.getValue());
+            if (ObjectUtils.nullSafeEquals(dqf.getField(), "id_")) {
+                dqf.setField("id");
+            }
             if (ObjectUtils.nullSafeEquals("searchValue", dqf.getField())) {
                 value = dqf.getValue() + "";
                 iter.remove();
@@ -137,12 +141,26 @@ public class MaterialController extends ControllerTools {
                 dqf.setField(dqf.getValue() + "");
                 searchCondition = dqf;
             }
+            if (ObjectUtils.nullSafeEquals("gmt_create", dqf.getField())) {
+                startDate = dqf.getValue() + "";
+                iter.remove();
+            }
             if (ObjectUtils.nullSafeEquals("gmt_create2", dqf.getField())) {
-                dqf.setField("gmt_create2");
+                endDate = dqf.getValue() + "";
+                iter.remove();
             }
         }
         if (null != searchCondition) {
             searchCondition.setValue(value);
+        }
+        if (StringUtils.isNotEmpty(startDate) && StringUtils.isNotEmpty(endDate)) {
+            Map<String, Object> paramMap = Maps.newHashMap();
+            paramMap.put("whereSql", "AND t.gmt_create >= '" + startDate + "' AND t.gmt_create <= '" + endDate + "'");
+            queryFilter.addParams(paramMap);
+        } else if (StringUtils.isNotEmpty(startDate)) {
+            queryFilter.addFilter("t.gmt_create", startDate, QueryOP.GREAT_EQUAL);
+        } else if (StringUtils.isNotEmpty(endDate)) {
+            queryFilter.addFilter("t.gmt_create", endDate, QueryOP.LESS_EQUAL);
         }
     }
 
