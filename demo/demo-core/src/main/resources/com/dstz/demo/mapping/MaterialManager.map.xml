@@ -193,7 +193,7 @@
                 ${whereSql}
             </if>
             <if test="hisUpdateUser != null ">
-                or EXISTS (SELECT 1 FROM t_purchase_plan_his_rec where material_process_id = t.id AND update_user = #{hisUpdateUser})
+                AND EXISTS (SELECT 1 FROM t_purchase_plan_his_rec where material_process_id = t.id AND update_user = #{hisUpdateUser})
             </if>
             <if test="ids != null ">
                 or t.id in

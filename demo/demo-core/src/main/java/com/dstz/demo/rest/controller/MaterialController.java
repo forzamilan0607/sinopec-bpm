@@ -95,20 +95,14 @@ public class MaterialController extends ControllerTools {
         boolean isAdmin = ContextUtil.isAdmin(user);
         if (!isAdmin) {
             queryFilter.addFilter("t.user_create", user.getUserId(), QueryOP.EQUAL);
-            List<String> ids = this.materialManager.queryMaterialProcIdsByCurrentUser(user.getUserId());
             queryFilter.addParamsFilter("hisUpdateUser", user.getUserId());
+            /*
+            List<String> ids = this.materialManager.queryMaterialProcIdsByCurrentUser(user.getUserId());
             if (!CollectionUtils.isEmpty(ids)) {
                 queryFilter.addParamsFilter("ids", ids);
             }
+            */
         }
-        /*if (null != queryFilter.getFieldLogic() && !CollectionUtils.isEmpty(queryFilter.getFieldLogic().getWhereClauses())) {
-            queryFilter.getFieldLogic().getWhereClauses().forEach(item -> {
-                DefaultQueryField dqf = (DefaultQueryField) item;
-                if (ObjectUtils.nullSafeEquals(dqf.getField(), "id_")) {
-                    dqf.setField("id");
-                }
-            });
-        }*/
         List<MaterialProcess> bpmDefinitionList = this.materialManager.query(queryFilter);
         for (MaterialProcess materialProcess : bpmDefinitionList) {
             if(StringUtils.isBlank(materialProcess.getProcessId())){
