@@ -13,6 +13,7 @@ import com.dstz.base.api.response.impl.ResultMsg;
 import com.dstz.base.core.id.IdUtil;
 import com.dstz.base.core.util.StringUtil;
 import com.dstz.base.db.model.page.PageResult;
+import com.dstz.base.db.model.query.DefaultPage;
 import com.dstz.base.db.model.query.DefaultQueryField;
 import com.dstz.base.db.model.query.DefaultQueryFilter;
 import com.dstz.base.rest.ControllerTools;
@@ -60,6 +61,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -90,9 +92,12 @@ public class MaterialController extends ControllerTools {
     @PostMapping({"listJson"})
     public PageResult listJson(HttpServletRequest request, HttpServletResponse response) throws Exception {
         QueryFilter queryFilter = this.getQueryFilter(request);
-        this.convertFilter(queryFilter);
+        String conditionSql = this.convertFilter(queryFilter);
         IUser user = ContextUtil.getCurrentUser();
         boolean isAdmin = ContextUtil.isAdmin(user);
+        if (StringUtil.isNotEmpty(conditionSql)) {
+            queryFilter.addParamsFilter("conditionParam", conditionSql);
+        }
         if (!isAdmin) {
             queryFilter.addFilter("t.user_create", user.getUserId(), QueryOP.EQUAL);
             queryFilter.addParamsFilter("hisUpdateUser", user.getUserId());
@@ -116,7 +121,8 @@ public class MaterialController extends ControllerTools {
         return new PageResult(bpmDefinitionList);
     }
 
-    private void convertFilter(QueryFilter queryFilter) {
+    private String convertFilter(QueryFilter queryFilter) {
+        String conditionSql = "";
         DefaultQueryField searchCondition = null;
         String value = "";
         Iterator iter = queryFilter.getFieldLogic().getWhereClauses().iterator();
@@ -146,6 +152,7 @@ public class MaterialController extends ControllerTools {
         }
         if (null != searchCondition) {
             searchCondition.setValue(value);
+            conditionSql = CONDITION_MAP.get(searchCondition.getField()) + "\"" + value + "\"";
         }
         if (StringUtils.isNotEmpty(startDate) && StringUtils.isNotEmpty(endDate)) {
             Map<String, Object> paramMap = Maps.newHashMap();
@@ -156,6 +163,18 @@ public class MaterialController extends ControllerTools {
         } else if (StringUtils.isNotEmpty(endDate)) {
             queryFilter.addFilter("t.gmt_create", endDate, QueryOP.LESS_EQUAL);
         }
+        return conditionSql;
+    }
+
+    private static final Map<String, String> CONDITION_MAP = new ConcurrentHashMap();
+    static {
+        CONDITION_MAP.put("req_plan_no", "\"reqPlanNo\":");
+        CONDITION_MAP.put("reserved_number", "\"reservedNumber\":");
+        CONDITION_MAP.put("enquiry_name", "\"enquiryName\":");
+        CONDITION_MAP.put("purchase_order_no", "\"purchaseOrderNo\":");
+        CONDITION_MAP.put("erp_order_no", "\"erpOrderNo\":");
+        CONDITION_MAP.put("contract_no", "\"contractNo\":");
+        CONDITION_MAP.put("stock_voucher_no", "\"stockVoucherNo\":");
     }
 
     /**
@@ -416,6 +435,8 @@ public class MaterialController extends ControllerTools {
             String ids = request.getParameter("ids");
             QueryFilter queryFilter = new DefaultQueryFilter();
             queryFilter.addFilter("t.id", ids, QueryOP.IN);
+            DefaultPage page = (DefaultPage) queryFilter.getPage();
+            page.setLimit(ids.split(",").length);
             List<MaterialProcess> materialList = this.materialManager.query(queryFilter);
             request.setCharacterEncoding("UTF-8");
             response.setCharacterEncoding("UTF-8");
