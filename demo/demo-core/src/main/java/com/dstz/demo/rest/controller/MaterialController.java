@@ -95,10 +95,10 @@ public class MaterialController extends ControllerTools {
         String conditionSql = this.convertFilter(queryFilter);
         IUser user = ContextUtil.getCurrentUser();
         boolean isAdmin = ContextUtil.isAdmin(user);
-        if (StringUtil.isNotEmpty(conditionSql)) {
-            queryFilter.addParamsFilter("conditionParam", conditionSql);
-        }
         if (!isAdmin) {
+            if (StringUtil.isNotEmpty(conditionSql)) {
+                queryFilter.addParamsFilter("conditionParam", conditionSql);
+            }
             queryFilter.addFilter("t.user_create", user.getUserId(), QueryOP.EQUAL);
             queryFilter.addParamsFilter("hisUpdateUser", user.getUserId());
             /*
