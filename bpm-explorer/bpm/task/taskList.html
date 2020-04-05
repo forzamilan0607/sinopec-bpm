@@ -123,17 +123,22 @@
     function validate4BatchHandle(selectedObjs) {
         var defId = selectedObjs[0].defId;
         var nodeId = selectedObjs[0].nodeId;
+        var taskName = selectedObjs[0].name;
         if (selectedObjs[0].delayFlag) {
-            $.Dialog.msg("任务[" + selectedObjs[0].name + "]已延期，不能批量处理！");
+            $.Dialog.msg("流程[" + selectedObjs[0].subject + "]已延期，不能批量处理！");
             return false;
         }
         for (var i = 1; i < selectedObjs.length; i++) {
-            if (defId !== selectedObjs[i].defId || nodeId !== selectedObjs[i].nodeId) {
+            /*if (defId !== selectedObjs[i].defId || nodeId !== selectedObjs[i].nodeId) {
+                $.Dialog.msg("请选择相同类型的任务!");
+                return false;
+            }*/
+            if (taskName != selectedObjs[i].name) {
                 $.Dialog.msg("请选择相同类型的任务!");
                 return false;
             }
             if (selectedObjs[i].delayFlag) {
-                $.Dialog.msg("任务[" + selectedObjs[i].name + "]已延期，不能批量处理！");
+                $.Dialog.msg("流程[" + selectedObjs[i].subject + "]已延期，不能批量处理！");
                 return false;
             }
         }
