@@ -99,10 +99,10 @@
 			t.create_time_ AS createTime,
 			t.create_by_ AS createBy,
 			t.apply_date AS applyDate,
-			task.assignee_names_ AS assigneeNames,
+			IFNULL(task.assignee_names_,t.assignee_names) AS assigneeNames,
 			u.fullname_ AS applyUser
 		FROM bpm_timelimit t
-		INNER JOIN bpm_task task ON task.id_ = t.task_id_
+		LEFT JOIN bpm_task task ON task.id_ = t.task_id_
 		LEFT JOIN org_user u ON t.apply_user = u.id_
 		<where>
 			<if test="whereSql!= null">
@@ -116,7 +116,7 @@
 			ORDER BY ${orderBySql}
 		</if>
 		<if test="orderBySql==null">
-			ORDER BY t.id_ DESC
+			ORDER BY t.task_end_time DESC
 		</if>
 	</select>
 
