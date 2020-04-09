@@ -161,57 +161,59 @@
 	</select>
 
     <select id="query" parameterType="java.util.Map" resultType="com.dstz.demo.core.model.MaterialProcess">
+        SELECT t.* FROM (
         SELECT
-            t2.instId,
-            t.id,
-            t.req_plan_no AS reqPlanNo,
-            t.material_no AS materialNo,
-            t.material_desc AS materialDesc,
-            t.unit AS unit,
-            t.number AS number,
-            t.plant AS plant,
-            t.workshop_planner_remark AS workshopPlannerRemark,
-            t.reserved_number AS reservedNumber,
-            t.purchase_aply AS purchaseAply,
-            t.enquiry_name AS enquiryName,
-            t.supply_plan_post_remark AS supplyPlanPostRemark,
-            t.purchase_order_no AS purchaseOrderNo,
-            t.erp_order_no AS erpOrderNo,
-            t.contract_no AS contractNo,
-            t.remark AS remark,
-            t.stock_voucher_no AS stockVoucherNo,
-            t.in_stock_date AS inStockDate,
-            t.out_stock_date AS outStockDate,
-            t.gmt_create AS createTime,
-            t.user_create AS createBy,
-            t.update_time AS updateTime,
-            t.update_by AS updateBy
+        t2.instId,
+        t.id,
+        t.req_plan_no AS reqPlanNo,
+        t.material_no AS materialNo,
+        t.material_desc AS materialDesc,
+        t.unit AS unit,
+        t.number AS number,
+        t.plant AS plant,
+        t.workshop_planner_remark AS workshopPlannerRemark,
+        t.reserved_number AS reservedNumber,
+        t.purchase_aply AS purchaseAply,
+        t.enquiry_name AS enquiryName,
+        t.supply_plan_post_remark AS supplyPlanPostRemark,
+        t.purchase_order_no AS purchaseOrderNo,
+        t.erp_order_no AS erpOrderNo,
+        t.contract_no AS contractNo,
+        t.remark AS remark,
+        t.stock_voucher_no AS stockVoucherNo,
+        t.in_stock_date AS inStockDate,
+        t.out_stock_date AS outStockDate,
+        t.gmt_create AS createTime,
+        t.user_create AS createBy,
+        t.update_time AS updateTime,
+        t.update_by AS updateBy
         FROM t_process_material t
-        left join (select inst.id_ AS instId,b.biz_id_ FROM bpm_bus_link b,bpm_instance inst where inst.id_ = b.inst_id_) t2 ON t2.biz_id_ = t.id
+        left join (select inst.id_ AS instId,b.biz_id_ FROM bpm_bus_link b,bpm_instance inst where inst.id_ =
+        b.inst_id_) t2 ON t2.biz_id_ = t.id
         <where>
-            <if test="whereSql!=null">
-                ${whereSql}
-            </if>
-            <if test="hisUpdateUser != null ">
-                or EXISTS (SELECT 1 FROM t_purchase_plan_his_rec where material_process_id = t.id AND update_user = #{hisUpdateUser}
-                <if test="conditionParam != null ">
-                    AND INSTR(content, #{conditionParam}) > 0
+                <if test="whereSql!=null">
+                    ${whereSql}
                 </if>
-                )
+                <if test="hisUpdateUser != null ">
+                    or EXISTS (SELECT 1 FROM t_purchase_plan_his_rec where material_process_id = t.id AND update_user = #{hisUpdateUser} )
+                </if>
+                <if test="ids != null ">
+                    or t.id in
+                    <foreach item="id" collection="ids" separator="," open="(" close=")" index="">
+                      #{id, jdbcType=VARCHAR}
+                    </foreach>
+                </if>
+            </where>
+            <if test="orderBySql!=null">
+                ORDER BY ${orderBySql}
             </if>
-            <if test="ids != null ">
-                or t.id in
-                <foreach item="id" collection="ids" separator="," open="(" close=")" index="">
-                  #{id, jdbcType=VARCHAR}
-                </foreach>
+            <if test="orderBySql==null">
+                ORDER BY t.id desc
             </if>
-        </where>
-        <if test="orderBySql!=null">
-            ORDER BY ${orderBySql}
-        </if>
-        <if test="orderBySql==null">
-            ORDER BY t.id desc
-        </if>
+        ) t WHERE 1=1
+          <if test="conditionParam != null">
+              ${conditionParam}
+          </if>
     </select>
 
     <select id="instanceQuery" parameterType="java.util.Map" resultMap="BpmInstance">

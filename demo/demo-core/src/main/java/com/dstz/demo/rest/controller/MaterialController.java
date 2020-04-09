@@ -95,18 +95,16 @@ public class MaterialController extends ControllerTools {
         String conditionSql = this.convertFilter(queryFilter);
         IUser user = ContextUtil.getCurrentUser();
         boolean isAdmin = ContextUtil.isAdmin(user);
+        if (StringUtil.isNotEmpty(conditionSql)) {
+            queryFilter.addParamsFilter("conditionParam", conditionSql);
+        }
         if (!isAdmin) {
-            if (StringUtil.isNotEmpty(conditionSql)) {
-                queryFilter.addParamsFilter("conditionParam", conditionSql);
-            }
             queryFilter.addFilter("t.user_create", user.getUserId(), QueryOP.EQUAL);
             queryFilter.addParamsFilter("hisUpdateUser", user.getUserId());
-            /*
             List<String> ids = this.materialManager.queryMaterialProcIdsByCurrentUser(user.getUserId());
             if (!CollectionUtils.isEmpty(ids)) {
                 queryFilter.addParamsFilter("ids", ids);
             }
-            */
         }
         List<MaterialProcess> bpmDefinitionList = this.materialManager.query(queryFilter);
         for (MaterialProcess materialProcess : bpmDefinitionList) {
@@ -152,29 +150,27 @@ public class MaterialController extends ControllerTools {
         }
         if (null != searchCondition) {
             searchCondition.setValue(value);
-            conditionSql = CONDITION_MAP.get(searchCondition.getField()) + "\"" + value + "\"";
+            conditionSql = CONDITION_MAP.get(searchCondition.getField()) + value + "\' ";
         }
         if (StringUtils.isNotEmpty(startDate) && StringUtils.isNotEmpty(endDate)) {
-            Map<String, Object> paramMap = Maps.newHashMap();
-            paramMap.put("whereSql", "AND t.gmt_create >= '" + startDate + "' AND t.gmt_create <= '" + endDate + "'");
-            queryFilter.addParams(paramMap);
+            conditionSql += "AND t.createTime >= '" + startDate + "' AND t.createTime <= '" + endDate + "'";
         } else if (StringUtils.isNotEmpty(startDate)) {
-            queryFilter.addFilter("t.gmt_create", startDate, QueryOP.GREAT_EQUAL);
+            conditionSql += "AND t.createTime >= '" + startDate + "'";
         } else if (StringUtils.isNotEmpty(endDate)) {
-            queryFilter.addFilter("t.gmt_create", endDate, QueryOP.LESS_EQUAL);
+            conditionSql += "AND t.createTime <= '" + endDate + "'";
         }
         return conditionSql;
     }
 
     private static final Map<String, String> CONDITION_MAP = new ConcurrentHashMap();
     static {
-        CONDITION_MAP.put("req_plan_no", "\"reqPlanNo\":");
-        CONDITION_MAP.put("reserved_number", "\"reservedNumber\":");
-        CONDITION_MAP.put("enquiry_name", "\"enquiryName\":");
-        CONDITION_MAP.put("purchase_order_no", "\"purchaseOrderNo\":");
-        CONDITION_MAP.put("erp_order_no", "\"erpOrderNo\":");
-        CONDITION_MAP.put("contract_no", "\"contractNo\":");
-        CONDITION_MAP.put("stock_voucher_no", "\"stockVoucherNo\":");
+        CONDITION_MAP.put("req_plan_no", "AND t.reqPlanNo=\'");
+        CONDITION_MAP.put("reserved_number", "AND t.reservedNumber=\'");
+        CONDITION_MAP.put("enquiry_name", "AND t.enquiryName=\'");
+        CONDITION_MAP.put("purchase_order_no", "AND t.purchaseOrderNo=\'");
+        CONDITION_MAP.put("erp_order_no", "AND t.erpOrderNo=\'");
+        CONDITION_MAP.put("contract_no", "AND t.contractNo=\'");
+        CONDITION_MAP.put("stock_voucher_no", "AND t.stockVoucherNo=\'");
     }
 
     /**
