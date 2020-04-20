@@ -1,13 +1,12 @@
 <html ng-app="delayTask">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>任务延期</title>
+    <title>任务延期查询</title>
     <link href="../../build/common/base.css" rel="stylesheet">
     <script type="text/javascript" src="../../build/common/base.js"></script>
     <script type="text/javascript" src="../../build/common/gridList.js"></script>
+    <script type="text/javascript" src="../../build/common/easyLayout.js"></script>
     <script type="text/javascript" src="../../build/common/ngEdit.js"></script>
-    <script type="text/javascript" src="../../assets/js/common/bpmForm/bpmService.js"></script>
-    <script type="text/javascript" src="../../build/common/custForm.js"></script>
     <style media="print">.print-hidden{display:none}</style>
     <style>
         td {
@@ -16,16 +15,25 @@
     </style>
 
     <script type="text/javascript">
+        $(function () {
+            lay('.test-item').each(function(){
+                laydate.render({
+                    elem: this,
+//                type: 'datetime',
+                    trigger: 'click'
+                });
+            });
+        })
         var TaskComplateController = ['$scope','baseService',function($scope,baseService){
-           /* $scope.save =function () {
-               /!* var timeLimit = $scope.timeLimit;
-                timeLimit.taskId = $.getParam("taskId");
-                var defer = baseService.postForm(__ctx+"/bpm/task/delayTask",timeLimit);
-                $.getResultMsg(defer,function(){
-                },function(){
+            /* $scope.save =function () {
+                /!* var timeLimit = $scope.timeLimit;
+                 timeLimit.taskId = $.getParam("taskId");
+                 var defer = baseService.postForm(__ctx+"/bpm/task/delayTask",timeLimit);
+                 $.getResultMsg(defer,function(){
+                 },function(){
 
-                });*!/
-            }*/
+                 });*!/
+             }*/
         }];
     </script>
 </head>
@@ -35,43 +43,48 @@
     <div class="panel-heading" data-toggle="collapse" toggle="true" data-target="#formSearch" >查询条件</div>
     <div class="panel-body">
         <form id="searchForm" class="form-horizontal">
-            <div class="form-group">
-                <label class="control-label col-sm-1" for="t.subject_^VLK">流程标题</label>
-                <div class="col-sm-3">
-                    <input type="text" class="form-control" id="t.subject_^VLK">
+            <div class="form-group" style="margin-right: 0px;">
+                <div class="col-sm-2">
+                    <input type="text" class="form-control" id="t.material_no^VEQ" placeholder="请输入物料编码">
                 </div>
-                <label class="control-label col-sm-1" for="t.name_^VLK">任务名称</label>
-                <div class="col-sm-3">
-                    <input type="text" class="form-control" id="t.name_^VLK"  ng-model="name">
+                <div class="col-sm-2">
+                    <input type="text" class="form-control" id="t.subject_^VLK" placeholder="请输入流程名称">
                 </div>
-                <div class="col-sm-4" style="text-align:left;">
-                    <button type="button" style="margin-left: 50px" class="btn btn-primary fa-search">查询</button>
+                <!--<label class="control-label col-sm-1" for="gmt_create^VGE">创建开始时间</label>-->
+                <div class="col-sm-2">
+                    <input class="form-control test-item" readonly id="t.task_start_time^VGE" placeholder="任务开始时间" ab-date="yyyy-MM-dd HH:mm:ss">
+                </div>
+                <div class="col-sm-2">
+                    <input class="form-control test-item" readonly id="t.task_end_time^VLE" placeholder="任务结束时间" ab-date="yyyy-MM-dd HH:mm:ss">
+                </div>
+                <div class="col-sm-4" style="text-align: left;">
+                    <button type="button" style="margin-left: 50px" class="btn btn-primary fa-search" id="btn_query">查询</button>
                     <button type="button" style="margin-left: 50px" class="btn btn-primary fa-rotate-left">重置</button>
                 </div>
             </div>
         </form>
     </div>
 </div>
-<table ab-grid data-id-field="id" data-url="/bpm/task/getDelayTaskList">
+<div class="btn-group toolbar" style="padding-left: 5px;">
+    <button class="btn btn-outline btn-primary"  onclick="exportData()" >导出</button>
+</div>
+<table ab-grid data-id-field="id" data-url="/bpm/task/queryDelayTasksGroupByMaterialNo">
     <thead>
     <tr>
-        <!--<th data-checkbox="true"></th>-->
-        <th data-field="subject">流程标题</th>
-        <th data-field="name">任务名称</th>
+        <!-- 物料编码、流程标题、延期任务数、当前任务名称、当前待处理人、当前任务创建时间、当前任务截止时间 -->
+        <th data-checkbox="true">序号</th>
+        <th data-formatter="innerHtmlFormatter" data-title="管理">
+            <span class="fa-history btn btn-outline btn-primary btn-sm" qtip='查看明细' openDialog='延期任务明细列表 【{materialNo}】' top="true" url='/bpm/task/delayTaskDetail.html?id={materialNo}'></span>
+        </th>
+        <th data-field="materialNo">物料编码</th>
+        <th data-field="processTitle">流程标题</th>
+        <th data-field="delayTaskNums">延期任务数</th>
         <!--<th data-field="delayFlag" data-formatter="labelFormatter"
             data-value-style="false-否-primary,true-是-danger,">是否延期</th>-->
-        <th data-field="timeLimit">处理时限(天)</th>
-        <th data-field="taskStartTime" data-formatter=dateTimeFormatter data-sort-name="task_start_time" data-sortable="true">任务创建时间</th>
-        <th data-field="expectDealTime" data-formatter=dateTimeFormatter >任务截止时间</th>
-        <!--<th data-field="taskDealTime" data-formatter=dateTimeFormatter data-sort-name="task_deal_Time" data-sortable="true">实际处理时间</th>-->
-        <th data-field="delayTimePeriod">延期处理时长</th>
-        <th data-field="taskEndTime" data-formatter=dateTimeFormatter>延期处理时间</th>
-        <th data-field="assigneeNames">待处理人</th>
-        <th data-field="applyUser">延期申请人</th>
-        <th data-field="delayReason">延期原因</th>
-        <th data-formatter="innerHtmlFormatter" data-title="详情">
-            <a class="fa-detail btn btn-outline btn-primary btn-sm" iview="特殊标记" openDialog='流程实例详情 【{subject}】' qtip='详情' url='/bpm/instance/instanceDetail.html?id={instId}'></a>
-        </th>
+        <th data-field="curTaskName">当前任务名称</th>
+        <th data-field="curTaskHandler">当前任务待处理人</th>
+        <th data-field="taskStartTime" data-formatter=dateTimeFormatter data-sort-name="task_start_time" data-sortable="true">当前任务创建时间</th>
+        <th data-field="taskEndTime" data-formatter=dateTimeFormatter >当前任务截止时间</th>
     </tr>
     </thead>
 </table>

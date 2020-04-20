@@ -1,0 +1,66 @@
+<html ng-app="delayTask">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>任务延期查询</title>
+    <link href="../../build/common/base.css" rel="stylesheet">
+    <script type="text/javascript" src="../../build/common/base.js"></script>
+    <script type="text/javascript" src="../../build/common/gridList.js"></script>
+    <script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+    <script type="text/javascript" src="../../assets/js/common/bpmForm/bpmService.js"></script>
+    <script type="text/javascript" src="../../build/common/custForm.js"></script>
+    <style media="print">.print-hidden{display:none}</style>
+    <style>
+        td {
+            white-space: nowrap;
+        }
+    </style>
+
+    <script type="text/javascript">
+        var TaskComplateController = ['$scope','baseService',function($scope,baseService){
+            /* $scope.save =function () {
+                /!* var timeLimit = $scope.timeLimit;
+                 timeLimit.taskId = $.getParam("taskId");
+                 var defer = baseService.postForm(__ctx+"/bpm/task/delayTask",timeLimit);
+                 $.getResultMsg(defer,function(){
+                 },function(){
+
+                 });*!/
+             }*/
+        }];
+    </script>
+</head>
+
+<body ng-controller="TaskComplateController">
+    <div>
+        <form id="searchForm" class="form-horizontal" style="display: none;">
+            <div class="form-group">
+                <div class="col-sm-3">
+                    <input type="hidden" class="form-control" id="material_no^VIN" >
+                </div>
+            </div>
+        </form>
+        <table ab-grid data-id-field="id" data-url="/bpm/task/getDelayTaskList">
+            <thead>
+            <tr>
+                <!--<th data-field="subject">流程标题</th>-->
+                <th data-field="name">任务名称</th>
+                <!--<th data-field="delayFlag" data-formatter="labelFormatter"
+                    data-value-style="false-否-primary,true-是-danger,">是否延期</th>-->
+                <th data-field="timeLimit">处理时限(天)</th>
+                <th data-field="taskStartTime" data-formatter=dateTimeFormatter data-sort-name="task_start_time" data-sortable="true">任务创建时间</th>
+                <th data-field="expectDealTime" data-formatter=dateTimeFormatter >任务截止时间</th>
+                <!--<th data-field="taskDealTime" data-formatter=dateTimeFormatter data-sort-name="task_deal_Time" data-sortable="true">实际处理时间</th>-->
+                <th data-field="delayTimePeriod">延期处理时长</th>
+                <th data-field="taskEndTime" data-formatter=dateTimeFormatter>延期处理时间</th>
+                <th data-field="assigneeNames">待处理人</th>
+                <th data-field="applyUser">延期申请人</th>
+                <th data-field="delayReason">延期原因</th>
+                <th data-formatter="innerHtmlFormatter" data-title="详情">
+                    <a class="fa-detail btn btn-outline btn-primary btn-sm" iview="特殊标记" openDialog='流程实例详情 【{subject}】' qtip='详情' url='/bpm/instance/instanceDetail.html?id={instId}'></a>
+                </th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+</body>
+</html>

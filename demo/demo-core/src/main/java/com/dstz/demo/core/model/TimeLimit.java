@@ -97,6 +97,11 @@ public class TimeLimit extends BaseModel{
 	 */
 	protected Date applyDate;
 
+	/**
+	 * 物料编码
+	 */
+	protected String materialNo;
+
 	public TimeLimit(String taskId) {
 		this.taskId = taskId;
 	}
@@ -274,5 +279,13 @@ public class TimeLimit extends BaseModel{
 
 	public void setApplyDate(Date applyDate) {
 		this.applyDate = applyDate;
+	}
+
+	public String getMaterialNo() {
+		return materialNo;
+	}
+
+	public void setMaterialNo(String materialNo) {
+		this.materialNo = materialNo;
 	}
 }

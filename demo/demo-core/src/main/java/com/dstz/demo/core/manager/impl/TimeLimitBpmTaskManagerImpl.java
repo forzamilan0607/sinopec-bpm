@@ -6,6 +6,7 @@ import com.dstz.bpm.core.model.BpmTask;
 import com.dstz.demo.core.dao.TimeLimitBpmTaskDao;
 import com.dstz.demo.core.manager.TimeLimitBpmTaskManager;
 import com.dstz.demo.core.model.TimeLimit;
+import com.dstz.demo.core.model.dto.DelayTaskCountDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,8 @@ public class TimeLimitBpmTaskManagerImpl extends BaseManager<String,TimeLimit> i
 
 	@Override
 	public void saveTimeLimitData(TimeLimit  timeLimitData) {
-		 this.timeLimitBpmTaskDao.saveTimeLimitData(timeLimitData);
+		timeLimitData.setMaterialNo(this.timeLimitBpmTaskDao.queryMaterialNoByInstId(timeLimitData.getInstId()));
+		this.timeLimitBpmTaskDao.saveTimeLimitData(timeLimitData);
 	}
 
 	@Override
@@ -61,6 +63,11 @@ public class TimeLimitBpmTaskManagerImpl extends BaseManager<String,TimeLimit> i
 	@Override
 	public void updateDelayTask(TimeLimit  timeLimitData) {
 		timeLimitBpmTaskDao.updateDelayTask(timeLimitData);
+	}
+
+	@Override
+	public List<DelayTaskCountDTO> queryDelayTasksGroupByMaterialNo(QueryFilter queryFilter) {
+		return timeLimitBpmTaskDao.queryDelayTasksGroupByMaterialNo(queryFilter);
 	}
 
 }

@@ -2,6 +2,7 @@ package com.dstz.demo.rest.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dstz.base.api.query.QueryFilter;
+import com.dstz.base.api.query.QueryOP;
 import com.dstz.base.api.response.impl.ResultMsg;
 import com.dstz.base.db.model.page.PageResult;
 import com.dstz.base.rest.ControllerTools;
@@ -16,6 +17,7 @@ import com.dstz.demo.core.model.BpmTaskNew;
 import com.dstz.demo.core.model.TimeLimit;
 import com.dstz.demo.core.model.dto.BpmTaskBatchDTO;
 import com.dstz.demo.core.model.dto.BpmTaskDTO;
+import com.dstz.demo.core.model.dto.DelayTaskCountDTO;
 import com.dstz.demo.core.model.dto.TaskCountDTO;
 import com.dstz.demo.core.utils.DemoConstants;
 import com.dstz.demo.core.utils.DemoUtils;
@@ -133,9 +135,21 @@ public class CustomBpmTaskController extends ControllerTools {
     @RequestMapping("/bpm/task/getDelayTaskList")
     public PageResult getDelayTaskList(HttpServletRequest request, HttpServletResponse response) throws Exception {
         QueryFilter queryFilter = super.getQueryFilter(request);
+        String sql = queryFilter.getFieldLogic().getWhereClauses().get(0).getSql();
+        String materialNo = sql.replace("material_no in  (\"?id=", "").replace("\")", "");
+        queryFilter.getFieldLogic().getWhereClauses().clear();
+        queryFilter.addFilter("t.material_no", materialNo, QueryOP.EQUAL);
         List<TimeLimit> timeLimitList = timeLimitBpmTaskManager.getDelayTaskList(queryFilter);
         this.handleDelayTime(timeLimitList);
         Page<TimeLimit> pageList = (Page) timeLimitList;
+        return new PageResult(pageList);
+    }
+
+    @RequestMapping("/bpm/task/queryDelayTasksGroupByMaterialNo")
+    public PageResult queryDelayTasksGroupByMaterialNo(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        QueryFilter queryFilter = super.getQueryFilter(request);
+        List<DelayTaskCountDTO> delayTasks = timeLimitBpmTaskManager.queryDelayTasksGroupByMaterialNo(queryFilter);
+        Page<TimeLimit> pageList = (Page) delayTasks;
         return new PageResult(pageList);
     }
 

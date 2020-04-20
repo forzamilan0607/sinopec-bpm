@@ -23,13 +23,13 @@
 
 	<insert id="saveTimeLimitData" parameterType="com.dstz.demo.core.model.TimeLimit">
 		INSERT INTO bpm_timelimit
-		(id_,name_,subject_,inst_id_,task_id_,isDelay,delayTime,delayReason,timeLimit,task_start_time,task_deal_time,task_end_time,create_time_,create_by_,remark, assignee_names)
+		(id_,name_,subject_,inst_id_,task_id_,isDelay,delayTime,delayReason,timeLimit,task_start_time,task_deal_time,task_end_time,create_time_,create_by_,remark, assignee_names, material_no)
 		VALUES
 		(#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{subject,jdbcType=VARCHAR},
 		 #{instId,jdbcType=VARCHAR}, #{taskId,jdbcType=VARCHAR},
 		#{isDelay,jdbcType=NUMERIC}, #{delayTime}, #{delayReason,jdbcType=VARCHAR},
 		#{timeLimit,jdbcType=VARCHAR}, #{taskStartTime}, #{taskDealTime}, #{taskEndTime},
-		#{createTime}, #{creatBy,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{assigneeNames,jdbcType=VARCHAR})
+		#{createTime}, #{creatBy,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{assigneeNames,jdbcType=VARCHAR}, #{materialNo})
 	</insert>
 
 	<!--<insert id="saveTimeLimitData" parameterType="com.dstz.demo.core.model.TimeLimit">
@@ -84,6 +84,7 @@
 
 	<select id="getDelayTaskList" parameterType="java.util.Map" resultType="com.dstz.demo.core.model.TimeLimit">
 		SELECT
+			t.material_no AS materialNo,
 			t.id_ AS id,
 			t.inst_id_ AS instId,
 			t.task_id_ AS taskId,
@@ -120,6 +121,37 @@
 		</if>
 	</select>
 
-	
+	<select id="queryMaterialNoByInstId" parameterType="java.lang.String" resultType="java.lang.String">
+		select t.material_no  FROM t_process_material t
+		inner join (select inst.id_ AS instId,b.biz_id_ FROM bpm_bus_link b,bpm_instance inst where inst.id_ =
+		b.inst_id_) t2 ON t2.biz_id_ = t.id
+		where t2.instId = #{instId}
+		limit 1
+	</select>
+
+	<select id="queryDelayTasksGroupByMaterialNo" parameterType="java.util.Map" resultType="com.dstz.demo.core.model.dto.DelayTaskCountDTO">
+		SELECT t.material_no AS materialNo,
+			t.subject_ AS processTitle,
+			t2.delayTaskNums,
+			t.name_ AS curTaskName,
+			IFNULL(task.assignee_names_,t.assignee_names) AS curTaskHandler,
+			t.task_start_time AS taskStartTime,
+			t.task_end_time AS taskEndTime
+		FROM bpm_timelimit t
+		INNER JOIN
+		(SELECT t.material_no,max(t.task_start_time) AS lastTaskStartTime,count(t.id_) AS delayTaskNums
+		FROM bpm_timelimit t
+		WHERE t.material_no is not null
+		AND IFNULL(t.task_deal_time,now())>ADDDATE(t.task_start_time,INTERVAL t.timeLimit DAY)
+		GROUP BY t.material_no) t2 ON t2.material_no = t.material_no AND t.task_start_time = t2.lastTaskStartTime
+		LEFT JOIN bpm_task task ON task.id_ = t.task_id_
+		LEFT JOIN org_user u ON t.apply_user = u.id_
+		<where>
+			<if test="whereSql!= null">
+				${whereSql}
+			</if>
+		</where>
+		ORDER BY t.create_time_ desc
+	</select>
 	
 </mapper>
