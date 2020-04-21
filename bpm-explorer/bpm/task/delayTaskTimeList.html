@@ -1,4 +1,4 @@
-<html ng-app="delayTask">
+<html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>任务延期查询</title>
@@ -35,6 +35,24 @@
                  });*!/
              }*/
         }];
+        function exportData() {
+            //  获取选中的记录
+            var selectedObjs = $("[ab-grid]").bootstrapTable("getSelections");
+            if (!selectedObjs || !selectedObjs.length) {
+                $.Dialog.error("请选择要导出的数据！");
+                return;
+            }
+            var ids = selectedObjs.map(item => item.materialNo).join(",");
+            $("#ids").val(ids);
+            $("#myForm").submit();
+            var $form = $('<form method="post"/>');
+            var url = getCtxUrl("/bpm/task/exportData", true);
+            $form.attr('action', url);
+            $form.append('<input type="hidden" name="ids" value="' + ids + '" />');
+            $(document.body).append($form);
+            $form[0].submit();
+            $form.remove();
+        }
     </script>
 </head>
 

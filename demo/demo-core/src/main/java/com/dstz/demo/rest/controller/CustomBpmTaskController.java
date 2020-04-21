@@ -1,10 +1,15 @@
 package com.dstz.demo.rest.controller;
 
+import cn.afterturn.easypoi.excel.ExcelExportUtil;
+import cn.afterturn.easypoi.excel.entity.ExportParams;
+import cn.afterturn.easypoi.excel.entity.enmus.ExcelType;
 import com.alibaba.fastjson.JSONObject;
 import com.dstz.base.api.query.QueryFilter;
 import com.dstz.base.api.query.QueryOP;
 import com.dstz.base.api.response.impl.ResultMsg;
 import com.dstz.base.db.model.page.PageResult;
+import com.dstz.base.db.model.query.DefaultPage;
+import com.dstz.base.db.model.query.DefaultQueryFilter;
 import com.dstz.base.rest.ControllerTools;
 import com.dstz.base.rest.util.RequestUtil;
 import com.dstz.bpm.api.engine.action.cmd.FlowRequestParam;
@@ -14,6 +19,7 @@ import com.dstz.bpm.engine.action.cmd.DefualtTaskActionCmd;
 import com.dstz.demo.core.manager.CustomBpmTaskManager;
 import com.dstz.demo.core.manager.TimeLimitBpmTaskManager;
 import com.dstz.demo.core.model.BpmTaskNew;
+import com.dstz.demo.core.model.MaterialProcess;
 import com.dstz.demo.core.model.TimeLimit;
 import com.dstz.demo.core.model.dto.BpmTaskBatchDTO;
 import com.dstz.demo.core.model.dto.BpmTaskDTO;
@@ -24,17 +30,23 @@ import com.dstz.demo.core.utils.DemoUtils;
 import com.dstz.sys.util.ContextUtil;
 import com.github.pagehelper.Page;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RestController
@@ -220,4 +232,33 @@ public class CustomBpmTaskController extends ControllerTools {
         TaskCountDTO taskCount = this.customBpmTaskManager.countTodoAndDelayTasks(ContextUtil.getCurrentUserId());
         return this.getSuccessResult(taskCount);
     }
+
+    @PostMapping("/bpm/task/exportData")
+    public void exportData(HttpServletRequest request, HttpServletResponse response){
+        Workbook workbook = null;
+        try {
+            String ids = request.getParameter("ids");
+            QueryFilter queryFilter = new DefaultQueryFilter();
+            queryFilter.addFilter("t.material_no", ids, QueryOP.IN);
+            DefaultPage page = (DefaultPage) queryFilter.getPage();
+            page.setLimit(ids.split(",").length);
+            List<DelayTaskCountDTO> data = this.timeLimitBpmTaskManager.queryDelayTasksGroupByMaterialNo(queryFilter);
+            request.setCharacterEncoding("UTF-8");
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("application/x-download");
+            String sdf = new SimpleDateFormat("yyyyMMddhhmmss").format(new Date());
+            String fileName = URLEncoder.encode("任务延期统计表-" + sdf + ".xlsx", "UTF-8");
+            response.addHeader("Content-Disposition", "attachment;filename=" + fileName);
+            ExportParams exportParams = new ExportParams("任务延期统计表", "sheet1");
+            exportParams.setType(ExcelType.XSSF);
+            exportParams.setTitleHeight((short) 20);
+            workbook = ExcelExportUtil.exportExcel(exportParams, DelayTaskCountDTO.class, data);
+            workbook.write(response.getOutputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            IOUtils.closeQuietly(workbook);
+        }
+    }
+
 }
