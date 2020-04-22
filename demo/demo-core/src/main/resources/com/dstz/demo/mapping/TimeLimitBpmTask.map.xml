@@ -117,7 +117,7 @@
 			ORDER BY ${orderBySql}
 		</if>
 		<if test="orderBySql==null">
-			ORDER BY t.task_end_time DESC
+			ORDER BY t.material_no
 		</if>
 	</select>
 
@@ -143,6 +143,12 @@
 		FROM bpm_timelimit t
 		WHERE t.material_no is not null
 		AND IFNULL(t.task_deal_time,now())>ADDDATE(t.task_start_time,INTERVAL t.timeLimit DAY)
+		<if test="taskStartTime != null">
+			AND DATE_FORMAT(t.task_start_time, '%Y-%m-%d') &gt;= #{taskStartTime}
+		</if>
+		<if test="taskEndTime != null">
+			AND DATE_FORMAT(t.task_end_time, '%Y-%m-%d') &lt;= #{taskEndTime}
+		</if>
 		GROUP BY t.material_no) t2 ON t2.material_no = t.material_no AND t.task_start_time = t2.lastTaskStartTime
 		LEFT JOIN bpm_task task ON task.id_ = t.task_id_
 		LEFT JOIN org_user u ON t.apply_user = u.id_

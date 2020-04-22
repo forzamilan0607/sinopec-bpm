@@ -29,93 +29,80 @@ public class TimeLimit extends BaseModel implements IExcelModel, IExcelDataModel
 	*/
 	protected  String taskId;
 
-	@Excel(name = "任务名称", width = 20)
-	protected  String name;
-	/**
-	 * 关联的任务ID
-	 */
-	protected  String subject;
-	/**
-	* 是否延期任务
-	*/
-	protected  int isDelay;
-	/**
-	* 延期时间
-	*/
-	protected  String delayTime;
-	/**
-	* 延期原因
-	*/
-	@Excel(name = "延期原因", width = 20)
-	protected  String delayReason;
-	/**
-	* 字段1
-	*/
-	@Excel(name = "处理时限(天)", width = 10)
-	protected  String timeLimit;
-	/**
-	 * 字段1
-	 */
-	@Excel(name = "任务创建时间", width = 30)
-	protected  Date taskStartTime;
-	/**
-	 * 字段1
-	 */
-	protected  Date taskDealTime;
-	/**
-	 * 字段1
-	 */
-	@Excel(name = "延期处理时间", width = 30)
-	protected  Date taskEndTime;
-	/**
-	 * 字段1
-	 */
-	protected  Date createTime;
-	/**
-	 * 字段1
-	 */
-	protected  String creatBy;
-	/**
-	 * 字段1
-	 */
-	protected  String remark;
-
-	protected boolean delayFlag;
-
-	@Excel(name = "延期处理时长", width = 10)
-	protected  String delayTimePeriod;
-
-	/**
-	 * 待处理人
-	 */
-	@Excel(name = "待处理人", width = 30)
-	protected String assigneeNames;
-
-	/**
-	 * 期望处理时间
-	 */
-
-	protected Date expectDealTime;
-
-	/**
-	 * 延期申请人
-	 */
-	@Excel(name = "延期申请人", width = 10)
-	protected String applyUser;
-
-	/**
-	 * 延期申请时间
-	 */
-
-	protected Date applyDate;
-
 	/**
 	 * 物料编码
 	 */
 	@Excel(name = "物料编码", width = 20)
 	protected String materialNo;
 
-	@Excel(name = "失败原因", width = 80)
+	/**
+	 * 关联的任务ID
+	 */
+	@Excel(name = "流程标题", width = 30)
+	protected  String subject;
+
+	@Excel(name = "任务名称", width = 20)
+	protected  String name;
+
+	/**
+	 * 待处理人
+	 */
+	@Excel(name = "待处理人", width = 20)
+	protected String assigneeNames;
+
+	@Excel(name = "处理时限(天)", width = 15)
+	protected  String timeLimit;
+
+	@Excel(name = "任务创建时间", width = 20, exportFormat = "yyyy-MM-dd hh:mm:ss")
+	protected  Date taskStartTime;
+
+	@Excel(name = "任务截止时间", width = 20, exportFormat = "yyyy-MM-dd hh:mm:ss")
+	protected Date expectDealTime;
+
+	protected  Date taskDealTime;
+
+	@Excel(name = "延期处理时间", width = 20, exportFormat = "yyyy-MM-dd hh:mm:ss")
+	protected  Date taskEndTime;
+
+	@Excel(name = "延期处理时长", width = 20)
+	protected  String delayTimePeriod;
+
+	/**
+	 * 延期申请人
+	 */
+	@Excel(name = "延期申请人", width = 15)
+	protected String applyUser;
+
+	/**
+	 * 延期原因
+	 */
+	@Excel(name = "延期原因", width = 30)
+	protected  String delayReason;
+
+	/**
+	 * 延期申请时间
+	 */
+	protected Date applyDate;
+
+
+	/**
+	 * 是否延期任务
+	 */
+	protected  int isDelay;
+	/**
+	 * 延期时间
+	 */
+	protected  String delayTime;
+
+	protected  Date createTime;
+
+	protected  String creatBy;
+
+	protected  String remark;
+
+	protected boolean delayFlag;
+
+//	@Excel(name = "失败原因", width = 80)
 	private String errorMsg;
 
 	public TimeLimit(String taskId) {

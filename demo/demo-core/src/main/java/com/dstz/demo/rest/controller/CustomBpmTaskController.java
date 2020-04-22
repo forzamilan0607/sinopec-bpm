@@ -6,9 +6,11 @@ import cn.afterturn.easypoi.excel.entity.enmus.ExcelType;
 import com.alibaba.fastjson.JSONObject;
 import com.dstz.base.api.query.QueryFilter;
 import com.dstz.base.api.query.QueryOP;
+import com.dstz.base.api.query.WhereClause;
 import com.dstz.base.api.response.impl.ResultMsg;
 import com.dstz.base.db.model.page.PageResult;
 import com.dstz.base.db.model.query.DefaultPage;
+import com.dstz.base.db.model.query.DefaultQueryField;
 import com.dstz.base.db.model.query.DefaultQueryFilter;
 import com.dstz.base.rest.ControllerTools;
 import com.dstz.base.rest.util.RequestUtil;
@@ -160,9 +162,24 @@ public class CustomBpmTaskController extends ControllerTools {
     @RequestMapping("/bpm/task/queryDelayTasksGroupByMaterialNo")
     public PageResult queryDelayTasksGroupByMaterialNo(HttpServletRequest request, HttpServletResponse response) throws Exception {
         QueryFilter queryFilter = super.getQueryFilter(request);
+        this.hanldeTimeCondition(queryFilter);
         List<DelayTaskCountDTO> delayTasks = timeLimitBpmTaskManager.queryDelayTasksGroupByMaterialNo(queryFilter);
         Page<TimeLimit> pageList = (Page) delayTasks;
         return new PageResult(pageList);
+    }
+
+    private void hanldeTimeCondition(QueryFilter queryFilter) {
+        Iterator<WhereClause> iter = queryFilter.getFieldLogic().getWhereClauses().iterator();
+        while (iter.hasNext()) {
+            DefaultQueryField queryField = (DefaultQueryField) iter.next();
+            if (ObjectUtils.nullSafeEquals("t.task_start_time", queryField.getField())) {
+                queryFilter.addParamsFilter("taskStartTime", queryField.getValue());
+                iter.remove();
+            } else if (ObjectUtils.nullSafeEquals("t.task_end_time", queryField.getField())) {
+                queryFilter.addParamsFilter("taskEndTime", queryField.getValue());
+                iter.remove();
+            }
+        }
     }
 
     private void handleDelayTime(List<TimeLimit> timeLimitList) {
@@ -241,7 +258,7 @@ public class CustomBpmTaskController extends ControllerTools {
             QueryFilter queryFilter = new DefaultQueryFilter();
             queryFilter.addFilter("t.material_no", ids, QueryOP.IN);
             DefaultPage page = (DefaultPage) queryFilter.getPage();
-            page.setLimit(ids.split(",").length);
+            page.setLimit(10000);
             List<TimeLimit> data = this.timeLimitBpmTaskManager.getDelayTaskList(queryFilter);
             this.handleDelayTime(data);
             request.setCharacterEncoding("UTF-8");
