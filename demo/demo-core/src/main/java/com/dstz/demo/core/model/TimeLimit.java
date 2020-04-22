@@ -1,5 +1,8 @@
 package com.dstz.demo.core.model;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
+import cn.afterturn.easypoi.handler.inter.IExcelDataModel;
+import cn.afterturn.easypoi.handler.inter.IExcelModel;
 import com.dstz.base.core.model.BaseModel;
 
 import java.util.Date;
@@ -12,7 +15,7 @@ import java.util.List;
  * @email aschs@qq.com
  * @time 2018-08-24 18:06:04
  */
-public class TimeLimit extends BaseModel{
+public class TimeLimit extends BaseModel implements IExcelModel, IExcelDataModel {
 	/**
 	* 主键
 	*/
@@ -26,6 +29,7 @@ public class TimeLimit extends BaseModel{
 	*/
 	protected  String taskId;
 
+	@Excel(name = "任务名称", width = 20)
 	protected  String name;
 	/**
 	 * 关联的任务ID
@@ -42,14 +46,17 @@ public class TimeLimit extends BaseModel{
 	/**
 	* 延期原因
 	*/
+	@Excel(name = "延期原因", width = 20)
 	protected  String delayReason;
 	/**
 	* 字段1
 	*/
+	@Excel(name = "处理时限(天)", width = 10)
 	protected  String timeLimit;
 	/**
 	 * 字段1
 	 */
+	@Excel(name = "任务创建时间", width = 30)
 	protected  Date taskStartTime;
 	/**
 	 * 字段1
@@ -58,6 +65,7 @@ public class TimeLimit extends BaseModel{
 	/**
 	 * 字段1
 	 */
+	@Excel(name = "延期处理时间", width = 30)
 	protected  Date taskEndTime;
 	/**
 	 * 字段1
@@ -74,33 +82,41 @@ public class TimeLimit extends BaseModel{
 
 	protected boolean delayFlag;
 
-
+	@Excel(name = "延期处理时长", width = 10)
 	protected  String delayTimePeriod;
 
 	/**
 	 * 待处理人
 	 */
+	@Excel(name = "待处理人", width = 30)
 	protected String assigneeNames;
 
 	/**
 	 * 期望处理时间
 	 */
+
 	protected Date expectDealTime;
 
 	/**
 	 * 延期申请人
 	 */
+	@Excel(name = "延期申请人", width = 10)
 	protected String applyUser;
 
 	/**
 	 * 延期申请时间
 	 */
+
 	protected Date applyDate;
 
 	/**
 	 * 物料编码
 	 */
+	@Excel(name = "物料编码", width = 20)
 	protected String materialNo;
+
+	@Excel(name = "失败原因", width = 80)
+	private String errorMsg;
 
 	public TimeLimit(String taskId) {
 		this.taskId = taskId;
@@ -288,4 +304,28 @@ public class TimeLimit extends BaseModel{
 	public void setMaterialNo(String materialNo) {
 		this.materialNo = materialNo;
 	}
+
+
+	@Override
+	public String getErrorMsg() {
+		return this.errorMsg;
+	}
+
+	@Override
+	public void setErrorMsg(String errorMsg) {
+		this.errorMsg = errorMsg;
+	}
+
+	private int rowNum;
+
+	@Override
+	public int getRowNum() {
+		return this.rowNum;
+	}
+
+	@Override
+	public void setRowNum(int rowNum) {
+		this.rowNum = rowNum;
+	}
+
 }

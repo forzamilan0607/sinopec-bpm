@@ -242,7 +242,8 @@ public class CustomBpmTaskController extends ControllerTools {
             queryFilter.addFilter("t.material_no", ids, QueryOP.IN);
             DefaultPage page = (DefaultPage) queryFilter.getPage();
             page.setLimit(ids.split(",").length);
-            List<DelayTaskCountDTO> data = this.timeLimitBpmTaskManager.queryDelayTasksGroupByMaterialNo(queryFilter);
+            List<TimeLimit> data = this.timeLimitBpmTaskManager.getDelayTaskList(queryFilter);
+            this.handleDelayTime(data);
             request.setCharacterEncoding("UTF-8");
             response.setCharacterEncoding("UTF-8");
             response.setContentType("application/x-download");
@@ -252,7 +253,7 @@ public class CustomBpmTaskController extends ControllerTools {
             ExportParams exportParams = new ExportParams("任务延期统计表", "sheet1");
             exportParams.setType(ExcelType.XSSF);
             exportParams.setTitleHeight((short) 20);
-            workbook = ExcelExportUtil.exportExcel(exportParams, DelayTaskCountDTO.class, data);
+            workbook = ExcelExportUtil.exportExcel(exportParams, TimeLimit.class, data);
             workbook.write(response.getOutputStream());
         } catch (IOException e) {
             e.printStackTrace();
