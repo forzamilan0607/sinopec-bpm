@@ -50,7 +50,10 @@ public class DefaultPage extends RowBounds implements Page, Serializable {
      * @param pageSize 分页大小
      */
     public DefaultPage(int pageNo, int pageSize) {
-        this(pageNo, pageSize, new ArrayList<FieldSort>(), true);
+        this.pageNo = pageNo;
+        this.pageSize = pageSize;
+        this.orders = new ArrayList<>();
+        this.isShowTotal = Boolean.TRUE;
     }
 
     /**

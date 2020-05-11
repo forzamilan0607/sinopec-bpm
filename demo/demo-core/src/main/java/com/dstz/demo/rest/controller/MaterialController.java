@@ -193,8 +193,11 @@ public class MaterialController extends ControllerTools {
         //保存成功信息
         if (!CollectionUtils.isEmpty(successList)) {
             List<MaterialProcess> resultList = this.filterData(successList);
+            List<String> materialNoList = resultList.stream().map(item -> item.getMaterialNo()).collect(Collectors.toList());
             QueryFilter queryFilter = new DefaultQueryFilter();
-            queryFilter.addFilter("t.material_no", resultList.stream().map(item -> item.getMaterialNo()).collect(Collectors.toList()), QueryOP.IN);
+            com.dstz.base.api.Page page = new DefaultPage(1, materialNoList.size() * 3);
+            queryFilter.setPage(page);
+            queryFilter.addFilter("t.material_no", materialNoList, QueryOP.IN);
             List<MaterialProcess> existedData = this.materialManager.query(queryFilter);
             for (MaterialProcess material : resultList) {
                 // 判断是否存在
