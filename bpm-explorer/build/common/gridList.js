@@ -2029,7 +2029,7 @@
                             sidePagination: "server",
                             pageNumber: 1,
                             pageSize: 10,
-                            pageList: [10, 25, 50, 100],
+                            pageList: [10, 25, 50, 100, 200],
                             search: !1,
                             strictSearch: !1,
                             showColumns: customShowColumns === "0" ? false : !0,
