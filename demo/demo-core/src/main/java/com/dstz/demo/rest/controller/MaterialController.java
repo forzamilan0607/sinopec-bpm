@@ -344,9 +344,10 @@ public class MaterialController extends ControllerTools {
         this.materialManager.remove(businessKey);
         BpmInstance bpmInstance = bpmInstanceManager.get(instanceCmd.getInstanceId());
         BpmDefinition def = this.bpmDefinitionMananger.getByKey(bpmInstance.getDefKey());
-        String defName = StringUtils.replace(bpmInstance.getDefName(),def.getName(),material.getMaterialDesc());
+        String replaceTxt = "(" + material.getMaterialNo() + ")" + material.getMaterialDesc();
+        String defName = StringUtils.replace(bpmInstance.getDefName(), def.getName(), replaceTxt);
         bpmInstance.setDefName(defName);
-        String subject = StringUtils.replace(bpmInstance.getSubject(),def.getName(),material.getMaterialDesc());
+        String subject = StringUtils.replace(bpmInstance.getSubject(), def.getName(), replaceTxt);
         bpmInstance.setSubject(subject);
         bpmInstanceManager.update(bpmInstance);
         List<BpmTask> bpmTaskList = bpmTaskManager.getByInstId(instanceCmd.getInstanceId());
